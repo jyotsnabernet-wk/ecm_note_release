@@ -1,0 +1,61 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-06-16" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>Amplitude taxonomy, ECM classification &amp;amp; hierarchy, C360 enrichment audit, Utilization facts</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="d277f8c9-b6d4-4055-8be7-49324111e835">
+        <strong>Amplitude — curated event taxonomy for product usage reporting</strong>
+        <ul>
+          <li data-uuid="c1d15f60-64ee-41ef-8faa-512540afe2de">
+            Product usage in Amplitude relies on thousands of distinct <u><strong>event_type</strong></u> values; native <u><strong>Event Category</strong></u> is inconsistently populated, so reliable reporting in <u><strong>fct_amplitude_events</strong></u> and downstream marts needs an explicit, maintained taxonomy rather than ad hoc labels.
+          </li>
+          <li data-uuid="e880c746-552d-44f2-823e-986f5090ca38">
+            DnA is defining a <strong>two-level</strong> structure — <u><strong>event_category</strong></u> (broad groupings) and <u><strong>event_sub_category</strong></u> (finer, homogeneity-driven buckets) — delivered as a <strong>seed</strong> mapping <u><strong>event_type</strong></u> to both fields, joined into <u><strong>fct_amplitude_events</strong></u> (<a href="https://jira.atl.workiva.net/browse/DNA-5446">DNA-5446</a>).
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="c3f3f551-24ba-4b92-956d-9f0cd874e3b8">
+        <strong>ECM — reporting classification semantics</strong>
+        <ul>
+          <li data-uuid="9b2539d0-9477-40c5-b481-208bc126f10f">
+            <u><strong>reporting_classification</strong></u> will <strong>keep the same dimension name and value labels</strong> to limit downstream churn, but the <strong>underlying logic</strong> is being replaced with the validated <strong>solution motion</strong> logic so classifications match how the business expects deals to roll up (<a href="https://jira.atl.workiva.net/browse/DNA-5394">DNA-5394</a>).
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Product &amp;amp; customer analytics</strong></p>
+    <ul>
+      <li data-uuid="3efb7d4f-e853-413a-9e64-acffb486670f">Raw <u><strong>event_type</strong></u> alone is too granular for executive and product reporting; without a governed middle layer, teams cannot consistently answer product usage questions.</li>
+      <li data-uuid="c468b002-d50d-4214-8664-0eb60904a88e">Customer and opportunity semantics need to stay aligned with validated business definitions; classification labels that drift in logic create silent metric skew across Finance and GTM surfaces.</li>
+    </ul>
+    <p><strong>Trust, operations &amp;amp; platform</strong></p>
+    <ul>
+      <li data-uuid="3aa482db-1da6-48ad-8dcf-6821f52b8a9d">Enrichment and rules-based decisions require <strong>auditable history</strong> so analysts can investigate model drift and retrospective accuracy without relying on ephemeral logs.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-06-17" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy.</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="0eb9753e-3c66-45ee-b684-9a790c0f4b71"><u><strong>fct_amplitude_events</strong></u> and Amplitude-derived marts — expect additive taxonomy columns; dashboards that hard-code event groupings should adopt <u><strong>event_category</strong></u> / <u><strong>event_sub_category</strong></u>.</li>
+      <li data-uuid="60ddb7b1-58c3-4cbf-b841-2aaa15350fff"><u><strong>reporting_classification</strong></u> — values stay labeled consistently, but rows may <strong>reclassify</strong> under solution-motion logic; GTM dashboards filtering on this field should be regression-tested.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p><strong>Verify</strong> — owners of Sigma / Tableau / QuickSight workbooks over Amplitude facts or GTM classification fields should re-run representative extracts after deploy and compare key metrics week-over-week.</p>
+    <p><strong>No action required</strong> for teams not consuming these surfaces.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="1f66129c-606b-40de-a44c-49e0d6aa82bf"><a href="https://jira.atl.workiva.net/browse/DNA-5394">DNA-5394</a> — [ECM] Replace reporting classification</li>
+    <li data-uuid="2128779d-cc8f-4b21-aa92-fb8b831cf9c2"><a href="https://jira.atl.workiva.net/browse/DNA-5446">DNA-5446</a> — Establish event categories for Amplitude</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="76595af6-57bd-4fd5-ae72-0ccee989e12a">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>

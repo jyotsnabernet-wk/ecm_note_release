@@ -1,0 +1,94 @@
+# Change Management Automation Rules
+
+You are an expert Data Architect and Change Management Specialist. Your core task is to review GitHub code changes (Git commits, PR descriptions, dbt models) and automatically generate structured deployment notifications.
+
+## Core requirements (8 elements)
+
+Whenever the user asks you to analyze a change, extract and generate these eight elements (they may be split across headings in the wiki sample—see **Wiki** below):
+
+1. **Headline / release themes** — Brief summary including deploy date (in the wiki sample this is expressed as **Sent on** + `<time>` and one or more **theme `<h3>` lines** under “Release Notification”, not a single field named “Headline”).
+2. **What is happening** — Plain language; name affected data objects (tables, views, metrics).
+3. **Why it is happening** — Business or technical context.
+4. **When it will happen** — Deploy date/time; if breaking, state a **30-day migration** window end date.
+5. **Downstream impact** — Dashboards, metrics, systems; be specific where possible.
+6. **Recommended actions** — Use explicit verbs: **Refresh**, **Repoint**, **Verify**, or **No action required** (or equivalent phrasing).
+7. **Links** — Wiki, GitHub PRs, Jira, methodology pages as applicable.
+8. **Contact** — Team, Slack channel, PR authors.
+
+## Tier-based adjustments
+
+Classify risk (e.g. breaking core tables = Tier 1; additive columns = Tier 2) and adjust volume:
+
+### Tier 1 — High risk / planned
+
+- **Slack / email**: Full eight-element narrative; add **Rollback plan** and **30-day migration note**; remind: send **3–5 business days** before deploy (typically the prior Friday).
+- **Wiki**: Full body per **`docs/wiki_page_sample.html`** through Contact; use Slack/email for tier rationale and rollback reminders (wiki has no Appendix block).
+
+### Tier 2 — Low risk / lightweight
+
+- **Slack**: Condensed one-paragraph note; send **≥ 48 hours** before deploy.
+- **Wiki**: Shorter body; same **structural** conventions as the sample (lists, `data-uuid`, optional nested bullets).
+
+---
+
+## Wiki deliverable (`wiki.html`) — **must follow `docs/wiki_page_sample.html`**
+
+**Canonical reference:** `docs/wiki_page_sample.html` (Confluence editor / storage XHTML fragment). Any change to **`release_comms_render.py`** wiki output, manual Confluence edits, or AI-generated wiki fragments for this repo should **converge toward that file’s layout and richness**, not the older “single `<h2>` = LLM headline only” minimal pattern.
+
+### Document shell
+
+- **One root** `<div class="mceContentBody aui-theme-default wiki-content fullsize">` … `</div>`.
+- **XHTML-safe**: no `<!DOCTYPE>`, no `<html>`, no `<head>`, no page-level `<style>` (Confluence storage rules).
+- Optional root attribute `data-ecm-headline="…"` only if the product still wants a machine headline; the **sample does not require it** on the outer div.
+
+### Order and block types (match the sample top to bottom)
+
+1. **Sent line** — `<p>Sent on<strong> <time datetime="YYYY-MM-DD" /></strong></p>` (use ISO date; preserve spacing style from sample if pasting into Confluence).
+2. **Section banner** — `<h2><strong>Release Notification</strong></h2>` — literal label **“Release Notification”**, not the long release summary.
+3. **Theme subheads** — One or more **`<h3>…</h3>`** lines for major storylines (e.g. GTM metrics vs workforce). These carry the **long narrative titles**; they sit **above** “What is happening”. Use plain `<h3>` or mixed bold per sample; do not collapse everything into a single “Headline” `<h2>`.
+4. **What is happening** — `<h3><strong>What is happening</strong></h3>`  
+   - Opening **`<p>`** (short intro).  
+   - **`<ul>`** of top-level **`<li data-uuid="…">`**: each item may start with **`<strong>Domain — summary:</strong>`** (or equivalent) and contain a **nested `<ul>`** of detail **`<li data-uuid="…">`**.  
+   - For metric / object names in prose, use **`<u><strong>snake_case_name</strong></u>`** (or `<strong>` alone) as in the sample—helps readers scan tables and flags.
+5. **Why it is happening** — `<h3><strong>Why it is happening</strong></h3>`  
+   - Optional **`<p><strong>Subsection label</strong></p>`** before bullets.  
+   - **`<ul><li data-uuid="…">`** for bullets.  
+   - **Inline links** (`<a href="…">`) to Wiki methodology or Jira are allowed **inside** this section (sample does this before “When”).
+6. **When it will happen** — `<h3><strong>When it will happen</strong></h3>`  
+   - Deploy line: **`<p>Deploy on <time datetime="YYYY-MM-DD" /></p>`** (or same pattern as sample).  
+   - Follow-up **`<p>`** for consumer validation / migration cutoff dates.
+7. **Downstream impact** — `<h3><strong>Downstream impact</strong></h3>`  
+   - **`<ul><li data-uuid="…">`**; use **nested `<ul>`** inside a parent `<li>` for sub-bullets (sample: obt_bookings / QuickSight sub-points).
+8. **Recommended actions** — `<h3><strong>Recommended actions</strong></h3>`  
+   - One or more **`<p>`** paragraphs (verify vs no-action split across `<p>` as in sample).
+9. **Links** — `<h3><strong>Links</strong></h3>`  
+   - **`<ul><li data-uuid="…">`** per link; pattern **`PR #n: <a href="url">url</a>`** (anchor text may be full URL as in sample).
+10. **Contact** — `<h3><strong>Contact</strong></h3>`  
+   - **`<ul><li data-uuid="…">`** for team / Slack (**`<a href="…">#channel</a>`** when linking Slack).  
+   - Second item **“PR authors:”** with a **nested `<ul>`** of one `<li data-uuid="…">` per author line.
+11. **Trailing spacer** — `<p><br /></p>` before closing root `</div>`.
+
+### List and ID rules
+
+- **Every `<li>`** in generated lists should have **`data-uuid="…"`** (use UUID v4 strings, unique per item).
+- Prefer **nested lists** for hierarchical “area → bullets” instead of one flat wall of text.
+- Preserve **HTML entity** escaping where Confluence expects it (e.g. `&amp;` in copy).
+
+### Automation (`release_comms_render.py`)
+
+- **`wiki.html`** follows **`docs/wiki_page_sample.html`** through **Contact** + trailing spacer only (no Engineering section, no Appendix).
+- Tier table, combined rationale, and rollback/migration reminders stay on **Slack** and **email**.
+
+### Rich text helpers
+
+- When transforming markdown-like source into XHTML: support `**bold**`, `[label](url)`, bare `https://`, and dbt identifiers; align with **`_wiki_body_to_atlassian_html`** behavior in `release_comms_render.py` where applicable.
+
+### When editing code
+
+- Prefer updating **`release_comms_render.py`** (`_wiki_release`, `_wiki_dual_section_release`, helpers) so **`wiki.html`** output **structurally matches** `docs/wiki_page_sample.html` rather than documenting a divergent layout in comments only.
+
+---
+
+## ECM scope (`models/marts`)
+
+When dbt models live under `models/marts` alongside **non-ECM** gold models, do not assume the whole tree is ECM. Use user-supplied **path prefixes** (`RELEASE_COMMS_PATH_PREFIXES` / `--path-prefix`) and/or **GitHub PR label** (`RELEASE_COMMS_PR_LABEL` / `--pr-label`) to limit which files and PRs count for this pod’s release comms.

@@ -1,0 +1,130 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-06-17" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>Amplitude event taxonomy, Zendesk support data, C360 &amp;amp; ECM customer intelligence, CPX contracts, workforce utilization, platform</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="c049b3ed-6ae0-4220-9449-22a235129473">
+        <strong>Amplitude — curated event taxonomy for product analytics</strong>
+        <ul>
+          <li data-uuid="3969f1f0-c0c9-4d45-bf7a-bd674813e2ff">
+            Thousands of distinct <u><strong>event_type</strong></u> values in Amplitude lack consistent categorization, making reliable product-level reporting difficult across teams.
+          </li>
+          <li data-uuid="d53feb66-400b-4e5b-89f9-b3a5a7b6b0db">
+            A governed <strong>event category taxonomy</strong> is being established to standardize classification across all product usage events ingested into the warehouse.
+          </li>
+          <li data-uuid="ae24826f-74b7-4f8d-85cd-f618d85dc0de">
+            This taxonomy will power consistent, trustworthy reporting in <u><strong>fct_amplitude_events</strong></u> and all downstream product analytics marts. (<a href="https://jira.atl.workiva.net/browse/DNA-5446">DNA-5446</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="96f7daf8-2b89-410d-8307-3b2f41865981">
+        <strong>Zendesk — support analytics data enrichment</strong>
+        <ul>
+          <li data-uuid="e4b85f9d-303a-453a-b85b-20b40772eb52">
+            The <strong>Solution Offered Timestamp</strong> field is being exposed in the Silver layer on the Zendesk Ticket object with a full historical backfill, closing a gap in SLA and resolution-time analysis. (<a href="https://jira.atl.workiva.net/browse/DNA-5489">DNA-5489</a>)
+          </li>
+          <li data-uuid="25b35df6-2992-4fec-8dd9-217684cf842e">
+            The <strong>Zendesk Voice: Calls</strong> dataset is being ingested into Snowflake for the first time, enabling precise call-channel metrics to be analyzed alongside existing ticket data for a complete end-to-end support view. (<a href="https://jira.atl.workiva.net/browse/DNA-5174">DNA-5174</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="be427e37-3810-4eb1-839e-2397e2b8e8d5">
+        <strong>C360 &amp; ECM — customer intelligence infrastructure</strong>
+        <ul>
+          <li data-uuid="9ca07193-9c4b-463a-a138-5469c37fb4ba">
+            Persisted <strong>transactional audit tables</strong> are being created in the Gold layer to track historical changes over time, log AI &amp; Rules Engine outputs, and support drift and accuracy analysis by analysts and data scientists. (<a href="https://jira.atl.workiva.net/browse/DNA-5422">DNA-5422</a>)
+          </li>
+          <li data-uuid="6090682f-c728-4011-9363-6cde040ecd8e">
+            The <strong>reporting classification</strong> dimension is being updated to replace its internal derivation logic with the validated <strong>solution motion</strong> logic; existing column values and names are preserved to avoid downstream breakage. (<a href="https://jira.atl.workiva.net/browse/DNA-5394">DNA-5394</a>)
+          </li>
+          <li data-uuid="88d68cf5-1ca9-402c-a9b4-92b799a9ff92">
+            A structured gap analysis is underway comparing current Snowflake customer models against revised specifications prepared externally, producing a prioritized list to guide future ECM model alignment. (<a href="https://jira.atl.workiva.net/browse/DNA-5478">DNA-5478</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="b40782dd-99aa-4c01-9d9f-9f29ebcbbdd9">
+        <strong>CPX — contract data modernization &amp; Gainsight mapping</strong>
+        <ul>
+          <li data-uuid="dd0bf6e7-2071-4fa2-806f-9500cc075b30">
+            Contract correction logic is being migrated from Redshift to Snowflake, delivering a continuous snapshot view of pre- and post-QTC contract data and unlocking CPX use cases that previously required Redshift access. (<a href="https://jira.atl.workiva.net/browse/DNA-5108">DNA-5108</a>)
+          </li>
+          <li data-uuid="5c16e5d0-8aff-4bfc-9454-f840e770e343">
+            The <u><strong>dim_cpxdna_gainsight_mapping</strong></u> seed is being updated to reflect the latest approved Gainsight account mappings, ensuring downstream customer success models reflect current account structures. (<a href="https://jira.atl.workiva.net/browse/DNA-5229">DNA-5229</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="e9a282f4-484e-4aa7-9ac0-47215ed0ccf8">
+        <strong>Workforce &amp; HoB — utilization models and sales hierarchy</strong>
+        <ul>
+          <li data-uuid="a12a0df2-68a7-42dd-9fb0-e3746f0fd7a8">
+            New models <u><strong>fct_workers_time_off_daily</strong></u> and <u><strong>fct_workers_availability_quarter</strong></u> are being built as materialized tables to power workforce utilization reporting. (<a href="https://jira.atl.workiva.net/browse/DNA-5383">DNA-5383</a>)
+          </li>
+          <li data-uuid="7e80f3f5-dc26-434f-87aa-9477919fba7a">
+            An intermediate model for the <strong>Sales Hierarchy</strong> is being created to expose Sales Operations seed data across dbt projects, incorporating versioning, surrogate keys, full documentation, and data tests. (<a href="https://jira.atl.workiva.net/browse/DNA-5430">DNA-5430</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="840c486b-9c02-42a3-b2db-b053d41695a2">
+        <strong>Platform — Iceberg–Snowflake integration and dbt deprecation cleanup</strong>
+        <ul>
+          <li data-uuid="cfd08719-cdc5-46c7-838f-497619ba1403">
+            An investigation and initial proof-of-concept is underway to connect <strong>Apache Iceberg</strong> tables to Snowflake, evaluating catalog options and validating a single end-to-end connection. (<a href="https://jira.atl.workiva.net/browse/DNA-5038">DNA-5038</a>)
+          </li>
+          <li data-uuid="0454c425-2534-4b82-b80d-a8b843ca4c28">
+            Outstanding <strong>dbt deprecation warnings</strong> are being resolved to keep the project on supported configurations and reduce accumulated technical debt. (<a href="https://jira.atl.workiva.net/browse/DNA-5130">DNA-5130</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Product &amp; customer analytics</strong></p>
+    <ul>
+      <li data-uuid="e8106319-822e-4beb-8efd-b82347645e71">Inconsistent event classification in Amplitude undermines product reporting reliability; a governed taxonomy ensures that <u><strong>fct_amplitude_events</strong></u> and downstream marts reflect accurate, comparable usage signals across every product surface.</li>
+      <li data-uuid="8eb2efcb-bca4-4cb9-b6c2-5cce8545d47e">The C360 enrichment audit tables and ECM <strong>solution motion</strong> logic change strengthen customer intelligence integrity by providing historical lineage and aligning classification dimensions with validated business definitions, reducing analytical error risk.</li>
+    </ul>
+    <p><strong>Data infrastructure &amp; support analytics</strong></p>
+    <ul>
+      <li data-uuid="98cd3574-3124-4f34-b7c4-11e9947dd76e">Ingesting the Zendesk Voice: Calls dataset and backfilling the Solution Offered Timestamp closes key measurement gaps in support analytics, enabling SLA, channel-performance, and end-to-end resolution analysis in a single semantic layer.</li>
+      <li data-uuid="ef8e02b1-fd1f-480b-8335-84bf2ff3ad39">The Iceberg–Snowflake integration proof-of-concept and dbt deprecation cleanup reduce platform technical debt, advance open-table-format capabilities, and keep the warehouse toolchain on stable, supported versions.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-06-17" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-06-17).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="a07f0268-ecb3-4bf5-86a8-59d606caa9c7"><u><strong>fct_amplitude_events</strong></u> and any downstream product analytics marts that join on the <u><strong>event_type</strong></u> category field will reflect the new standardized taxonomy once DNA-5446 is deployed — category-level row counts and aggregations should be validated.</li>
+      <li data-uuid="ee5e0613-5184-4f78-8018-a7642c67f5ce">Models consuming <u><strong>dim_cpxdna_gainsight_mapping</strong></u> should be spot-checked against the approved spreadsheet after the seed refresh (DNA-5229); the new contract correction tables introduced in DNA-5108 add net-new upstream Snowflake objects that CPX reporting models should reference going forward.</li>
+      <li data-uuid="a8a48765-b0b1-42e4-8af2-b60d80ba14ae">The <strong>reporting classification</strong> dimension (DNA-5394) deliberately preserves existing column names and values — no consumer query changes are required, but mart-level aggregations should be spot-checked for any logic-driven count shifts.</li>
+      <li data-uuid="8ec67286-0986-45a3-974f-05868faf377f">New models <u><strong>fct_workers_time_off_daily</strong></u> and <u><strong>fct_workers_availability_quarter</strong></u> (DNA-5383) are net-new additions; workforce and utilization report owners should onboard to these tables and confirm grain and date-range coverage meet their needs.</li>
+      <li data-uuid="2ab75b1b-aaf4-4e0b-834e-615b24ea6a78">The intermediate <strong>Sales Hierarchy</strong> model (DNA-5430) is a new cross-project reference point; any HoB consumers currently reading sales hierarchy data from seeds directly should migrate references to this intermediate model.</li>
+      <li data-uuid="7b77bc7b-a7db-48cc-afad-280451bded70">Zendesk Silver layer additions (DNA-5489, DNA-5174) are additive — existing ZD-based models are unaffected, but teams building or refreshing support dashboards should plan to incorporate the new <strong>Solution Offered Timestamp</strong> column and the Voice: Calls dataset.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — confirm that <u><strong>fct_amplitude_events</strong></u> event-category distributions align with expectations post-deploy (DNA-5446); spot-check <u><strong>dim_cpxdna_gainsight_mapping</strong></u> row totals against the approved Gainsight spreadsheet (DNA-5229); and validate that <strong>reporting classification</strong> dimension values are unchanged for all existing consumers (DNA-5394 / DNA-5130).</p>
+    <p>Verify — utilization report owners should confirm <u><strong>fct_workers_time_off_daily</strong></u> and <u><strong>fct_workers_availability_quarter</strong></u> are fully populated and accessible after the deploy (DNA-5383); HoB stakeholders should confirm the new intermediate <strong>Sales Hierarchy</strong> model is referenced in place of any direct seed reads (DNA-5430).</p>
+    <p>No action required for — the Zendesk Silver layer additions (DNA-5489, DNA-5174), C360 enrichment audit tables (DNA-5422), ECM customer model gap analysis (DNA-5478), Iceberg proof-of-concept (DNA-5038), and dbt deprecation cleanup (DNA-5130), as these are additive or internal changes with no breaking impact on existing consumers.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="cde9f5fe-9ca1-44ff-8225-de1adc2611b4"><a href="https://jira.atl.workiva.net/browse/DNA-5038">DNA-5038</a> — Connect iceberg to snowflake</li>
+    <li data-uuid="7a33dd03-5a1b-48f6-9a76-4ab150bd9e94"><a href="https://jira.atl.workiva.net/browse/DNA-5108">DNA-5108</a> — Bringing contract correction&#x27;s logic to the warehouse</li>
+    <li data-uuid="efe9fdc9-aad0-4055-8d2a-26d72596fee5"><a href="https://jira.atl.workiva.net/browse/DNA-5130">DNA-5130</a> — dbt Deprecations</li>
+    <li data-uuid="5da7e10c-c5ef-4b23-8f3a-ef222548a264"><a href="https://jira.atl.workiva.net/browse/DNA-5174">DNA-5174</a> — Ingest Zendesk Voice: Calls dataset</li>
+    <li data-uuid="8606704e-8429-4544-a58f-51c1c7537cd4"><a href="https://jira.atl.workiva.net/browse/DNA-5229">DNA-5229</a> — Adjust dim_cpxdna_gainsight_mapping seed</li>
+    <li data-uuid="5e1c91ba-8a9c-4332-8eb4-f22803a5a965"><a href="https://jira.atl.workiva.net/browse/DNA-5383">DNA-5383</a> — Create the availability model models for utilization</li>
+    <li data-uuid="4d563d35-1a49-4922-89d7-364d25ef2779"><a href="https://jira.atl.workiva.net/browse/DNA-5394">DNA-5394</a> — [ECM] Replace reporting classification with solution motion</li>
+    <li data-uuid="40cb8c41-0383-43f7-aed0-dee00af63cbc"><a href="https://jira.atl.workiva.net/browse/DNA-5422">DNA-5422</a> — C360 - Enrichment Engine Audit Tables</li>
+    <li data-uuid="546f5746-9314-4ddb-b8af-92664e2ff2e6"><a href="https://jira.atl.workiva.net/browse/DNA-5430">DNA-5430</a> — [HoB] Create a intermediate model for the sales Hierarchy</li>
+    <li data-uuid="df1ca6aa-c1b2-446a-9289-dd0db9211358"><a href="https://jira.atl.workiva.net/browse/DNA-5446">DNA-5446</a> — Establish event categories for Amplitude product usage analytics</li>
+    <li data-uuid="144b706b-8579-4177-a7d8-469a84c998ab"><a href="https://jira.atl.workiva.net/browse/DNA-5478">DNA-5478</a> — [ECM] Identify Customer Model Gaps</li>
+    <li data-uuid="744cec76-3844-481e-8007-2b512b871556"><a href="https://jira.atl.workiva.net/browse/DNA-5489">DNA-5489</a> — Add Solution Offered Timestamp to ZD Ticket</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="94ad7f38-fc47-483b-92d6-2df829032d26">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>

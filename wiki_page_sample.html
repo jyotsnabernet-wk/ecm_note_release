@@ -1,0 +1,181 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-06-10" /> </strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>
+      GTM Metric Definition Changes: $0 Exclusions, ADS Denominator, Reno Split, Cycle Time Metric Removal, updated Reporting Classification logic 
+    </h3>
+    <h3>New Workforce &amp; Audit Models</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release combines merged PRs across two domains.</p>
+    <ul>
+      <li data-uuid="49c354c2-c715-40ec-85bd-3153104b3a23">
+        <strong>ECM GTM — obt_bookings and obt_partner_bookings receive cumulative updates:</strong>
+        <ul>
+          <li data-uuid="c5aa28f1-41d0-4f89-b303-ecb96d2d6dae">
+            $0 first-year S&amp;S bookings are excluded from <u><strong>is_metric_win_rate</strong></u
+            >, <u><strong>is_metric_average_deal_size</strong></u> (DNA-5285 / DNA-5169)
+          </li>
+          <li data-uuid="d5b84fc6-7e95-40ce-b209-d1a22f30b5a6">
+            ADS denominator is recalculated via a new <u><strong>opportunity_booking_category</strong></u> key (DNA-5169)
+          </li>
+          <li data-uuid="7ccb78a2-425d-4997-969e-788453884093">
+            Reno-classified bookings are now filtered out of existing Win Rate and ADS metrics, with new
+            <u><strong>_including_reno</strong></u> variants added (DNA-5396).
+          </li>
+          <li data-uuid="2717793f-33ee-4f4f-a3cb-f78599227475">
+            Updated <u><strong>New Solution </strong></u>and <u><strong>Reno</strong></u> (under Reporting Classification) logic reclassify upgrades,
+            entity increases, and other upsell activity out of NS and into Reno. Total bookings across the two buckets combined are unchanged.
+          </li>
+          <li data-uuid="e0322713-fcc3-496d-be43-133fd2b61cdf">
+            <u><strong>is_metric_cycle_time</strong></u> columns are removed from facts and OBTs (DNA-5421)
+          </li>
+          <li data-uuid="b37a150d-7925-4638-b465-413076b07936">
+            <u><strong>sv_pipeline</strong></u> gains two new filterable columns: account_name and account_id (DNA-5434).
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="c94ba15c-c202-4f89-8ad1-8f782a14f36f">
+        <strong>Net-new Workforce</strong> <strong>Models:</strong>
+        <ul>
+          <li data-uuid="c4fc2cd3-f409-466d-b7b8-d388e1b80fb7">
+            dim_workers, fct_utilization_time_entries, fct_workers_availability_quarter, and fct_workers_time_off_daily are deployed to support
+            capacity and time-off reporting (DNA-5358, DNA-5370, DNA-5383).
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>ECM GTM </strong></p>
+    <ul>
+      <li data-uuid="80af88a6-187b-4876-8de1-ec98a5244817">
+        Win rate, ADS, and cycle time metrics were over-counting by including $0 S&amp;S bookings and reno-classified deals that should not factor
+        into standard performance benchmarks
+      </li>
+      <li data-uuid="40a0d067-5e04-4a7f-9629-57915c40c737">
+        These changes align the metric definitions to agreed business logic validated by Corporate Ops.
+      </li>
+      <li data-uuid="9f4dfe8d-7134-4e8c-b903-f0f03b4805a4">The ADS denominator fix corrects an undercounting issue in the denominator key. </li>
+      <li data-uuid="47124a2f-4332-4db7-8a08-7f1c2eac04e3">
+        We are removing the static is_metric_cycle_time* flags because precomputed, warehouse level deduplication rules cannot adapt to dynamic BI
+        charting.
+      </li>
+    </ul>
+    <p>
+      Learn more about the updated
+      <a
+        href="https://wiki.atl.workiva.net/spaces/BT/pages/513250173/ECM+Quick+Suite+Dashboard+-+Reference+Guide#ECMQuickSuiteDashboardReferenceGuide-UnderstandingDealMetrics"
+        >Deal Metric Methodology here</a
+      >. 
+    </p>
+    <p>Learn more about the updated <a href="https://jira.atl.workiva.net/browse/DNA-5421">is_metric_cycle_time here</a>. </p>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-06-10" /> </p>
+    <p>
+      Consumers relying on columns for Reporting Classification, Win Rate, ADS, or Cycle Time should validate and update any downstream references
+      after 2026-07-10.
+    </p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="18663321-51a3-4036-bb26-a73fc8586e4d">
+        obt_bookings and obt_partner_bookings: win rate, ADS, and cycle time figures will shift —
+        <ul>
+          <li data-uuid="363a920c-0cc8-4e39-8768-196fb5464e4c">
+            win rate and ADS increase slightly with $0 exclusion, ADS denominator changes, and reno bookings removed from base metrics.
+          </li>
+          <li data-uuid="74b13d96-18f1-46ce-866c-055df776df4e">
+            Any QuickSight dashboards or ad-hoc queries consuming
+            <u><strong>is_metric_win_rate, is_metric_average_deal_size, is_metric_cycle_time, or is_metric_booking</strong></u> will reflect updated
+            numbers. 
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="b7825336-b0e6-4f12-8617-0a7dd433952b">
+        Updated logic for <u><strong>reporting_classification</strong></u> will more accurately classify New Solution and Renegotiation Bookings. 
+      </li>
+      <li data-uuid="81fc36ba-60ac-4b33-87fe-428260627080">
+        New <u><strong>is_metric_win_rate_including_reno</strong></u> and <u><strong>is_metric_average_deal_size_including_reno</strong></u> columns
+        are available for reno-inclusive views.
+      </li>
+      <li data-uuid="81739f3b-5e73-482b-a6ed-b62022bfa70f">
+        sv_pipeline: additive only — consumers gain <u><strong>account_name</strong></u> and <u><strong>account_id</strong></u> with no removal of
+        existing columns.
+      </li>
+      <li data-uuid="2c9ed5c7-a7d3-413f-aa09-cfca4ecd64f5">
+        New models (dim_workers, fct_utilization_time_entries, fct_workers_availability_quarter, fct_workers_time_off_daily,
+        int_accounts__enhanced_audit) are net-new and have no prior downstream consumers.
+      </li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>
+      Verify — owners of QuickSight dashboards and reports sourced from obt_bookings or obt_partner_bookings must re-run key GTM metrics (win rate,
+      ADS, cycle time) against the deployed data and confirm numbers align with updated definitions;
+    </p>
+    <p>No action required for sv_pipeline, workforce, or audit model consumers (additive or net-new releases).</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+      <li data-uuid="3188bf7d-0458-4f1a-8efd-4d092f6fd867">
+        PR #992: <a href="https://github.com/Workiva/dbt_core_models/pull/992">https://github.com/Workiva/dbt_core_models/pull/992</a>
+      </li>
+      <li data-uuid="cf422d95-8dd8-40ff-9626-a43cbafd3df4">
+        PR #1000: <a href="https://github.com/Workiva/dbt_core_models/pull/1000">https://github.com/Workiva/dbt_core_models/pull/1000</a>
+      </li>
+      <li data-uuid="a976fda5-ecc9-4b07-bdd9-5adb6f3bad44">
+        PR #995: <a href="https://github.com/Workiva/dbt_core_models/pull/995">https://github.com/Workiva/dbt_core_models/pull/995</a>
+      </li>
+      <li data-uuid="b545f399-f357-450c-8b24-076c302db6ef">
+        PR #988: <a href="https://github.com/Workiva/dbt_core_models/pull/988">https://github.com/Workiva/dbt_core_models/pull/988</a>
+      </li>
+      <li data-uuid="6fde8cdf-c786-42db-a4e7-3333be827856">
+        PR #990: <a href="https://github.com/Workiva/dbt_core_models/pull/990">https://github.com/Workiva/dbt_core_models/pull/990</a>
+      </li>
+      <li data-uuid="3a88a95e-48c1-46f8-a395-43c1b51d2451">
+        PR #989: <a href="https://github.com/Workiva/dbt_core_models/pull/989">https://github.com/Workiva/dbt_core_models/pull/989</a>
+      </li>
+      <li data-uuid="dc8af669-5acb-4d06-9ef7-282c601d6120">
+        PR #985: <a href="https://github.com/Workiva/dbt_core_models/pull/985">https://github.com/Workiva/dbt_core_models/pull/985</a>
+      </li>
+      <li data-uuid="00051af5-73a8-48a2-8204-9884d5df2ee4">
+        PR #973: <a href="https://github.com/Workiva/dbt_core_models/pull/973">https://github.com/Workiva/dbt_core_models/pull/973</a>
+      </li>
+      <li data-uuid="f7b42cba-1081-4e54-ad3d-8fb6a508dbd8">
+        PR #977: <a href="https://github.com/Workiva/dbt_core_models/pull/977">https://github.com/Workiva/dbt_core_models/pull/977</a>
+      </li>
+      <li data-uuid="638167eb-3b6a-44db-aafb-4977b83fb36a">
+        PR #830: <a href="https://github.com/Workiva/dbt_core_models/pull/830">https://github.com/Workiva/dbt_core_models/pull/830</a>
+      </li>
+      <li data-uuid="9fd23ed8-80e8-449f-956b-15886a8cb100">
+        PR #975: <a href="https://github.com/Workiva/dbt_core_models/pull/975">https://github.com/Workiva/dbt_core_models/pull/975</a>
+      </li>
+      <li data-uuid="5b870613-5772-4497-8b4b-7d21026e3bfa">
+        PR #974: <a href="https://github.com/Workiva/dbt_core_models/pull/974">https://github.com/Workiva/dbt_core_models/pull/974</a>
+      </li>
+      <li data-uuid="0bc21790-cda6-4300-bca1-ae8c5a084d83">
+        PR #972: <a href="https://github.com/Workiva/dbt_core_models/pull/972">https://github.com/Workiva/dbt_core_models/pull/972</a>
+      </li>
+      <li data-uuid="6e9d8d24-5485-4c8d-ad37-4a3ffbd2f044">
+        PR #966: <a href="https://github.com/Workiva/dbt_core_models/pull/966">https://github.com/Workiva/dbt_core_models/pull/966</a>
+      </li>
+      <li data-uuid="49f2e3cd-e5e3-4d77-9327-4d4e394dcbc9">
+        PR #970: <a href="https://github.com/Workiva/dbt_core_models/pull/970">https://github.com/Workiva/dbt_core_models/pull/970</a>
+      </li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="4b973f40-820e-41cd-b1a4-6094f6956ac0">
+        DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a>
+      </li>
+      <li data-uuid="1fc8abab-2461-4981-822d-a6e2f10ef468">
+        PR authors:
+        <ul>
+          <li data-uuid="7c9f8874-aa5d-4ef3-aeba-c5024b07692b">maxwellmeiser-wk (GTM metrics)</li>
+          <li data-uuid="7f148de6-7086-479e-b82a-a8b1842d3e29">ericchristensen-wk (Customer360)</li>
+          <li data-uuid="9414b996-033c-4574-b272-33cb5910ca22">tysanders-wk (SV Pipeline)</li>
+          <li data-uuid="0b12437e-4c12-4d25-ab51-03011d668798">IsabelPietri-wk (GTM metrics, Workforce)</li>
+        </ul>
+      </li>
+    </ul>
+    <p><br /></p>
+  </div>
+  
