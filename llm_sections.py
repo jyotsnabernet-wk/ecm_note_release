@@ -50,6 +50,9 @@ Schema (ALL keys required):
   "recommended_actions": [
     "<Verify — ...>",
     "<No action required for ...>"
+  ],
+  "pr_authors": [
+    { "handle": "<githubhandle-wk>", "domains": "<comma-separated domain areas>" }
   ]
 }
 
@@ -65,6 +68,13 @@ Schema (ALL keys required):
 3. **downstream_bullets** — one bullet per affected surface; mention specific dbt model names.
 
 4. **recommended_actions** — 1–3 lines. At minimum: a Verify paragraph and a No-action paragraph.
+
+5. **pr_authors** — one entry per unique assignee who has at least one ticket.
+   - "handle": derive GitHub handle as `{firstname}{lastname}-wk` (all lowercase, no spaces).
+     Example: "Maxwell Meiser" → "maxwellmeiser-wk", "Isabel Pietri" → "isabelpietri-wk".
+   - "domains": 1–3 short labels for the areas that person owns in this release, comma-separated.
+     Infer from their ticket summaries/topics, e.g. "GTM metrics", "Customer360", "Workforce", "Platform".
+   - Sort by number of tickets owned descending.
 
 ## HTML inline markup rules (use HTML, NOT markdown)
 - dbt models, columns, tables, metrics: <u><strong>name</strong></u>

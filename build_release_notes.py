@@ -109,6 +109,28 @@ def _strip_trailing_order_by(jql: str) -> tuple[str, str | None]:
     return core, order_clause
 
 
+def _build_status_clause(start_d: date, end_inclusive_d: date) -> str:
+    """
+    Build the status/date clause based on DNA_JIRA_CLOSED_DATE_FILTER.
+
+    When enabled (default):
+      - "In Progress" tickets always included
+      - "Closed" tickets only if resolutiondate falls in [start_d, end_inclusive_d]
+
+    When disabled:
+      - falls back to DNA_JIRA_JQL_SUFFIX as-is (legacy behaviour)
+    """
+    enabled = (os.environ.get("DNA_JIRA_CLOSED_DATE_FILTER") or "true").strip().lower()
+    if enabled not in ("1", "true", "yes"):
+        return ""
+    end_exclusive = end_inclusive_d + timedelta(days=1)
+    return (
+        f'(status = "In Progress" OR '
+        f'(status = "Closed" AND resolutiondate >= "{start_d.isoformat()}" '
+        f'AND resolutiondate < "{end_exclusive.isoformat()}"))'
+    )
+
+
 def _build_jql(
     *,
     base_jql: str,
@@ -118,28 +140,179 @@ def _build_jql(
     end_inclusive_d: date,
     sprint_fragment: str,
     order_by: str,
+    fix_version_names: list[str] | None = None,
+    sprint_names: list[str] | None = None,
+    exclude_keys: list[str] | None = None,
 ) -> str:
     if time_field not in ("updated", "resolutiondate"):
         raise ValueError("time_field must be updated or resolutiondate")
-    # Jira inclusive calendar filter using half-open day range in UTC
-    end_exclusive = end_inclusive_d + timedelta(days=1)
-    time_clause = (
-        f'{time_field} >= "{start_d.isoformat()}" AND '
-        f'{time_field} < "{end_exclusive.isoformat()}"'
-    )
+
     core, embedded_order = _strip_trailing_order_by(base_jql)
     if not core:
         raise SystemExit("DNA_JIRA_BASE_JQL is empty after removing ORDER BY — set a project or filter clause.")
-    parts = [f"({core})", f"({time_clause})"]
-    sf = (sprint_fragment or "").strip()
-    if sf:
-        parts.append(f"({sf})")
+    parts = [f"({core})"]
+
+    # Status clause: In Progress always, Closed only if resolutiondate in window
+    status_clause = _build_status_clause(start_d, end_inclusive_d)
+    if status_clause:
+        parts.append(status_clause)
+    else:
+        # Legacy: no smart status filter — use time_field window + suffix as-is
+        have_fv     = bool(fix_version_names)
+        have_sprint = bool(sprint_names or (sprint_fragment or "").strip())
+        if not (have_fv or have_sprint):
+            end_exclusive = end_inclusive_d + timedelta(days=1)
+            time_clause = (
+                f'{time_field} >= "{start_d.isoformat()}" AND '
+                f'{time_field} < "{end_exclusive.isoformat()}"'
+            )
+            parts.append(f"({time_clause})")
+
+    # issuetype exclusion (e.g. Initiative, Epic)
+    exclude_types_raw = (os.environ.get("DNA_JIRA_ISSUETYPE_EXCLUDE") or "").strip()
+    if exclude_types_raw:
+        type_list = ", ".join(f'"{t.strip()}"' for t in exclude_types_raw.split(",") if t.strip())
+        if type_list:
+            parts.append(f"(issuetype not in ({type_list}))")
+
+    # updated lookback — keeps very old In Progress tickets out of results
+    lookback_days_raw = (os.environ.get("DNA_JIRA_UPDATED_LOOKBACK_DAYS") or "").strip()
+    if lookback_days_raw.isdigit():
+        lookback_date = (end_inclusive_d - timedelta(days=int(lookback_days_raw))).isoformat()
+        parts.append(f'(updated >= "{lookback_date}")')
+
+    if fix_version_names:
+        fv_list = ", ".join(f'"{v}"' for v in fix_version_names)
+        parts.append(f"(fixVersion in ({fv_list}))")
+
+    # sprint clause — prefer auto-fetched names over --sprint-jql fragment
+    effective_sprint = (sprint_fragment or "").strip()
+    if sprint_names:
+        sn_list = ", ".join(f'"{s}"' for s in sprint_names)
+        effective_sprint = f"sprint in ({sn_list})"
+    if effective_sprint:
+        parts.append(f"({effective_sprint})")
+
+    # exclude keys that appeared in the previous release
+    if exclude_keys:
+        ex_list = ", ".join(exclude_keys)
+        parts.append(f"(issue not in ({ex_list}))")
+
+    # Append any remaining suffix (excluding status — handled above when smart filter is on)
     suf = (suffix or "").strip()
-    if suf:
+    if suf and not status_clause:
         parts.append(f"({suf})")
-    body = " AND ".join(parts)
+
     ob = (embedded_order or order_by or "updated DESC").strip()
-    return f"{body} ORDER BY {ob}"
+    return " AND ".join(parts) + f" ORDER BY {ob}"
+
+
+def load_prev_release_keys(out_dir: Path) -> list[str]:
+    """Load ticket keys from the most recent saved release keys file."""
+    keys_file = out_dir / "prev_release_keys.json"
+    if not keys_file.exists():
+        return []
+    try:
+        data = json.loads(keys_file.read_text(encoding="utf-8"))
+        keys = data if isinstance(data, list) else data.get("keys", [])
+        return [str(k) for k in keys if k]
+    except Exception as e:
+        print(f"[warn] Could not load prev release keys: {e}", file=sys.stderr)
+        return []
+
+
+def save_release_keys(out_dir: Path, keys: list[str]) -> None:
+    """Persist this run's ticket keys so next run can exclude them."""
+    keys_file = out_dir / "prev_release_keys.json"
+    keys_file.write_text(
+        json.dumps({"keys": sorted(set(keys)), "saved_at": datetime.now(timezone.utc).isoformat()},
+                   indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(f"[jira] saved {len(keys)} keys to {keys_file}", file=sys.stderr)
+
+
+def fetch_fix_versions_in_window(
+    base: str,
+    session: Any,
+    project: str,
+    start_d: date,
+    end_inclusive_d: date,
+) -> list[str]:
+    """Return fix-version names whose releaseDate falls in [start_d, end_inclusive_d]."""
+    url = f"{base}/rest/api/2/project/{project}/versions"
+    r = session.get(url, timeout=30)
+    if r.status_code in (403, 404):
+        print(f"[warn] Cannot list versions for {project}: HTTP {r.status_code}", file=sys.stderr)
+        return []
+    r.raise_for_status()
+    try:
+        versions = r.json()
+    except Exception:
+        return []
+    start_iso = start_d.isoformat()
+    end_iso   = end_inclusive_d.isoformat()
+    return [
+        v["name"]
+        for v in versions
+        if isinstance(v, dict) and v.get("releaseDate")
+        and start_iso <= v["releaseDate"] <= end_iso
+    ]
+
+
+def fetch_sprints_in_window(
+    base: str,
+    session: Any,
+    project: str,
+    start_d: date,
+    end_inclusive_d: date,
+) -> list[str]:
+    """
+    Auto-discover boards for the project, return sprint names overlapping [start_d, end_inclusive_d].
+    Returns [] if the Agile API is unavailable (404/403).
+    """
+    boards_url = f"{base}/rest/agile/1.0/board?projectKeyOrId={project}&maxResults=50"
+    rb = session.get(boards_url, timeout=30)
+    if rb.status_code in (403, 404):
+        print(f"[warn] Agile API unavailable: HTTP {rb.status_code} — sprint filter skipped.", file=sys.stderr)
+        return []
+    rb.raise_for_status()
+    boards = rb.json().get("values") or []
+    if not boards:
+        print(f"[warn] No Agile boards found for project {project} — sprint filter skipped.", file=sys.stderr)
+        return []
+
+    start_iso = start_d.isoformat()
+    end_iso   = end_inclusive_d.isoformat()
+    matched: list[str] = []
+
+    for board in boards:
+        bid = board.get("id")
+        if not bid:
+            continue
+        matched_for_board: list[str] = []
+        for state in ("active", "closed"):
+            sprints_url = (
+                f"{base}/rest/agile/1.0/board/{bid}/sprint"
+                f"?state={state}&maxResults=50"
+            )
+            rs = session.get(sprints_url, timeout=30)
+            if rs.status_code in (400, 403, 404):
+                continue
+            try:
+                rs.raise_for_status()
+            except Exception:
+                continue
+            for sprint in rs.json().get("values") or []:
+                sd = (sprint.get("startDate") or "")[:10]
+                ed = (sprint.get("endDate")   or "")[:10]
+                name = sprint.get("name", "")
+                if sd and ed and name and sd <= end_iso and ed >= start_iso:
+                    if name not in matched and name not in matched_for_board:
+                        matched_for_board.append(name)
+        matched.extend(matched_for_board)
+
+    return matched
 
 
 def _fix_versions(issue: dict[str, Any]) -> list[str]:
@@ -198,25 +371,35 @@ def _parse_issuelinks(base: str, issue: dict[str, Any]) -> list[dict[str, Any]]:
 
 def merge_team_filter_from_env(base_jql: str) -> str:
     """
-    When ``DNA_JIRA_TEAM`` is set, append ``AND <Team field> = "<value>"``.
+    When ``DNA_JIRA_TEAM`` is set, appends the team clause.
 
-    If ``base_jql`` is empty, build ``project = <DNA_JIRA_PROJECT> AND …`` (default project ``DNA``).
+    When ``DNA_JIRA_ECM_EXPAND=true`` is also set, expands to:
+      (<team clause> OR component = "ECM" OR summary ~ "\\[ECM\\]")
+    so ECM-tagged tickets are always included regardless of team assignment.
+
+    If ``base_jql`` is empty, builds ``project = <DNA_JIRA_PROJECT> AND …``.
     """
     team = (os.environ.get("DNA_JIRA_TEAM") or "").strip()
     if not team:
         return base_jql.strip()
     field = (os.environ.get("DNA_JIRA_TEAM_FIELD") or "Team[Team]").strip()
-    if field.startswith('"'):
-        field_jql = field
-    else:
-        field_jql = f'"{field}"'
+    field_jql = field if field.startswith('"') else f'"{field}"'
     esc = team.replace("\\", "\\\\").replace('"', '\\"')
-    clause = f"{field_jql} = \"{esc}\""
+    team_clause = f'{field_jql} = "{esc}"'
+
+    ecm_expand = (os.environ.get("DNA_JIRA_ECM_EXPAND") or "").strip().lower()
+    if ecm_expand in ("1", "true", "yes"):
+        who_clause = (
+            f'({team_clause} OR component = "ECM" OR summary ~ "\\\\[ECM\\\\]")'
+        )
+    else:
+        who_clause = team_clause
+
     b = base_jql.strip()
     if not b:
         proj = (os.environ.get("DNA_JIRA_PROJECT") or "DNA").strip()
-        return f"project = {proj} AND {clause}"
-    return f"({b}) AND ({clause})"
+        return f"project = {proj} AND {who_clause}"
+    return f"({b}) AND {who_clause}"
 
 
 def _normalize_issue(
@@ -463,19 +646,6 @@ def main() -> None:
 
     sprint_fragment = args.sprint_jql.strip()
     order_by = (os.environ.get("DNA_JIRA_ORDER_BY") or "updated DESC").strip()
-    jql = _build_jql(
-        base_jql=base_jql,
-        suffix=suffix,
-        time_field=args.time_field,
-        start_d=start_d,
-        end_inclusive_d=end_inclusive_d,
-        sprint_fragment=sprint_fragment,
-        order_by=order_by,
-    )
-
-    if args.dry_run_jql:
-        print(jql)
-        return
 
     if args.verbose:
         print(auth_debug_summary(), file=sys.stderr)
@@ -484,6 +654,54 @@ def main() -> None:
         base, session = jira_session()
     except JiraConfigError as e:
         raise SystemExit(str(e)) from e
+
+    proj = (os.environ.get("DNA_JIRA_PROJECT") or "DNA").strip()
+
+    fix_version_names: list[str] = []
+    sprint_names: list[str] = []
+
+    if (os.environ.get("DNA_JIRA_USE_FIX_VERSION") or "").strip().lower() in ("1", "true", "yes"):
+        fix_version_names = fetch_fix_versions_in_window(base, session, proj, start_d, end_inclusive_d)
+        if fix_version_names:
+            print(f"[jira] fix versions in window: {fix_version_names}", file=sys.stderr)
+        else:
+            print(f"[warn] No fix versions found with releaseDate {start_d}–{end_inclusive_d}; "
+                  "falling back to date window.", file=sys.stderr)
+
+    if (os.environ.get("DNA_JIRA_USE_SPRINT") or "").strip().lower() in ("1", "true", "yes"):
+        sprint_names = fetch_sprints_in_window(base, session, proj, start_d, end_inclusive_d)
+        if sprint_names:
+            print(f"[jira] sprints in window: {sprint_names}", file=sys.stderr)
+        else:
+            print(f"[warn] No sprints found overlapping {start_d}–{end_inclusive_d}; "
+                  "sprint filter skipped.", file=sys.stderr)
+
+    out_dir = Path(args.output_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Load previous release keys to exclude from this run
+    exclude_keys: list[str] = []
+    if (os.environ.get("DNA_JIRA_EXCLUDE_PREV_KEYS") or "true").strip().lower() in ("1", "true", "yes"):
+        exclude_keys = load_prev_release_keys(out_dir)
+        if exclude_keys:
+            print(f"[jira] excluding {len(exclude_keys)} keys from previous release: {exclude_keys}", file=sys.stderr)
+
+    jql = _build_jql(
+        base_jql=base_jql,
+        suffix=suffix,
+        time_field=args.time_field,
+        start_d=start_d,
+        end_inclusive_d=end_inclusive_d,
+        sprint_fragment=sprint_fragment,
+        order_by=order_by,
+        fix_version_names=fix_version_names,
+        sprint_names=sprint_names,
+        exclude_keys=exclude_keys,
+    )
+
+    if args.dry_run_jql:
+        print(jql)
+        return
 
     raw_issues = list(search_issues_jql(base, session, jql, max_results_cap=args.max_issues))
     normalized: list[dict[str, Any]] = []
@@ -494,6 +712,10 @@ def main() -> None:
         else:
             row["remote_links"] = []
         normalized.append(row)
+
+    # Save this run's keys so next week's run can exclude them
+    if (os.environ.get("DNA_JIRA_EXCLUDE_PREV_KEYS") or "true").strip().lower() in ("1", "true", "yes"):
+        save_release_keys(out_dir, [r["key"] for r in normalized if r.get("key")])
 
     by_component = _group_by_component(normalized)
     meta = {
@@ -515,8 +737,6 @@ def main() -> None:
     }
     payload = {"meta": meta, "issues": normalized, "by_component": by_component}
 
-    out_dir = Path(args.output_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     json_path = out_dir / f"dna_release_{stamp}.json"
     md_path = out_dir / f"dna_release_{stamp}.md"

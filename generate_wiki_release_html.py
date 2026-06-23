@@ -458,8 +458,16 @@ def build_html(
     # 9. Links
     parts.extend(_section_links(rows, extra_links or [], jira_browse_base))
 
-    # 10. Contact
-    parts.extend(_section_contact(pr_authors or []))
+    # 10. Contact — prefer LLM-generated pr_authors over caller-supplied list
+    if llm_sections and llm_sections.get("pr_authors"):
+        llm_authors = [
+            f"{a.get('handle', '')} ({a.get('domains', '')})"
+            for a in llm_sections["pr_authors"]
+            if a.get("handle")
+        ]
+        parts.extend(_section_contact(llm_authors))
+    else:
+        parts.extend(_section_contact(pr_authors or []))
 
     # 11. Trailing spacer
     parts.append("    <p><br /></p>")
