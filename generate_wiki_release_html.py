@@ -326,6 +326,65 @@ def _autolink_keys(text: str, base: str) -> str:
     return re.sub(r"\bDNA-\d+\b", _sub, text)
 
 
+def _section_executive_summary(
+    bullets: list[str],
+    start_date: str = "",
+    end_date: str = "",
+    detail_link: str = "",
+) -> list[str]:
+    """
+    Render the executive summary block before 'What is happening'.
+    Only Closed tickets feed this section; format is bold domain + one-sentence impact.
+    """
+    if not bullets:
+        return []
+
+    # Build date range label e.g. "July 9–15, 2026"
+    date_label = ""
+    if start_date and end_date:
+        try:
+            from datetime import date as _date
+            import calendar
+            s = _date.fromisoformat(start_date)
+            e = _date.fromisoformat(end_date)
+            if s.month == e.month:
+                date_label = f"{calendar.month_name[s.month]} {s.day}–{e.day}, {e.year}"
+            else:
+                date_label = (
+                    f"{calendar.month_name[s.month]} {s.day} – "
+                    f"{calendar.month_name[e.month]} {e.day}, {e.year}"
+                )
+        except Exception:
+            date_label = f"{start_date} – {end_date}"
+
+    lines: list[str] = []
+    heading = f"DnA Release{' — ' + date_label if date_label else ''} | Executive Summary"
+    lines.append(f'    <h3><strong>{_esc(heading)}</strong></h3>')
+    lines.append("    <ul>")
+    for bullet in bullets:
+        b = str(bullet).strip()
+        if not b:
+            continue
+        # Bold the domain label (everything before " — " or " - ")
+        import re as _re
+        m = _re.match(r"^(\*\*)?(.+?)(\*\*)?\s*[—\-–]\s*(.+)$", b, _re.DOTALL)
+        if m:
+            domain = _esc(m.group(2).strip())
+            rest   = m.group(4).strip()  # LLM already provides HTML-safe text
+            rendered = f"<strong>{domain}</strong> — {rest}"
+        else:
+            rendered = _esc(b)
+        lines.append(f'      <li data-uuid="{_u()}">{rendered}</li>')
+    lines.append("    </ul>")
+    if detail_link:
+        sprint_label = detail_link  # display text is the link itself or a label
+        lines.append(
+            f'    <p>Need more detail? Review the technical release notes here: '
+            f'<a href="{_esc(detail_link)}">{_esc(sprint_label)}</a></p>'
+        )
+    return lines
+
+
 def _section_what_llm(topics: list[dict], jira_browse_base: str) -> list[str]:
     lines: list[str] = []
     lines.append('    <h3><strong>What is happening</strong></h3>')
@@ -391,6 +450,9 @@ def build_html(
     *,
     sent_date: str,
     deploy_date: str,
+    start_date: str = "",
+    end_date: str = "",
+    detail_link: str = "",
     title: str = "DnA — Analytics Engineering (DNA Stories)",
     subtitle: str = "",
     why_bullets: list[str] | None = None,
@@ -427,6 +489,15 @@ def build_html(
     parts.append(f"    <h3>{_esc(effective_title)}</h3>")
     if subtitle.strip():
         parts.append(f"    <h3>{_esc(subtitle)}</h3>")
+
+    # 3b. Executive summary (LLM-only, Closed tickets only, rendered before What is happening)
+    if llm_sections and llm_sections.get("executive_summary"):
+        parts.extend(_section_executive_summary(
+            llm_sections["executive_summary"],
+            start_date=start_date,
+            end_date=end_date,
+            detail_link=detail_link,
+        ))
 
     # 4. What is happening
     if llm_sections and llm_sections.get("what_topics"):

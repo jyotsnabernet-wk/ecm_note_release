@@ -1,0 +1,131 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-07-13" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>Product Usage dimensions, Account Enrichment Reverse ETL, ECM transfer classification, Support OBT, Platform data share</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="fef9df4d-99c6-45b8-9d60-68e1ab05ebda">
+        <strong>Product Usage — workspace usage fact &amp; user dimension models</strong>
+        <ul>
+          <li data-uuid="7bd3f706-1bc2-49a0-acfe-5c1c7353517f">
+            A new conformed daily usage fact, <u><strong>fct_user_workspace_usage_daily</strong></u>, is being built at the user × workspace × environment × day grain, combining engagement signals from <strong>workiva_event_log</strong> and <strong>CUSTOMER_TIME_IN_APP</strong> to enable DAU/WAU-style reporting and cohort analysis including first-seen and days-since-activation.
+          </li>
+          <li data-uuid="12566b75-6ff7-45c1-b5e0-3acd9b1e3af1">
+            A user workspace membership bridge dimension, <u><strong>dim_user_workspaces</strong></u>, has been created sourced from <strong>workiva_workspace_membership</strong> (production environments only), establishing a consistent join path alongside <u><strong>dim_workiva_users</strong></u> and <u><strong>dim_workspaces</strong></u>.
+          </li>
+          <li data-uuid="c9affa02-7b40-4ee0-9dab-702a8a5db0db">
+            Together these two models form the foundational layer for product adoption and access reporting. (<a href="https://jira.atl.workiva.net/browse/DNA-5594">DNA-5594</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5560">DNA-5560</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="db077e6e-12b5-4c80-a46d-eedb01a7ac12">
+        <strong>Account Enrichment — Reverse ETL promotion &amp; data quality refinement</strong>
+        <ul>
+          <li data-uuid="84b255b3-3cb8-4d74-974e-bd3439d67580">
+            The Reverse ETL account enrichment job has been promoted to production following successful sandbox validation (<a href="https://jira.atl.workiva.net/browse/DNA-4779">DNA-4779</a>), writing 4 enrichment fields from Snowflake directly into the <strong>Account</strong> object in Salesforce.
+          </li>
+          <li data-uuid="c827b2e9-ddf1-46a1-b72f-4ca1aa87b8e5">
+            Logic governing <u><strong>dim_accounts__enriched</strong></u> has been tightened to suppress low-confidence enrichment overrides: fields now revert to Salesforce values when enrichment confidence is <strong>LOW</strong>, company type is unknown, enrichment revenue is $0 while Salesforce is non-zero, or SIC Code is 9999 (unknown).
+          </li>
+          <li data-uuid="16b42778-c69e-4af5-910f-1feb33429f17">
+            Updates applied by the SPP team and tracked in <strong>BT_DS_ML_PROD.ACCOUNT_ENRICHMENT.AUDIT_LOG_UPDATE</strong> are also incorporated to keep the enriched dimension current. (<a href="https://jira.atl.workiva.net/browse/DNA-5268">DNA-5268</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5603">DNA-5603</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="d51fde0c-715e-41b5-b2b2-e2dfb850c57d">
+        <strong>ECM — Intracompany transfer classification &amp; null solution total fix</strong>
+        <ul>
+          <li data-uuid="ec756fb8-0a3f-4082-85d0-0fd74af0245c">
+            An investigation into how dbt models misclassify intracompany account transfers has been completed: subscription or contract moves between sibling accounts under the same ultimate parent were incorrectly recorded as <strong>Churn</strong> at the source and <strong>New</strong> at the destination, double-counting both metrics.
+          </li>
+          <li data-uuid="af4affb8-4c3b-46fb-b333-9976238b0573">
+            A fallback classification path has been added to <u><strong>dim_opportunity_solution_classifications</strong></u> for pipeline deals that lack solution totals, resolving the majority of null <strong>reporting_classification</strong> values previously caused by the new logic anchoring exclusively on solution total.
+          </li>
+          <li data-uuid="3b926336-fb21-40db-9fb1-7d67158bd0ad">
+            (<a href="https://jira.atl.workiva.net/browse/DNA-5511">DNA-5511</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5533">DNA-5533</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="dc5daf67-6eb7-41bd-b724-20122026c3b9">
+        <strong>GTM — Bookings classification investigation &amp; VoC data cleanup</strong>
+        <ul>
+          <li data-uuid="52ee5600-c89a-4f2d-828d-bc8b0db65120">
+            An investigation into five opportunities incorrectly classified as <strong>Reno</strong> instead of <strong>PI-Comm Ops</strong> in <u><strong>obt_bookings</strong></u> has been completed, identifying and resolving the root cause of the misclassification.
+          </li>
+          <li data-uuid="909fcfee-e432-4907-ba2a-6a0a1443c398">
+            The <strong>AUM</strong> field — previously populated by Pitchbook but no longer updated — has been removed from Voice of Customer Reverse ETL tables to eliminate potential confusion for downstream consumers. (<a href="https://jira.atl.workiva.net/browse/DNA-5602">DNA-5602</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5601">DNA-5601</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="e122485f-5e8c-4a20-a78a-3958bb16a0d5">
+        <strong>Support — OBT &amp; IS_METRIC field build</strong>
+        <ul>
+          <li data-uuid="e97e7f2e-97b6-414b-b0de-e8a99a49b906">
+            Following the completion of Support data refinement activities, the <strong>OBT</strong> (one big table) and associated <strong>IS_METRIC</strong> fields are being built out based on validated SQL for the stakeholder-facing end view.
+          </li>
+          <li data-uuid="0b7de813-002f-4be1-ab67-fcb0378f12b1">
+            This delivers the core analytical surface for Support reporting in a single conformed layer. (<a href="https://jira.atl.workiva.net/browse/DNA-5504">DNA-5504</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="80c83c9e-731b-4f52-a6a8-ff8f386d180c">
+        <strong>Platform — Tech team direct data share &amp; model materialization fix</strong>
+        <ul>
+          <li data-uuid="3fe7427f-4df3-49a2-8770-49ab00082801">
+            A safe, curated Snowflake direct data share dataset has been set up for the Tech team, enabling their MVP work for customer direct data sharing into Wdata tables.
+          </li>
+          <li data-uuid="2e5e1f15-dc18-4125-a0b9-135a22151163">
+            The <u><strong>fct_marketing_targets</strong></u> model has been re-materialized as a <strong>table</strong> (previously a <strong>view</strong>) to align with the standard materialization pattern across other target models in marts. (<a href="https://jira.atl.workiva.net/browse/DNA-5604">DNA-5604</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5591">DNA-5591</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Product &amp; customer analytics</strong></p>
+    <ul>
+      <li data-uuid="74b99f78-1f89-4cc4-b46e-cc869d205e5e">Building <u><strong>fct_user_workspace_usage_daily</strong></u> and <u><strong>dim_user_workspaces</strong></u> closes a foundational gap in self-serve product analytics, providing the trusted grain required for DAU/WAU KPIs, cohort studies, and activation reporting across the customer base.</li>
+      <li data-uuid="64f88e05-7c88-4d87-bfb0-4eb4e794ba5a">Promoting the Account Enrichment Reverse ETL job to production and tightening quality gates in <u><strong>dim_accounts__enriched</strong></u> ensures downstream GTM teams operate on higher-confidence account data, eliminating stale or incorrectly overridden Salesforce fields.</li>
+    </ul>
+    <p><strong>Revenue integrity &amp; platform reliability</strong></p>
+    <ul>
+      <li data-uuid="4e6fca3c-5e05-4bee-8455-65f275b56050">Fixing intracompany transfer misclassification in ECM models and resolving null <strong>reporting_classification</strong> values in pipeline directly improves the accuracy of churn, new-logo, and bookings metrics consumed by Finance &amp; RevOps.</li>
+      <li data-uuid="898ca049-0947-4d46-93c1-4e48a93e87bf">Removing the stale <strong>AUM</strong> field from VoC Reverse ETL tables, correcting the Reno/<strong>PI-Comm Ops</strong> bookings misclassification in <u><strong>obt_bookings</strong></u>, and converting <u><strong>fct_marketing_targets</strong></u> to a table materialization collectively reduce silent data quality risk for downstream consumers.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-07-15" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-07-15).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="98c9e0b1-bf02-47e8-a91d-e889d1624af2"><u><strong>fct_user_workspace_usage_daily</strong></u> and <u><strong>dim_user_workspaces</strong></u> are new models shipping in this release; downstream dashboards or queries built on product usage data should reference these models starting 2026-07-15.</li>
+      <li data-uuid="122b61a9-9109-4860-bd79-718b0e4b7987"><u><strong>dim_accounts__enriched</strong></u> will reflect updated enrichment suppression logic; consumers comparing pre- and post-deploy snapshots may observe field-level changes on accounts where enrichment confidence was previously accepted at <strong>LOW</strong> or where revenue/SIC signals were overriding valid Salesforce data.</li>
+      <li data-uuid="1d3633cf-9409-4268-881a-504824e55c2d"><u><strong>dim_opportunity_solution_classifications</strong></u> will no longer produce null <strong>reporting_classification</strong> for pipeline deals without solution totals; ECM and Finance dashboards should see materially improved classification coverage.</li>
+      <li data-uuid="292805e4-7d97-4417-982a-f6544f17ccd3"><u><strong>obt_bookings</strong></u> classification for the five investigated opportunities has been corrected from <strong>Reno</strong> to <strong>PI-Comm Ops</strong>; bookings reports and downstream aggregations will reflect this reclassification post-deploy.</li>
+      <li data-uuid="491eb582-b892-47d8-983e-e6befb4bce65">Voice of Customer Reverse ETL tables will no longer include the <strong>AUM</strong> column; any downstream queries or Salesforce reports selecting <strong>AUM</strong> explicitly must be updated to avoid errors.</li>
+      <li data-uuid="37896961-ccfc-4683-bf56-d8ff94cf636d"><u><strong>fct_marketing_targets</strong></u> is now materialized as a <strong>table</strong>; query performance will improve and no schema or metric changes are required.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — After deploy on 2026-07-15, confirm row counts and key metrics in <u><strong>fct_user_workspace_usage_daily</strong></u>, <u><strong>dim_user_workspaces</strong></u>, <u><strong>dim_accounts__enriched</strong></u>, <u><strong>dim_opportunity_solution_classifications</strong></u>, and <u><strong>obt_bookings</strong></u> match expected values; validate that the Reverse ETL AUM removal has not broken any Salesforce reports or downstream VoC dashboards that may reference the <strong>AUM</strong> column.</p>
+    <p>No action required for the <u><strong>fct_marketing_targets</strong></u> table materialization change or the Tech team Snowflake direct data share — both are infrastructure-only updates with no schema, metric, or interface changes for existing consumers.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="b8889167-f128-4214-9c19-ad8c0a7fa8cc"><a href="https://jira.atl.workiva.net/browse/DNA-5268">DNA-5268</a> — Promote Reverse ETL Account Enrichment Job to Production</li>
+    <li data-uuid="513f7d4e-e29c-432e-b694-dafd378e27c7"><a href="https://jira.atl.workiva.net/browse/DNA-5504">DNA-5504</a> — [Support] Build OBT and IS_METRIC fields</li>
+    <li data-uuid="ef476032-b797-44f5-a6f2-cc16c6395624"><a href="https://jira.atl.workiva.net/browse/DNA-5511">DNA-5511</a> — [ECM] Customer Intracompany Transfer Investigation</li>
+    <li data-uuid="c07eaa00-842f-44d3-aad5-fa3ce9b81f50"><a href="https://jira.atl.workiva.net/browse/DNA-5533">DNA-5533</a> — [ECM] Reporting classification null solution total</li>
+    <li data-uuid="bcd7ceaf-0554-4d2e-9ddc-52f2375b40f5"><a href="https://jira.atl.workiva.net/browse/DNA-5560">DNA-5560</a> — Create dim_user_workspaces for product usage reporting</li>
+    <li data-uuid="c3a22ee6-0f31-45a4-ad56-c04773bd77d2"><a href="https://jira.atl.workiva.net/browse/DNA-5591">DNA-5591</a> — Materialize the fct_marketing_targets model as table</li>
+    <li data-uuid="50095dd7-2d72-4dd6-b1f2-85da66d2a4c3"><a href="https://jira.atl.workiva.net/browse/DNA-5594">DNA-5594</a> — Build fct_user_workspace_usage_daily</li>
+    <li data-uuid="b7a208f9-356e-40ca-9c36-2466e01c8d76"><a href="https://jira.atl.workiva.net/browse/DNA-5601">DNA-5601</a> — VoC - Remove AUM from reverse ETL tables</li>
+    <li data-uuid="20a2eb71-828f-41df-b1cc-9a4406925f02"><a href="https://jira.atl.workiva.net/browse/DNA-5602">DNA-5602</a> — Investigate Reno vs PI-Comm Ops classification for 5 opportunities</li>
+    <li data-uuid="08a2b05d-a76e-4049-a90f-42a13c19d101"><a href="https://jira.atl.workiva.net/browse/DNA-5603">DNA-5603</a> — Account Enrichment - Update to dim_accounts__enriched table</li>
+    <li data-uuid="32fe329b-ec72-4c9b-a1df-be42e97752aa"><a href="https://jira.atl.workiva.net/browse/DNA-5604">DNA-5604</a> — Setup direct data share for Tech team</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="6398dfbd-295f-4dc9-be9c-8b9b2c3b5e1f">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>

@@ -1,0 +1,114 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-07-06" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM bookings fields, User Analytics dimension &amp;amp; int layer, Zendesk KB engagement, C360 D&amp;amp;B/ZoomInfo join, dbt docs POC</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="397748bf-8c9c-4330-923b-8b850436c5fb">
+        <strong>ECM — bookings field enrichment</strong>
+        <ul>
+          <li data-uuid="0fa37669-4cf0-4b6b-a856-ce7c51d8cef7">
+            The <u><strong>bookings</strong></u> tables are being extended to include <strong>opportunity_creator_id</strong> and <strong>opportunity_creator_name</strong> as they appear in the pipeline view.
+          </li>
+          <li data-uuid="ce0a419f-8c31-4d6b-b5d2-6de75ac98c69">
+            An <strong>opportunity_closed_reason</strong> field is also being added to support downstream sales reporting and closed-deal attribution.
+          </li>
+          <li data-uuid="5cec715e-74ed-4ad0-abe5-bcc5b0b406b0">
+            These additions improve data completeness for ECM pipeline analysis and revenue operations reporting. (<a href="https://jira.atl.workiva.net/browse/DNA-5550">DNA-5550</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="d9247fae-5d33-42cc-8868-a7b9cff9a29f">
+        <strong>User Analytics — dimension table &amp; intermediate layer expansion</strong>
+        <ul>
+          <li data-uuid="b94dd38a-2235-4151-82e6-90b20805b770">
+            A new <u><strong>dim_workiva_users</strong></u> dimension model is being created as the single source of truth for user-related attributes across the platform, formalizing the migration away from the legacy <u><strong>workiva_user</strong></u> model. (<a href="https://jira.atl.workiva.net/browse/DNA-5535">DNA-5535</a>)
+          </li>
+          <li data-uuid="99abef40-5ea8-4a81-895d-8ebf5ab7ea09">
+            Building on <a href="https://jira.atl.workiva.net/browse/DNA-5519">DNA-5519</a>, this release ships <strong>82 additional legacy USER_ANALYTIC tables</strong> across <strong>10 new <u><strong>int_user_analytics_*</strong></u> model groups</strong>, advancing intermediate layer coverage toward the full 811-table inventory.
+          </li>
+          <li data-uuid="dcb25448-d228-4934-8c98-a6ffac7b484c">
+            Each group follows the established int contract (<strong>event_key, legacy_table_name, source_event_id, event_timestamp, raw_event_properties</strong>); six high-volume tables remain deferred pending Amplitude/User Analytics mapping resolution. (<a href="https://jira.atl.workiva.net/browse/DNA-5534">DNA-5534</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="ab4e5837-803c-4d89-81e8-f11742c1be74">
+        <strong>Zendesk — knowledge base engagement ingestion</strong>
+        <ul>
+          <li data-uuid="8c56f038-8989-4470-8080-fe94334e9fc3">
+            The <u><strong>zendesk.article</strong></u> ingestion pipeline is being extended to capture engagement fields — <strong>views, comments, subscriptions, and upvotes</strong> — that are currently absent from both the Redshift and Snowflake versions of the table.
+          </li>
+          <li data-uuid="9d76ffb9-ff0c-4996-9ea1-5cda5b551419">
+            These fields are available in the Zendesk Knowledge Base API but are not pulled in through Fivetran, requiring a custom ingestion extension.
+          </li>
+          <li data-uuid="76f6161c-a4b7-41cb-a2a0-1986c9898084">
+            The DX team needs this data to quantify how users engage with knowledge base content and to inform content strategy. (<a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="586038f8-f2e9-4e58-975e-d31cc18e6685">
+        <strong>Customer 360 — D&amp;B &amp; ZoomInfo account join</strong>
+        <ul>
+          <li data-uuid="3ef3c9cd-32fc-4bb8-aec9-010270c5f2d6">
+            A new table is being built within the Customer 360 domain to join <strong>Dun &amp; Bradstreet</strong> and <strong>ZoomInfo</strong> firmographic data at the account level.
+          </li>
+          <li data-uuid="1ea135f0-5f46-4be3-b747-a10767869aaf">
+            This enriched surface will improve account-level segmentation and firmographic coverage for GTM analytics and pipeline reporting. (<a href="https://jira.atl.workiva.net/browse/DNA-5324">DNA-5324</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="b76583ec-191b-4cdb-8c62-7e7949987b22">
+        <strong>Platform Engineering — dbt documentation POC</strong>
+        <ul>
+          <li data-uuid="33a8dfc7-99f1-4084-9693-f3fe43f0ad68">
+            A time-boxed proof-of-concept investigated workarounds for referencing <strong>.md documentation files within .sql files</strong>, a capability not natively supported by dbt and needed specifically for semantic views.
+          </li>
+          <li data-uuid="b4b1bff1-619c-4962-aedf-69a90158b84c">
+            Findings from this investigation will inform future documentation authoring standards for the analytics engineering platform. (<a href="https://jira.atl.workiva.net/browse/DNA-5556">DNA-5556</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Platform data quality &amp; standardization</strong></p>
+    <ul>
+      <li data-uuid="4c51b03c-8674-466a-8282-a25095b58433">Formalizing <u><strong>dim_workiva_users</strong></u> as a dimension and continuing the <u><strong>int_user_analytics_*</strong></u> intermediate layer buildout reduces reliance on legacy tables, establishes consistent model contracts, and enables reliable downstream KPI tracking and product analytics.</li>
+      <li data-uuid="75306250-b4f9-49dc-a79d-d35827c4144d">The dbt documentation POC addresses a persistent authoring gap — enabling inline documentation for semantic views improves model discoverability and reduces knowledge silos across the engineering team.</li>
+    </ul>
+    <p><strong>GTM &amp; customer analytics enrichment</strong></p>
+    <ul>
+      <li data-uuid="25c1e14b-ff15-418c-b1bf-7e43e43fe2a1">Enriching ECM <u><strong>bookings</strong></u> tables with creator attribution and closed-reason data directly supports sales pipeline accuracy and revenue attribution reporting.</li>
+      <li data-uuid="9899ef20-ddfd-4b07-bcae-f1bdda6625e5">Extending Zendesk knowledge base engagement ingestion and building the C360 D&amp;B/ZoomInfo join table deliver incremental improvements to customer support analytics and account-level firmographic data coverage for GTM teams.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-07-08" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-07-08).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="c7f759d4-e697-4e62-905a-3b0c489b644b">Models referencing the legacy <u><strong>workiva_user</strong></u> table should begin migrating to <u><strong>dim_workiva_users</strong></u>; any downstream model joining on user attributes will benefit from the standardized dimension grain.</li>
+      <li data-uuid="75530e03-e218-484b-879e-5ca1719c7351">Downstream consumers of <u><strong>int_user_analytics_*</strong></u> model groups gain coverage of 82 additional legacy event tables; models dependent on the six deferred high-volume tables are unaffected in this release.</li>
+      <li data-uuid="4967cf56-4ceb-4fa1-ad03-1dd9322075f0">Reports and models reading ECM <u><strong>bookings</strong></u> tables will have access to new <strong>opportunity_creator_id</strong>, <strong>opportunity_creator_name</strong>, and <strong>opportunity_closed_reason</strong> columns after deploy.</li>
+      <li data-uuid="e2b4f91e-66c8-4233-a834-a24bb08c1f18">Any model or dashboard sourcing <u><strong>zendesk.article</strong></u> will gain <strong>views</strong>, <strong>comments</strong>, <strong>subscriptions</strong>, and <strong>upvotes</strong> engagement fields once the ingestion extension is live.</li>
+      <li data-uuid="cbd8eaaa-52d1-4a9b-be16-c289d52e80b2">The new C360 D&amp;B/ZoomInfo join table will be available as an additive source for GTM segmentation, account enrichment, and firmographic coverage models.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — confirm <u><strong>dim_workiva_users</strong></u> row counts and user attributes match the legacy <u><strong>workiva_user</strong></u> model post-deploy; validate new ECM <u><strong>bookings</strong></u> columns (<strong>opportunity_creator_id</strong>, <strong>opportunity_creator_name</strong>, <strong>opportunity_closed_reason</strong>) are populated for recently closed opportunities; and spot-check <u><strong>zendesk.article</strong></u> in both Redshift and Snowflake for the presence of the four new engagement fields.</p>
+    <p>No action required for teams not consuming ECM bookings, Zendesk article, User Analytics intermediate models, or Customer 360 account tables — the dbt docs POC produces no model changes and all other additions are fully additive.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="ce68797a-c69f-40b8-8dcf-56e24eff9a00"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="0ed5e6b5-8091-4cf8-a2fc-e2c66678d075"><a href="https://jira.atl.workiva.net/browse/DNA-5324">DNA-5324</a> — C360 - Create table to join D&amp;B and Zoominfo</li>
+    <li data-uuid="5a13ecbf-3c1c-43f0-98c3-9ac3f905b0e5"><a href="https://jira.atl.workiva.net/browse/DNA-5534">DNA-5534</a> — USER_ANALYTICS Intermediate layer - Phase 2</li>
+    <li data-uuid="ec5618b5-df53-4f59-8dad-504d5b733765"><a href="https://jira.atl.workiva.net/browse/DNA-5535">DNA-5535</a> — Create dim_workiva_users dimension table</li>
+    <li data-uuid="e4e8b3c9-7484-40cc-ba20-bde9ed3a35eb"><a href="https://jira.atl.workiva.net/browse/DNA-5550">DNA-5550</a> — [ECM] Add fields to bookings</li>
+    <li data-uuid="d2cc96a5-2dbe-4dc6-a02f-867ae9ea4a02"><a href="https://jira.atl.workiva.net/browse/DNA-5556">DNA-5556</a> — POC - docs in sql files</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="0489cd92-6154-4472-8da2-c8d08ffe31a9">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>

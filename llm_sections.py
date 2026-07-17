@@ -33,6 +33,9 @@ Respond with ONLY a single valid JSON object. No markdown fences, no prose, no c
 Schema (ALL keys required):
 {
   "title": "<short comma-separated topic overview for the <h3> theme line, ≤ 120 chars>",
+  "executive_summary": [
+    "<one bullet per product/domain area — business-impact language, no jargon, ≤ 25 words each>"
+  ],
   "what_topics": [
     {
       "label": "<domain — concise action phrase>",
@@ -57,6 +60,13 @@ Schema (ALL keys required):
 }
 
 ## Content rules
+0. **executive_summary** — one bullet per product/domain area, covering ONLY tickets with status "Closed".
+   - Written for executives and non-technical stakeholders: lead with the business outcome.
+   - Format exactly as: "<Domain Label> — <one sentence, ≤ 20 words, plain English, no model names, no SQL terms>"
+   - Example: "ECM — A classification bug is fixed, giving Finance and RevOps more complete pipeline reporting."
+   - Do NOT include domains where all tickets are In Progress (no completed work to report).
+   - Do NOT use markdown bold (**), backticks, or any markup — plain text only.
+
 1. **what_topics** — group stories by business domain / theme (NOT by status or component).
    - label: "Domain — action phrase"  e.g. "Amplitude — curated event taxonomy"
    - bullets: 2–4 narrative sentences from ticket descriptions
@@ -94,8 +104,10 @@ def _build_user_prompt(rows: list[dict], deploy_date: str) -> str:
         comp = str(r.get("COMPONENTS")       or r.get("components")          or "").strip()
         stat = (r.get("STATUS_NAME")         or r.get("status_name")         or "").strip()
         asn  = (r.get("ASSIGNEE_NAME")       or r.get("assignee_name")       or "").strip()
+        # Mark closed tickets explicitly so LLM knows which qualify for executive_summary
+        closed_flag = " [CLOSED — include in executive_summary]" if stat.lower() == "closed" else " [IN PROGRESS — exclude from executive_summary]"
         tickets.append(
-            f"### {key} [{stat}]\n"
+            f"### {key} [{stat}]{closed_flag}\n"
             f"Summary: {summ}\n"
             f"Components: {comp}\n"
             f"Assignee: {asn}\n"
@@ -142,7 +154,7 @@ def generate_sections(
       title, what_topics, why_groups, downstream_bullets, recommended_actions
     """
     try:
-        from cursor_sdk import Agent, AgentOptions, CursorAgentError, LocalAgentOptions
+        from cursor_sdk import Agent, AgentOptions, CursorAgentError
     except ImportError:
         raise SystemExit(
             "Missing cursor-sdk.  Install with:  pip install cursor-sdk\n"
@@ -158,7 +170,6 @@ def generate_sections(
         )
 
     model = (os.environ.get("CURSOR_AGENT_MODEL") or "claude-sonnet-4-6").strip()
-    cwd   = (os.environ.get("CURSOR_AGENT_CWD")   or os.getcwd()).strip()
 
     user_prompt  = _build_user_prompt(rows, deploy_date)
     full_message = (
@@ -172,7 +183,7 @@ def generate_sections(
 
     if verbose:
         print(
-            f"[llm] Agent.prompt  model={model!r}  cwd={cwd!r}  chars={len(full_message)}",
+            f"[llm] Agent.prompt  model={model!r}  chars={len(full_message)}",
             file=sys.stderr,
         )
 
@@ -182,7 +193,6 @@ def generate_sections(
             AgentOptions(
                 api_key=api_key,
                 model=model,
-                local=LocalAgentOptions(cwd=cwd),
             ),
         )
     except CursorAgentError as e:
@@ -206,5 +216,79 @@ def generate_sections(
     text = (result.result or "").strip()
     if verbose:
         print(f"[llm] response chars={len(text)}", file=sys.stderr)
+
+    return _parse_json(text)
+
+
+_EXEC_SUMMARY_PROMPT = """\
+You are a DnA Analytics Engineering release communication writer for executive stakeholders.
+
+Given a list of CLOSED Jira tickets, produce a concise executive summary.
+
+## Output format
+Respond with ONLY a valid JSON object. No markdown fences, no prose.
+
+Schema:
+{
+  "date_range": "<e.g. July 9-15, 2026 — infer from ticket dates if possible, else leave empty>",
+  "bullets": [
+    "<Domain Label> — <one sentence business impact, ≤ 20 words, plain English>"
+  ]
+}
+
+## Rules
+- One bullet per business domain/product area (group related tickets).
+- Lead with the business outcome — what does this mean for Finance, GTM, Support, Product teams?
+- No model names, SQL terms, ticket keys, or technical jargon.
+- Plain text only — no markdown bold (**), no backticks, no HTML tags.
+- If a domain has no shipped (Closed) tickets, omit it entirely.
+- Keep bullets parallel in structure: "<Domain> — <verb phrase or completed outcome>."
+"""
+
+
+def generate_executive_summary(
+    rows: list[dict],
+    deploy_date: str,
+    *,
+    verbose: bool = False,
+) -> dict[str, Any]:
+    """
+    Call the LLM to generate a concise executive summary from Closed tickets only.
+    Returns dict with keys: date_range, bullets.
+    """
+    try:
+        from cursor_sdk import Agent, AgentOptions, CursorAgentError
+    except ImportError:
+        raise SystemExit("Missing cursor-sdk.  Install with:  pip install cursor-sdk")
+
+    api_key = (os.environ.get("CURSOR_API_KEY") or "").strip()
+    if not api_key:
+        raise SystemExit("CURSOR_API_KEY is not set. Add it to .env or run with --no-llm.")
+
+    model = (os.environ.get("CURSOR_AGENT_MODEL") or "claude-sonnet-4-6").strip()
+
+    user_prompt = _build_user_prompt(rows, deploy_date)
+    full_message = (
+        f"{_EXEC_SUMMARY_PROMPT.strip()}\n\n"
+        "=== TICKETS (Closed only) ===\n"
+        f"{user_prompt.strip()}\n\n"
+        "Output: single JSON object only."
+    )
+
+    if verbose:
+        print(f"[llm-summary] model={model!r}  chars={len(full_message)}", file=sys.stderr)
+
+    try:
+        result = Agent.prompt(full_message, AgentOptions(api_key=api_key, model=model))
+    except CursorAgentError as e:
+        raise SystemExit(f"Cursor agent error: {e}\nUse --no-llm to skip.") from e
+
+    status = str(getattr(result, "status", "")).lower()
+    if status in ("error", "cancelled", "expired"):
+        raise SystemExit(f"Cursor agent run ended with status={result.status!r}.")
+
+    text = (result.result or "").strip()
+    if verbose:
+        print(f"[llm-summary] response chars={len(text)}", file=sys.stderr)
 
     return _parse_json(text)

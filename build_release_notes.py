@@ -109,11 +109,14 @@ def _strip_trailing_order_by(jql: str) -> tuple[str, str | None]:
     return core, order_clause
 
 
-def _build_status_clause(start_d: date, end_inclusive_d: date) -> str:
+def _build_status_clause(start_d: date, end_inclusive_d: date, *, closed_only: bool = False) -> str:
     """
     Build the status/date clause based on DNA_JIRA_CLOSED_DATE_FILTER.
 
-    When enabled (default):
+    When closed_only=True (--summary mode):
+      - Only "Closed" tickets whose resolutiondate falls in [start_d, end_inclusive_d]
+
+    When enabled (default, --note mode):
       - "In Progress" tickets always included
       - "Closed" tickets only if resolutiondate falls in [start_d, end_inclusive_d]
 
@@ -124,11 +127,13 @@ def _build_status_clause(start_d: date, end_inclusive_d: date) -> str:
     if enabled not in ("1", "true", "yes"):
         return ""
     end_exclusive = end_inclusive_d + timedelta(days=1)
-    return (
-        f'(status = "In Progress" OR '
+    closed_clause = (
         f'(status = "Closed" AND resolutiondate >= "{start_d.isoformat()}" '
-        f'AND resolutiondate < "{end_exclusive.isoformat()}"))'
+        f'AND resolutiondate < "{end_exclusive.isoformat()}")'
     )
+    if closed_only:
+        return closed_clause
+    return f'(status = "In Progress" OR {closed_clause})'
 
 
 def _build_jql(
@@ -143,6 +148,7 @@ def _build_jql(
     fix_version_names: list[str] | None = None,
     sprint_names: list[str] | None = None,
     exclude_keys: list[str] | None = None,
+    closed_only: bool = False,
 ) -> str:
     if time_field not in ("updated", "resolutiondate"):
         raise ValueError("time_field must be updated or resolutiondate")
@@ -153,7 +159,7 @@ def _build_jql(
     parts = [f"({core})"]
 
     # Status clause: In Progress always, Closed only if resolutiondate in window
-    status_clause = _build_status_clause(start_d, end_inclusive_d)
+    status_clause = _build_status_clause(start_d, end_inclusive_d, closed_only=closed_only)
     if status_clause:
         parts.append(status_clause)
     else:
@@ -552,6 +558,15 @@ def main() -> None:
         help='Appended as AND (…). Example: sprint in openSprints()',
     )
     p.add_argument(
+        "--closed-only",
+        action="store_true",
+        default=False,
+        help=(
+            "Override status filter to Closed-only (resolutiondate in window). "
+            "Used by --summary mode in jira_pipeline.py."
+        ),
+    )
+    p.add_argument(
         "--jql-file",
         default="",
         metavar="PATH",
@@ -679,9 +694,13 @@ def main() -> None:
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load previous release keys to exclude from this run
+    # Load previous release keys to exclude — only for --note mode, not --summary (--closed-only)
     exclude_keys: list[str] = []
-    if (os.environ.get("DNA_JIRA_EXCLUDE_PREV_KEYS") or "true").strip().lower() in ("1", "true", "yes"):
+    prev_keys_enabled = (
+        (os.environ.get("DNA_JIRA_EXCLUDE_PREV_KEYS") or "true").strip().lower() in ("1", "true", "yes")
+        and not args.closed_only
+    )
+    if prev_keys_enabled:
         exclude_keys = load_prev_release_keys(out_dir)
         if exclude_keys:
             print(f"[jira] excluding {len(exclude_keys)} keys from previous release: {exclude_keys}", file=sys.stderr)
@@ -697,6 +716,7 @@ def main() -> None:
         fix_version_names=fix_version_names,
         sprint_names=sprint_names,
         exclude_keys=exclude_keys,
+        closed_only=args.closed_only,
     )
 
     if args.dry_run_jql:
@@ -713,8 +733,8 @@ def main() -> None:
             row["remote_links"] = []
         normalized.append(row)
 
-    # Save this run's keys so next week's run can exclude them
-    if (os.environ.get("DNA_JIRA_EXCLUDE_PREV_KEYS") or "true").strip().lower() in ("1", "true", "yes"):
+    # Save this run's keys for next week's --note run (skip for --summary / --closed-only)
+    if prev_keys_enabled:
         save_release_keys(out_dir, [r["key"] for r in normalized if r.get("key")])
 
     by_component = _group_by_component(normalized)
