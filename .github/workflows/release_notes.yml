@@ -48,7 +48,7 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
 
-      - run: pip install requests python-dotenv cursor-sdk
+      - run: pip install -r requirements.txt
 
       - name: Generate release note HTML
         run: |
@@ -101,7 +101,7 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
 
-      - run: pip install requests python-dotenv cursor-sdk
+      - run: pip install -r requirements.txt
 
       - name: Generate executive summary
         run: |
