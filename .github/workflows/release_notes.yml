@@ -83,6 +83,7 @@ jobs:
           git add out/wiki_release_*.html
           git add dna_jira_release_notes/out/prev_release_keys.json
           git diff --cached --quiet || git commit -m "chore: release note $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
           git push
 
   # ── Wednesday: executive summary ──────────────────────────────────────────
@@ -126,4 +127,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add out/executive_summary_*.md
           git diff --cached --quiet || git commit -m "chore: executive summary $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
           git push
