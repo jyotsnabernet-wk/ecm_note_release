@@ -110,6 +110,10 @@ def create_page(
             f"A page titled '{title}' already exists in space {space_key}.\n"
             "Delete or rename it in Confluence before re-running."
         )
+    if not resp.ok:
+        raise SystemExit(
+            f"Confluence API error {resp.status_code}:\n{resp.text[:1000]}"
+        )
     resp.raise_for_status()
     return resp.json()
 
