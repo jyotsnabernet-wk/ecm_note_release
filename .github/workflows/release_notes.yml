@@ -64,7 +64,7 @@ jobs:
           DNA_JIRA_PROJECT:    DNA
           DNA_JIRA_TEAM:       Analytics Engineering
           DNA_JIRA_TEAM_FIELD: cf[10288]
-          DNA_JIRA_JQL_SUFFIX: "issuetype = Story AND status in (Closed, \"In Progress\") AND created >= \"2026-01-01\""
+          DNA_JIRA_BASE_JQL:   "project = DNA AND issuetype = Story AND created >= \"2026-01-01\""
           CURSOR_API_KEY:      ${{ secrets.CURSOR_API_KEY }}
 
       - name: Publish to Confluence
@@ -117,7 +117,7 @@ jobs:
           DNA_JIRA_PROJECT:    DNA
           DNA_JIRA_TEAM:       Analytics Engineering
           DNA_JIRA_TEAM_FIELD: cf[10288]
-          DNA_JIRA_JQL_SUFFIX: "issuetype = Story AND status in (Closed, \"In Progress\") AND created >= \"2026-01-01\""
+          DNA_JIRA_BASE_JQL:   "project = DNA AND issuetype = Story AND created >= \"2026-01-01\""
           CURSOR_API_KEY:      ${{ secrets.CURSOR_API_KEY }}
 
       - name: Commit summary to repo
