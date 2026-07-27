@@ -58,10 +58,20 @@ def _latest_html(out_dir: Path) -> Path:
 
 
 def _page_title(html_path: Path) -> str:
-    """Derive a page title from the filename, e.g. wiki_release_2026-07-22.html → DnA Release 2026-07-22."""
+    """
+    Derive sprint title from filename.
+    wiki_release_2026-07-22.html → DRAFT DNA Weekly Release - Sprint 7/16-7/22
+    Deploy date (Wednesday) is in the filename; sprint starts the prior Thursday (6 days earlier).
+    """
+    from datetime import date, timedelta
     stem = html_path.stem  # wiki_release_2026-07-22
-    date_part = stem.replace("wiki_release_", "")
-    return f"DnA Analytics Engineering Release {date_part}"
+    date_str = stem.replace("wiki_release_", "")
+    try:
+        end = date.fromisoformat(date_str)       # Wednesday (deploy date)
+        start = end - timedelta(days=6)          # prior Thursday
+        return f"DRAFT DNA Weekly Release - Sprint {start.month}/{start.day}-{end.month}/{end.day}"
+    except ValueError:
+        return f"DRAFT DNA Weekly Release - {date_str}"
 
 
 # ── Confluence API ─────────────────────────────────────────────────────────────

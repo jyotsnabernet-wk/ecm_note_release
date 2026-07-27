@@ -502,14 +502,8 @@ def build_html(
     if subtitle.strip():
         parts.append(f"    <h3>{_esc(subtitle)}</h3>")
 
-    # 3b. Executive summary (LLM-only, Closed tickets only, rendered before What is happening)
-    if llm_sections and llm_sections.get("executive_summary"):
-        parts.extend(_section_executive_summary(
-            llm_sections["executive_summary"],
-            start_date=start_date,
-            end_date=end_date,
-            detail_link=detail_link,
-        ))
+    # 3b. Executive summary block intentionally omitted from release note HTML
+    #     (run with --summary to generate the standalone executive_summary_*.md instead)
 
     # 4. What is happening
     if llm_sections and llm_sections.get("what_topics"):
