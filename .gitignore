@@ -1,3 +1,5 @@
 *.json
 *.env*
 dna_jira_release_notes/out/*
+# Keep prev_release_keys.json so GitHub Actions can exclude last week's tickets
+!dna_jira_release_notes/out/prev_release_keys.json

@@ -81,6 +81,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add out/wiki_release_*.html
+          git add dna_jira_release_notes/out/prev_release_keys.json
           git diff --cached --quiet || git commit -m "chore: release note $(date -u +%Y-%m-%d)"
           git push
 
