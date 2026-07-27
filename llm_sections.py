@@ -76,8 +76,10 @@ Schema (ALL keys required):
    Leave "label" as "" when there is only one group.
 
 3. **downstream_bullets** — one bullet per affected surface; mention specific dbt model names.
+   - Do NOT include ticket key references (DNA-XXXX) in downstream bullets.
 
-4. **recommended_actions** — 1–3 lines. At minimum: a Verify paragraph and a No-action paragraph.
+4. **recommended_actions** — 1–3 lines of actionable "Verify —" or similar instructions only.
+   - Do NOT include any "No action required" lines — omit areas that need no action entirely.
 
 5. **pr_authors** — one entry per unique assignee who has at least one ticket.
    - "handle": derive GitHub handle as `{firstname}{lastname}-wk` (all lowercase, no spaces).

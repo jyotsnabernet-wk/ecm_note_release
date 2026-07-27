@@ -1,0 +1,136 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-07-20" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM role alignment &amp;amp; customer transfers, ETL reliability, FedRAMP sanitization, Reverse ETL &amp;amp; data share</h3>
+    <h3><strong>DnA Release — July 16–22, 2026 | Executive Summary</strong></h3>
+    <ul>
+      <li data-uuid="3072b6a7-266c-4c48-a937-55771a2351b1"><strong>ECM</strong> — Role alignment data is now version-controlled, restoring accurate segment and region mapping in Finance and RevOps reports.</li>
+      <li data-uuid="cfdb9da1-1acb-4b42-a6fc-321e3c639ef5"><strong>ECM</strong> — Intracompany account transfers are now correctly classified, eliminating overstated churn and new-logo counts in pipeline reporting.</li>
+      <li data-uuid="2ecf7b4f-7e95-49ef-ac69-704a581d3449"><strong>Platform</strong> — An ETL repo build secret sync error is resolved, restoring reliable pipeline execution for dependent jobs.</li>
+      <li data-uuid="27aafbae-c5b0-499a-a414-53c2a4a6ccf9"><strong>Data Sharing</strong> — A direct Snowflake data share is enabled for the Tech team, supporting their MVP customer data sharing initiative.</li>
+      <li data-uuid="890331bd-dd68-4a59-adc3-0ed7cd8e46a8"><strong>GTM / Salesforce</strong> — Four account enrichment fields now flow automatically from Snowflake into Salesforce, improving data quality for sales teams.</li>
+    </ul>
+    <p>Need more detail? Review the technical release notes here: <a href="DNA Weekly Release Sprint 7/16-7/22">DNA Weekly Release Sprint 7/16-7/22</a></p>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="613332cf-96cc-4770-aa20-04567a311894">
+        <strong>ECM — role alignment data migration</strong>
+        <ul>
+          <li data-uuid="a28f1884-5123-4b26-8754-9a0ad4cd6b74">
+            The live WDesk Drop Sheet connection to the role alignment source table was paused to prevent unintended breaking changes, causing newly created sales roles to stop flowing downstream and producing NULL segment and region values in reporting.
+          </li>
+          <li data-uuid="ab10a167-369e-4a9a-944e-24f0029d74d9">
+            The role alignment dataset has been migrated from a spreadsheet-based live connection into a <strong>dbt seed</strong>, restoring complete and accurate data to <u><strong>dim_role_alignments</strong></u> and eliminating broken mappings in Finance &amp; RevOps dashboards. (<a href="https://jira.atl.workiva.net/browse/DNA-5665">DNA-5665</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="85ceef3d-d213-4e7c-ba97-664e19880cd2">
+        <strong>ECM — intracompany account transfer classification</strong>
+        <ul>
+          <li data-uuid="f68fb2bd-6636-469a-b1fd-e7cea5e9cb92">
+            When a subscription or contract moves between sibling accounts sharing the same ultimate parent, affected dbt models were misclassifying the event: the source account recorded a <strong>Churn</strong> and the destination a <strong>New</strong> logo, producing a systematic double-count across ARR movement reporting.
+          </li>
+          <li data-uuid="517ac991-bc32-4cbe-8c98-5d8311250c65">
+            This work introduces dedicated detection logic for <strong>intracompany transfers</strong> as a distinct movement type, correcting overstated churn and new-logo figures in pipeline and revenue reporting. (<a href="https://jira.atl.workiva.net/browse/DNA-5511">DNA-5511</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="2b62ae43-f478-4b2f-af60-6057af6cf470">
+        <strong>ECM — customer model expansion &amp; solution retention</strong>
+        <ul>
+          <li data-uuid="75924711-51fa-4414-962b-828e4e386a7f">
+            New customer-family models are being added to enable reporting at monthly and daily account-plus-solution grains, complementing the existing quarterly view in <u><strong>fct_customers_quarterly</strong></u> and built on top of <u><strong>fct_customers_daily</strong></u>.
+          </li>
+          <li data-uuid="0fda3dca-380c-4e2f-8457-ebc47224c5be">
+            A new <u><strong>fct_solution_retention</strong></u> fact and companion <u><strong>logic_view_solution_retention_summary</strong></u> view are in development to measure <strong>gross revenue retention (GRR)</strong> by product solution QoQ &amp; YoY, aligned to <u><strong>fct_customers_quarterly_by_solution</strong></u>. (<a href="https://jira.atl.workiva.net/browse/DNA-5652">DNA-5652</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5677">DNA-5677</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="d3fadd27-f4bd-42f8-a16a-cc2b1d5d055e">
+        <strong>FedRAMP — sanitized Iceberg table exposure</strong>
+        <ul>
+          <li data-uuid="66f1510e-a410-424d-915b-d6a8acc3aba2">
+            As part of the <strong>FedRAMP Sanitization Phase 1</strong> initiative, all Workiva/Wdesk and GES topic data must be sanitized before reaching Snowflake; high-volume event streams require dedicated sanitized Iceberg tables backed by unit tests.
+          </li>
+          <li data-uuid="a3dde475-2bfc-43b1-abdf-419820a313c3">
+            Sanitized Iceberg tables are being built and exposed for the <strong>Workiva Document</strong> event stream and the <strong>workiva.common.v0.workiva-event-log</strong> GES topic; both must be connected to Snowflake and covered by unit tests before Phase 1 is considered complete. (<a href="https://jira.atl.workiva.net/browse/DNA-5693">DNA-5693</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5622">DNA-5622</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="d2aa2dcf-3b14-4b23-9d61-7662c6002553">
+        <strong>Platform — ETL reliability, data sharing &amp; Reverse ETL promotion</strong>
+        <ul>
+          <li data-uuid="3b96ceed-ae9b-441f-913b-80858b6792bd">
+            An AWS Secrets Manager validation constraint (65,536-character limit on secret strings) was causing the ETL repo build to fail; this has been resolved, restoring stable execution of the <strong>de_etl_scripts</strong> pipeline. (<a href="https://jira.atl.workiva.net/browse/DNA-5691">DNA-5691</a>)
+          </li>
+          <li data-uuid="944e51ff-903b-49a6-8adf-9d6532e9608c">
+            A direct <strong>Snowflake data share</strong> has been configured for the Tech team, enabling them to test their MVP for customer direct data sharing into Wdata tables without manual data transfer. (<a href="https://jira.atl.workiva.net/browse/DNA-5604">DNA-5604</a>)
+          </li>
+          <li data-uuid="70c3f649-f6b5-4a61-91d3-14ca0b5d2a0d">
+            The <strong>Reverse ETL account enrichment job</strong> has been promoted to production following successful sandbox validation, writing four account enrichment fields from Snowflake into the Salesforce Account object to keep CRM data current. (<a href="https://jira.atl.workiva.net/browse/DNA-5268">DNA-5268</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="804f1073-bc32-4999-ba8e-f3bae4dc89c5">
+        <strong>Customer Intelligence — Zendesk knowledge, Support OBT &amp; C360 enrichment</strong>
+        <ul>
+          <li data-uuid="8b68644b-3dad-4fb3-85f3-c6da371d60fe">
+            Zendesk article ingestion is being extended to capture engagement fields (views, comments, subscriptions, upvotes) currently absent from the Fivetran pull, giving the DX team the signals needed to evaluate knowledge-base content performance. (<a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
+          </li>
+          <li data-uuid="40f2f112-cf83-46bc-8771-26bec104f834">
+            A <strong>Support OBT</strong> (one big table) and accompanying <strong>IS_METRIC</strong> fields are being built to deliver the consolidated end-view requested by Support stakeholders, and a new C360 table joining <strong>D&amp;B</strong> and <strong>ZoomInfo</strong> firmographic data is in development to enrich account intelligence. (<a href="https://jira.atl.workiva.net/browse/DNA-5504">DNA-5504</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5324">DNA-5324</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>ECM reporting accuracy</strong></p>
+    <ul>
+      <li data-uuid="00e87cc2-ca6a-447a-aca7-001e72649d24">Pausing the WDesk live connection created a gap in role alignment data that propagated as NULL segment and region values into Finance &amp; RevOps dashboards; migrating to a <strong>dbt seed</strong> removes the dependency on an unstable spreadsheet connection and makes the dataset auditable in version control.</li>
+      <li data-uuid="88874fd5-ba39-4505-a98d-1168089cb351">Misclassified intracompany transfers were systematically inflating both churn and new-logo figures in ARR movement reports; introducing a dedicated transfer classification corrects the double-count and gives Finance a reliable view of true customer movement.</li>
+    </ul>
+    <p><strong>Data infrastructure &amp; access</strong></p>
+    <ul>
+      <li data-uuid="7abc3a46-d64e-47d1-8d9e-2752e6302718">Resolving the ETL secret sync error eliminates a build-time blocker that was preventing dependent pipeline runs from completing and risked cascading failures across downstream consumers.</li>
+      <li data-uuid="d1ad0914-1c46-4d54-84ab-4d277d2b8c64">Promoting the <strong>Reverse ETL enrichment job</strong> to production and enabling the Tech team's direct Snowflake share extend data access to key internal consumers, reducing manual export overhead and supporting self-service analytics initiatives.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-07-22" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-07-22).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="fe843f46-9668-4222-9325-e3a18bdc9e3c"><u><strong>dim_role_alignments</strong></u> — will reflect all newly created sales roles after deploy; Finance &amp; RevOps segment/region breakdowns that were showing NULLs are unblocked (DNA-5665).</li>
+      <li data-uuid="1984ec2f-91a4-4bbc-9ffe-6d6bdd2b8a83">ECM ARR movement models — intracompany transfers will no longer inflate churn and new-logo metrics once the transfer classification logic in DNA-5511 is deployed.</li>
+      <li data-uuid="75c26c8d-b26f-4f11-bf46-036f38b50d39"><u><strong>fct_solution_retention</strong></u> and <u><strong>logic_view_solution_retention_summary</strong></u> — new in-progress models (DNA-5652) that will power QoQ &amp; YoY gross retention dashboards; not yet in production.</li>
+      <li data-uuid="0a1cd016-2361-45aa-af1c-38966599a4fa"><u><strong>fct_customers_daily</strong></u> and the forthcoming monthly &amp; daily account-solution grain models (DNA-5677) — downstream reports requiring sub-quarterly customer views will depend on these once available.</li>
+      <li data-uuid="8beef20f-43f9-4158-af28-b58ff486c8a7">Salesforce Account object — four enrichment fields are now written from Snowflake via the promoted Reverse ETL job; CRM consumers and GTM dashboards relying on account-level firmographic data will see improved coverage (DNA-5268).</li>
+      <li data-uuid="a5c6a7a9-def4-4003-8c11-5dc47767dbca">Tech team Wdata tables — receive a direct Snowflake share for MVP testing; no changes to DnA-owned dbt models are required (DNA-5604).</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — After the 2026-07-22 deploy, confirm <u><strong>dim_role_alignments</strong></u> contains all recently created sales roles and that segment/region fields are no longer NULL in Finance &amp; RevOps dashboards; raise a P1 incident if NULLs persist. Also spot-check ECM ARR movement reports to confirm intracompany transfers appear under the correct movement type and that churn/new-logo figures are not overstated.</p>
+    <p>Verify — Confirm the Reverse ETL account enrichment job ran successfully in production and that the four enrichment fields are populated on the expected Salesforce Account records; coordinate with the GTM ops team to validate field values.</p>
+    <p>No action required for FedRAMP sanitization (DNA-5693 / DNA-5622), ECM customer model expansion (DNA-5652 / DNA-5677), Zendesk knowledge ingestion (DNA-5171), Support OBT (DNA-5504), or C360 D&amp;B/ZoomInfo enrichment (DNA-5324) — these are In Progress and will not be deployed on 2026-07-22.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="497feb45-92a4-4585-aa13-19956ed7e3e3"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="3bbb6bc4-ed57-4bf1-8a7f-7702648cd3ad"><a href="https://jira.atl.workiva.net/browse/DNA-5268">DNA-5268</a> — Promote Reverse ETL Account Enrichment Job to Production</li>
+    <li data-uuid="008eb4dc-5810-496b-aeef-c10fa372b275"><a href="https://jira.atl.workiva.net/browse/DNA-5324">DNA-5324</a> — C360 - Create table to join D&amp;B and Zoominfo</li>
+    <li data-uuid="c28217fa-f046-49d8-a7c7-a2e486a9ea06"><a href="https://jira.atl.workiva.net/browse/DNA-5504">DNA-5504</a> — [Support] Build OBT and IS_METRIC fields</li>
+    <li data-uuid="cf811ac4-5bec-4ef2-8d09-946f282afa9d"><a href="https://jira.atl.workiva.net/browse/DNA-5511">DNA-5511</a> — [ECM] Customer Intracompany Transfer Investigation</li>
+    <li data-uuid="63de5202-d8a0-4d97-a23c-77e0d1161ebf"><a href="https://jira.atl.workiva.net/browse/DNA-5604">DNA-5604</a> — Setup direct data share for Tech team</li>
+    <li data-uuid="7023a58b-25f2-458e-b92d-3b6dff319b55"><a href="https://jira.atl.workiva.net/browse/DNA-5622">DNA-5622</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.common.v0.workiva-event-log</li>
+    <li data-uuid="51f1cbc0-d7d8-4d71-9f76-88a559fa0bd2"><a href="https://jira.atl.workiva.net/browse/DNA-5652">DNA-5652</a> — [ECM] Build fct_solution_retention: solution level gross retention</li>
+    <li data-uuid="f490367c-62fb-4f1f-8eaf-4c3605b155f5"><a href="https://jira.atl.workiva.net/browse/DNA-5665">DNA-5665</a> — [ECM] Migrate Role Alignment Spreadsheet to dbt Seed</li>
+    <li data-uuid="2d298443-23fd-4dc7-b587-cc460b670244"><a href="https://jira.atl.workiva.net/browse/DNA-5677">DNA-5677</a> — [ECM] Expand customer models</li>
+    <li data-uuid="3067b6bb-b2f4-4ed1-826c-a20c3bc4b53e"><a href="https://jira.atl.workiva.net/browse/DNA-5691">DNA-5691</a> — ETL Repo Build Secret Sync Error</li>
+    <li data-uuid="2f4aaf49-2359-49b2-9d35-1aa10f4a4719"><a href="https://jira.atl.workiva.net/browse/DNA-5693">DNA-5693</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva document</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="3a621beb-5fdb-49a6-8df1-0772fc7bed44">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>

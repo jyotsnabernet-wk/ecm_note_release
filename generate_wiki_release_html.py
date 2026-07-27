@@ -275,7 +275,6 @@ def _section_recommended(actions: list[str]) -> list[str]:
             "    <p>Verify — owners of dashboards or reports sourced from affected models should "
             "validate key metrics against the deployed data after the release.</p>"
         )
-        lines.append("    <p>No action required for consumers of additive or net-new models.</p>")
     return lines
 
 
@@ -425,12 +424,22 @@ def _section_why_llm(groups: list[dict]) -> list[str]:
     return lines
 
 
+def _strip_ticket_refs(text: str) -> str:
+    """Remove parenthetical and bare DNA-XXXX ticket references from prose."""
+    # Remove parenthetical refs like (DNA-5665) or (DNA-5665 / DNA-5677)
+    text = re.sub(r"\s*\([^)]*DNA-\d+[^)]*\)", "", text)
+    # Remove any remaining bare DNA-XXXX refs (already-linked anchors or plain text)
+    text = re.sub(r'\s*<a href="[^"]*">DNA-\d+</a>', "", text)
+    text = re.sub(r"\s*\bDNA-\d+\b", "", text)
+    return text.strip()
+
+
 def _section_downstream_llm(bullets: list[str]) -> list[str]:
     lines: list[str] = []
     lines.append('    <h3><strong>Downstream impact</strong></h3>')
     lines.append("    <ul>")
     for b in bullets:
-        lines.append(f'      <li data-uuid="{_u()}">{b}</li>')
+        lines.append(f'      <li data-uuid="{_u()}">{_strip_ticket_refs(b)}</li>')
     lines.append("    </ul>")
     return lines
 
@@ -439,6 +448,9 @@ def _section_recommended_llm(actions: list[str]) -> list[str]:
     lines: list[str] = []
     lines.append('    <h3><strong>Recommended actions</strong></h3>')
     for a in actions:
+        # Drop any "No action required" bullets — readers don't need a list of non-actions
+        if re.match(r"^\s*No action required", a, re.IGNORECASE):
+            continue
         lines.append(f"    <p>{a}</p>")
     return lines
 
