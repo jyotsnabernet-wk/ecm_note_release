@@ -3,164 +3,120 @@
       Sent on<strong> <time datetime="2026-07-27" />&nbsp;</strong>
     </p>
     <h2><strong>Release Notification</strong></h2>
-    <h3>FedRAMP Workiva sanitization, ECM bookings &amp;amp; renewals, Zendesk fix, SCD Type 2 tests, C360 hierarchy</h3>
+    <h3>FedRAMP Workiva sanitization, Zendesk fix, ECM bookings &amp;amp; renewals, C360 D&amp;amp;B hierarchy, SCD Type 2 quality</h3>
     <h3><strong>What is happening</strong></h3>
     <p>This week's DnA release covers the following Analytics Engineering stories.</p>
     <ul>
-      <li data-uuid="db21acbe-a457-46f1-81dd-bbd03119a1b7">
-        <strong>FedRAMP — Workiva event data sanitization</strong>
+      <li data-uuid="eb9a4af2-80f0-4645-bbdd-c932f3afdddb">
+        <strong>FedRAMP — Workiva sanitized Iceberg tables</strong>
         <ul>
-          <li data-uuid="5ed61739-2d3d-40bc-9001-df9980083dda">
-            As part of the <strong>FedRAMP Sanitization</strong> project, all Workiva/Wdesk event data must be sanitized before reaching Snowflake.
+          <li data-uuid="c0751d8d-7a05-4fae-97df-607000cb1e8e">
+            As part of the <strong>FedRAMP Sanitization</strong> project, all Workiva/Wdesk event data must be sanitized before reaching Snowflake; five high-volume modules required sanitized <strong>Iceberg</strong> tables and unit test coverage before Phase 1 is considered complete.
           </li>
-          <li data-uuid="b47c91d8-8b2b-4d13-9759-e8127cfa5189">
-            Sanitized <strong>Iceberg tables</strong> have been built and exposed for five high-volume Workiva event streams: org module transform, service provider, role assignment, retention, and org membership.
+          <li data-uuid="36373eb3-c16e-44b9-9e8e-4f97fe89ded4">
+            Sanitized Iceberg tables have been built and connected to Snowflake for <u><strong>workiva_org_module_transform</strong></u>, <u><strong>workiva_service_provider</strong></u>, <u><strong>workiva_role_assignment</strong></u>, <u><strong>workiva_retention</strong></u>, and <u><strong>workiva_org_membership</strong></u>.
           </li>
-          <li data-uuid="828e0925-8055-4678-a399-e6330d7f2fc4">
-            Each table is connected to Snowflake and covered by <strong>unit tests</strong>, satisfying Phase 1 completion criteria. (<a href="https://jira.atl.workiva.net/browse/DNA-5706">DNA-5706</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5708">DNA-5708</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5722">DNA-5722</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5707">DNA-5707</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5705">DNA-5705</a>)
+          <li data-uuid="48ba4234-58d1-41c3-882c-5fd7fd8ddf4b">
+            Unit tests have been added to each module to validate data quality and confirm completeness of the sanitization pipeline. (<a href="https://jira.atl.workiva.net/browse/DNA-5705">DNA-5705</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5706">DNA-5706</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5707">DNA-5707</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5708">DNA-5708</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5722">DNA-5722</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="5bc42494-ba26-40ec-aee7-6ded36d3306e">
-        <strong>ECM — bookings accuracy &amp; renewal metrics</strong>
+      <li data-uuid="a03eda3f-26ab-4f0a-a2c6-8c88345a1022">
+        <strong>Zendesk — voice calls type error fix</strong>
         <ul>
-          <li data-uuid="34dd850a-9778-4638-9cd6-646a0efb304a">
-            The <strong>never-started contract exclusion</strong> in <u><strong>OBT_Bookings</strong></u> incorrectly filters out valid Non-PI bookings; the logic is being corrected so only PI bookings are subject to the exclusion. (<a href="https://jira.atl.workiva.net/browse/DNA-5717">DNA-5717</a>)
+          <li data-uuid="669cc495-27a6-448c-9a08-4be68be561fa">
+            A <strong>type error</strong> in the Zendesk voice calls model was preventing data from being returned on SELECT queries, blocking support analytics consumers.
           </li>
-          <li data-uuid="cced8f4e-95e7-4b27-bd3c-d053b1d3d402">
-            A new solution-level renewal metric is being built on the <strong>Customers ARR stack</strong>, delivering S&amp;S renewal ARR and renewal rate at solution grain via a new detail fact model. (<a href="https://jira.atl.workiva.net/browse/DNA-5690">DNA-5690</a>)
+          <li data-uuid="def57793-792f-4754-81ce-ee0bc5217d6b">
+            The fix restores full data accessibility so downstream reporting and exports behave as expected. (<a href="https://jira.atl.workiva.net/browse/DNA-5724">DNA-5724</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="e2b650e1-5a05-4c7e-8d23-89f6e21364bb">
-        <strong>Customer360 &amp; Workiva Master — account hierarchy &amp; master data</strong>
+      <li data-uuid="881217e0-5d42-4cd0-b4a2-908179d99628">
+        <strong>ECM — non-PI bookings logic correction</strong>
         <ul>
-          <li data-uuid="e9f62660-c8a8-4b18-80ef-18a7ea7dd1d6">
-            A new <strong>Dun &amp; Bradstreet (D&amp;B) hierarchy table</strong> is being created in C360 to enrich account relationship data for downstream segmentation. (<a href="https://jira.atl.workiva.net/browse/DNA-5544">DNA-5544</a>)
+          <li data-uuid="64e70c79-23fc-4253-9b0c-074141a224ef">
+            The current bookings logic in <u><strong>OBT_Bookings</strong></u> excludes all bookings associated with <strong>Never Started</strong> contracts; while this exclusion is correct for PI Bookings, it incorrectly filters out valid Non-PI Bookings.
           </li>
-          <li data-uuid="91aee807-0fc0-4b9a-a933-d8b41749320c">
-            Two Workiva Master deliverables are in progress: establishing a canonical <strong>Workiva Master Account ID</strong> and a comprehensive <strong>Workiva Master Attributes</strong> dataset to support cross-system account resolution. (<a href="https://jira.atl.workiva.net/browse/DNA-4362">DNA-4362</a> / <a href="https://jira.atl.workiva.net/browse/DNA-4363">DNA-4363</a>)
+          <li data-uuid="1b40f57e-650c-41bf-b564-348797ac0c1a">
+            The logic is being updated so that Non-PI deals are captured appropriately, improving completeness of pipeline reporting for Finance and RevOps. (<a href="https://jira.atl.workiva.net/browse/DNA-5717">DNA-5717</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="b2b8054c-0159-42bb-a157-d6e521e59194">
-        <strong>Data Platform — SCD Type 2 integrity tests &amp; solution classification</strong>
+      <li data-uuid="f182261d-1454-43df-b4d1-f6f67a42ccd6">
+        <strong>ECM — solution renewal metrics</strong>
         <ul>
-          <li data-uuid="8cd1d8e4-aeb9-4150-885a-82b7c2fa697d">
-            A preventive <strong>dbt_utils.expression_is_true</strong> test is being added to 11 <strong>SCD Type 2</strong> dimension models to catch interval overlaps where <strong>version_start_at</strong> is not strictly less than <strong>version_end_at</strong>. (<a href="https://jira.atl.workiva.net/browse/DNA-5712">DNA-5712</a>)
+          <li data-uuid="3bc3eb1b-0066-4085-add2-19823af20b43">
+            New solution-level renewal metrics will measure S&amp;S renewals at contract term end, using the <strong>Customers ARR stack</strong> — the same subscription population as the daily fact — as the retention model.
           </li>
-          <li data-uuid="14f9ac29-2a8c-4f85-a24d-e75ec5173670">
-            The <u><strong>int_solution_classifications</strong></u> model is being updated to default null <strong>Booking Category</strong> and <strong>Solution Group</strong> values, preventing records from being silently excluded in <u><strong>OBT_Booking</strong></u> and <u><strong>OBT_Pipeline</strong></u>. (<a href="https://jira.atl.workiva.net/browse/DNA-4539">DNA-4539</a>)
-          </li>
-          <li data-uuid="c171111f-fe79-47d3-a79d-afe0fcf97668">
-            The <u><strong>account_s_s_amt_usd</strong></u> column in <u><strong>dim_salesforce_account</strong></u> is being revised to pull directly from Salesforce rather than aggregating solution-level S&amp;S amounts. (<a href="https://jira.atl.workiva.net/browse/DNA-2227">DNA-2227</a>)
+          <li data-uuid="465577cf-4f31-48a2-ba22-87437ec58481">
+            Deliverables include a detail fact model for renewal events at solution grain, exposing S&amp;S ARR up for renewal and renewal rate for Finance stakeholders. (<a href="https://jira.atl.workiva.net/browse/DNA-5690">DNA-5690</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="1095aef5-f22f-49f8-8d9b-9580c83cedcd">
-        <strong>Zendesk — voice call data fix</strong>
+      <li data-uuid="e74bfcc8-4316-4c7d-a764-788859a99a21">
+        <strong>Customer360 — D&amp;B hierarchy table</strong>
         <ul>
-          <li data-uuid="3e63f5b2-74c0-4137-b7e0-70fe07f45210">
-            A <strong>type error</strong> in the Zendesk voice calls model causes query failures; the fix ensures the model returns complete, queryable data for all support call records. (<a href="https://jira.atl.workiva.net/browse/DNA-5724">DNA-5724</a>)
+          <li data-uuid="4721f4e2-a1dc-4f2d-b3de-f2e63e6d85d5">
+            A new <strong>Dun &amp; Bradstreet</strong> hierarchy table is being built as part of the <strong>Customer360</strong> initiative to enrich account data with corporate hierarchy information, supporting account segmentation and analysis. (<a href="https://jira.atl.workiva.net/browse/DNA-5544">DNA-5544</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="8ab80a33-8a57-449f-98cd-528b64753931">
-        <strong>OpenAir — billing rule cleanup</strong>
+      <li data-uuid="c07c3db0-309c-4347-8c98-5e3fb5d3c4e1">
+        <strong>Platform — SCD Type 2 dbt data quality tests</strong>
         <ul>
-          <li data-uuid="680fe97b-5264-4441-9630-8c28b18c47e2">
-            End dates on write-off billing rules in <strong>OpenAir</strong> are being removed, as the original business rationale for those dates is no longer valid.
+          <li data-uuid="da072c1f-7035-4d12-849d-4642f7cc2eab">
+            A preventive <strong>dbt_utils.expression_is_true</strong> test is being added to <strong>SCD Type 2</strong> dimension models to enforce that <u><strong>version_start_at</strong></u> &lt; <u><strong>version_end_at</strong></u> on every row, catching interval problems at build time before they reach downstream consumers.
           </li>
-          <li data-uuid="0a7323a4-98bf-4f5c-8ac0-441ae62513f3">
-            All reserve hour portfolios will be verified to have an active write-off rule, and the <u><strong>UPLOAD_OA_FIN</strong></u> process will be updated to reflect the corrected configuration. (<a href="https://jira.atl.workiva.net/browse/DNA-1113">DNA-1113</a>)
-          </li>
-        </ul>
-      </li>
-      <li data-uuid="507d68ec-ca76-4d86-b0bb-8b31ce4234c5">
-        <strong>Platform Standards — dbt repo, dimensional modeling &amp; access governance</strong>
-        <ul>
-          <li data-uuid="8717811f-9d96-4c27-9d05-be485c542647">
-            Standardized <strong>dbt repository and project structures</strong> are being defined across the analytics engineering estate to align with a data mesh architecture and enable clear domain ownership. (<a href="https://jira.atl.workiva.net/browse/DNA-3977">DNA-3977</a>)
-          </li>
-          <li data-uuid="36d6be40-0806-4d90-9506-8f6c7bffd059">
-            The <strong>Dimensional Modeling Standard</strong> is under review to identify gaps against industry best practices and ensure models are optimized for performance, scalability, and reusability. (<a href="https://jira.atl.workiva.net/browse/DNA-3935">DNA-3935</a>)
-          </li>
-          <li data-uuid="2f79ed02-bd82-4ca9-8a7b-b49b3c46f636">
-            The <strong>Booking Design</strong> is being reviewed and certified to accurately capture the full booking lifecycle and align with company SaaS metrics. (<a href="https://jira.atl.workiva.net/browse/DNA-3936">DNA-3936</a>)
-          </li>
-          <li data-uuid="90f9f702-5762-4b2d-8ef3-37728813e629">
-            A <strong>Privilege Assessment</strong> is under way to review and remediate P1 access items across the data platform. (<a href="https://jira.atl.workiva.net/browse/DNA-3293">DNA-3293</a>)
-          </li>
-        </ul>
-      </li>
-      <li data-uuid="a000aaec-bc1d-48ba-8c6d-f266afc95395">
-        <strong>Analytics Engineering — CPX, corporate &amp; partner metrics</strong>
-        <ul>
-          <li data-uuid="678b354f-16bc-4d5b-ad40-647d47f2eb24">
-            Q1 and Q2 <strong>CPX Metrics</strong> are in development to support customer and partner experience reporting across business segments. (<a href="https://jira.atl.workiva.net/browse/DNA-885">DNA-885</a> / <a href="https://jira.atl.workiva.net/browse/DNA-1705">DNA-1705</a>)
-          </li>
-          <li data-uuid="79486ece-fc63-47a7-99b9-10d1d29cdbe0">
-            Q1 <strong>Corporate Metrics</strong> and Q2 <strong>Partner Engagement Optimization</strong> datasets are being built to enable cross-functional performance tracking. (<a href="https://jira.atl.workiva.net/browse/DNA-934">DNA-934</a> / <a href="https://jira.atl.workiva.net/browse/DNA-1691">DNA-1691</a>)
+          <li data-uuid="f7c07f60-6cc8-4ba7-815d-4216092ff381">
+            Eleven models are in scope, including <u><strong>dim_accounts</strong></u>, <u><strong>dim_contacts</strong></u>, and <u><strong>dim_contracts</strong></u>. (<a href="https://jira.atl.workiva.net/browse/DNA-5712">DNA-5712</a>)
           </li>
         </ul>
       </li>
     </ul>
     <h3><strong>Why it is happening</strong></h3>
-    <p><strong>Compliance &amp; data security</strong></p>
+    <p><strong>FedRAMP compliance</strong></p>
     <ul>
-      <li data-uuid="b18598ff-88a7-4de9-9ffe-6e2d13f43bd2">The <strong>FedRAMP Phase 1</strong> program requires all Workiva/Wdesk event data to be sanitized before landing in Snowflake; creating sanitized Iceberg tables for each high-volume event stream fulfills this regulatory obligation and unblocks downstream analytics consumers.</li>
+      <li data-uuid="09effe8c-7bc0-444e-882a-a68907e7f3c6">Workiva/Wdesk event data must be sanitized before landing in Snowflake as a prerequisite for <strong>FedRAMP Phase 1</strong> certification; five high-volume modules required sanitized Iceberg tables and unit test coverage to satisfy the Phase 1 definition of done.</li>
     </ul>
-    <p><strong>Data accuracy &amp; platform quality</strong></p>
+    <p><strong>Data quality &amp; analytics completeness</strong></p>
     <ul>
-      <li data-uuid="780c7fc2-a9b4-47d3-a365-315c39d15f48">Incorrect bookings exclusion logic, missing solution classifications, and a type error in support call data erode trust in key revenue and customer metrics; these corrections ensure Finance, RevOps, and CX teams work from accurate, complete datasets.</li>
-      <li data-uuid="e71db9de-5041-4357-91e6-96c06007409f">Preventive data tests on SCD Type 2 models and standardized dbt repository structures reduce the risk of silent data corruption and improve engineering velocity across all domains.</li>
+      <li data-uuid="0f7b3c36-59d4-4078-b60b-283104916bfc">A type error in the Zendesk voice calls model was blocking support analytics data access and required an immediate fix to restore reporting fidelity.</li>
+      <li data-uuid="43289105-187b-4d00-9985-9fa064a5f969">ECM bookings logic must be corrected to stop valid Non-PI deals from being silently excluded, and new solution-level renewal metrics are needed to give Finance a complete view of S&amp;S retention performance.</li>
+      <li data-uuid="33da9367-cf57-47a1-9159-55d76ab97282">Adding SCD Type 2 interval tests across eleven dimension models provides a build-time safety net that prevents silent data corruption from propagating into downstream metrics and reports.</li>
+      <li data-uuid="db061388-e297-485e-b70f-4b7fe0343915">The D&amp;B hierarchy table expands the Customer360 dataset with corporate structure data required for account segmentation and multi-entity analysis.</li>
     </ul>
     <h3><strong>When it will happen</strong></h3>
     <p>Deploy on <time datetime="2026-07-29" /></p>
     <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-07-29).</p>
     <h3><strong>Downstream impact</strong></h3>
     <ul>
-      <li data-uuid="85ebbf2a-276b-4f73-95d6-ebcceac06486">Snowflake consumers of Workiva event data should migrate to the new sanitized Iceberg-connected tables for <u><strong>workiva_org_module</strong></u>, <u><strong>workiva_service_provider</strong></u>, <u><strong>workiva_role_assignment</strong></u>, <u><strong>workiva_retention</strong></u>, and <u><strong>workiva_org_membership</strong></u>.</li>
-      <li data-uuid="0fcc444b-52f2-4d6b-9220-337bc6d85eb0"><u><strong>OBT_Bookings</strong></u> will reflect corrected Non-PI booking counts once the never-started exclusion logic is updated to apply only to PI bookings.</li>
-      <li data-uuid="1339c951-80b7-497e-9746-f1314942b112">A new renewal detail fact model will surface S&amp;S renewal ARR and renewal rate at solution grain, extending the <strong>Customers ARR stack</strong> for ECM reporting.</li>
-      <li data-uuid="ba805f7b-7eb9-419d-b94d-e0b3321ceb63"><u><strong>OBT_Booking</strong></u> and <u><strong>OBT_Pipeline</strong></u> will include previously excluded records once <u><strong>int_solution_classifications</strong></u> defaults null booking categories and solution groups.</li>
-      <li data-uuid="88d8ec42-eed2-4ee5-94ea-8ebc81d476b7"><u><strong>dim_salesforce_account</strong></u> will return a revised <u><strong>account_s_s_amt_usd</strong></u> value sourced directly from Salesforce, affecting any report that aggregates account-level S&amp;S.</li>
-      <li data-uuid="6a862f8c-69fa-46f7-9888-a0ada1c9e4c8">The Zendesk voice calls model will be fully queryable after the type error fix, restoring data availability for support analytics dashboards.</li>
-      <li data-uuid="1f3053d6-2b30-4270-8adb-59653a6e4193">All 11 SCD Type 2 dimension models — including <u><strong>dim_accounts</strong></u>, <u><strong>dim_contacts</strong></u>, and <u><strong>dim_contracts</strong></u> — will enforce interval integrity via the new <strong>dbt_utils.expression_is_true</strong> test.</li>
+      <li data-uuid="d52413d9-c9bb-4532-821c-ec1c7cdd0d78">FedRAMP-scoped consumers gain access to sanitized, Snowflake-connected data for <u><strong>workiva_org_module_transform</strong></u>, <u><strong>workiva_service_provider</strong></u>, <u><strong>workiva_role_assignment</strong></u>, <u><strong>workiva_retention</strong></u>, and <u><strong>workiva_org_membership</strong></u>.</li>
+      <li data-uuid="69bb3c1e-2569-469f-adb5-4e2dcc212881">Support analytics workflows querying the Zendesk <u><strong>zendesk_voice_calls</strong></u> model will return correct results after the type error is resolved.</li>
+      <li data-uuid="3ec2e80f-230c-4b50-891c-aeaa2609682d">ECM reporting surfaces downstream of <u><strong>OBT_Bookings</strong></u> will reflect updated Non-PI booking counts once the never-started exclusion logic is corrected.</li>
+      <li data-uuid="87f21fb2-11c6-4fe1-9ce5-fcca6cd21b2d">Finance and RevOps dashboards will gain new solution-level renewal metrics sourced from the new ECM renewal detail fact model built on the <u><strong>customers_arr_stack</strong></u>.</li>
+      <li data-uuid="aa80f961-5270-4185-88e2-0a77426c1616">All eleven SCD Type 2 dimension models — including <u><strong>dim_accounts</strong></u>, <u><strong>dim_contacts</strong></u>, and <u><strong>dim_contracts</strong></u> — will enforce row-level interval integrity at every dbt build.</li>
     </ul>
     <h3><strong>Recommended actions</strong></h3>
-    <p>Verify — downstream Snowflake consumers of Workiva event data are pointed to the new sanitized Iceberg-connected tables after the 2026-07-29 deploy.</p>
-    <p>Verify — ECM Non-PI Booking counts in <u><strong>OBT_Bookings</strong></u> align with expected values once the never-started exclusion fix is live.</p>
-    <p>Verify — the Zendesk voice calls model returns complete data via SELECT * following the type error fix.</p>
+    <p>Verify — FedRAMP-scoped data consumers can SELECT from each newly exposed sanitized Iceberg table in Snowflake after the 2026-07-29 deploy.</p>
+    <p>Verify — Zendesk voice calls data is fully accessible with a SELECT * on the repaired model and downstream support reports return expected row counts.</p>
+    <p>Verify — ECM Non-PI booking counts in downstream reports reflect the corrected never-started exclusion logic and previously missing deals are now present.</p>
     <h3><strong>Links</strong></h3>
     <ul>
-    <li data-uuid="5b66a81a-1e9e-4e77-b74d-dfef80c0e56e"><a href="https://jira.atl.workiva.net/browse/DNA-1113">DNA-1113</a> — Remove end date on write off billing rules in OA</li>
-    <li data-uuid="5a560cb8-c2d1-470e-885c-9937c521cefa"><a href="https://jira.atl.workiva.net/browse/DNA-1691">DNA-1691</a> — AE - Q2 - Partner Engagement Optimization Datasets</li>
-    <li data-uuid="159706bc-1529-43ab-a2be-9b20d890133a"><a href="https://jira.atl.workiva.net/browse/DNA-1705">DNA-1705</a> — AE - Q2 - CPX Metrics</li>
-    <li data-uuid="b7df16c3-0a63-4a05-b5f8-fb638a6b87e5"><a href="https://jira.atl.workiva.net/browse/DNA-2227">DNA-2227</a> — Revise account_s_s_amt_usd in dim_salesforce_account dataset</li>
-    <li data-uuid="f449b01c-2b05-43f7-870c-3a748f8821c9"><a href="https://jira.atl.workiva.net/browse/DNA-3293">DNA-3293</a> — DNA Privilege Assessment - P1 Items</li>
-    <li data-uuid="431c2328-901a-4f59-aa62-cf42a6ce045d"><a href="https://jira.atl.workiva.net/browse/DNA-3935">DNA-3935</a> — Dimensional Modeling Standard</li>
-    <li data-uuid="4cef9b28-4a3a-4411-b67a-7b0499e74ee3"><a href="https://jira.atl.workiva.net/browse/DNA-3936">DNA-3936</a> — Booking Design</li>
-    <li data-uuid="3509f909-588b-43af-951a-0f01102cc3ab"><a href="https://jira.atl.workiva.net/browse/DNA-3977">DNA-3977</a> — dbt Repo and Standards</li>
-    <li data-uuid="00b07807-9634-4311-8652-af82b624a444"><a href="https://jira.atl.workiva.net/browse/DNA-4362">DNA-4362</a> — Deliverable 2: Workiva Master Account ID</li>
-    <li data-uuid="48fb4514-21de-45b9-a7b6-8ae5511feee3"><a href="https://jira.atl.workiva.net/browse/DNA-4363">DNA-4363</a> — Deliverable 3: Workiva Master Attributes</li>
-    <li data-uuid="5c9a243b-89e2-48d8-a328-e534d313595b"><a href="https://jira.atl.workiva.net/browse/DNA-4539">DNA-4539</a> — Default to given Solution Total Booking Category, Solution Group if null</li>
-    <li data-uuid="166981b0-7894-447e-a9fd-5472c1994c9c"><a href="https://jira.atl.workiva.net/browse/DNA-5544">DNA-5544</a> — C360 - Create D&amp;B hierarchy table</li>
-    <li data-uuid="21dee40e-15cf-47be-ac2b-6675c30f52aa"><a href="https://jira.atl.workiva.net/browse/DNA-5690">DNA-5690</a> — [ECM] Build solution renewal metric on the Customers ARR stack</li>
-    <li data-uuid="c189eb94-e11c-4086-86d5-a2ad1f9cc7db"><a href="https://jira.atl.workiva.net/browse/DNA-5705">DNA-5705</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva org membership</li>
-    <li data-uuid="f1bb472d-72ab-41aa-bd1f-548b8d91ea2c"><a href="https://jira.atl.workiva.net/browse/DNA-5706">DNA-5706</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva org module transform</li>
-    <li data-uuid="6058b950-7fd0-4502-991d-7370d2f07930"><a href="https://jira.atl.workiva.net/browse/DNA-5707">DNA-5707</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva retention</li>
-    <li data-uuid="eed3e95a-c869-4875-ac2f-9a267acd2bd7"><a href="https://jira.atl.workiva.net/browse/DNA-5708">DNA-5708</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva service provider</li>
-    <li data-uuid="0abb9cde-2552-4ece-aae3-47ab25c8f841"><a href="https://jira.atl.workiva.net/browse/DNA-5712">DNA-5712</a> — Add version_start_at &lt; version_end_at dbt test to clean SCD Type 2 dim models</li>
-    <li data-uuid="13598769-c37f-464e-8a02-1c94d36084be"><a href="https://jira.atl.workiva.net/browse/DNA-5717">DNA-5717</a> — [ECM] Remove never-started exclusion from non-pi bookings</li>
-    <li data-uuid="0080c415-89a6-4323-9fd9-01b124d387c0"><a href="https://jira.atl.workiva.net/browse/DNA-5722">DNA-5722</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva role assignment</li>
-    <li data-uuid="89bdc5a3-c9a7-42aa-b5f1-622dbc59c1bd"><a href="https://jira.atl.workiva.net/browse/DNA-5724">DNA-5724</a> — Type error on zendesk calls</li>
-    <li data-uuid="d50b8fac-9d5c-4ec3-a3a4-4b2c8d6747f6"><a href="https://jira.atl.workiva.net/browse/DNA-885">DNA-885</a> — AE - Q1 - CPX Metrics</li>
-    <li data-uuid="4c32f4cb-f83d-470d-a490-9737b4367d22"><a href="https://jira.atl.workiva.net/browse/DNA-934">DNA-934</a> — AE - Q1 - Corporate Metrics</li>
+    <li data-uuid="0b2bc972-bb24-4b62-9cc2-ce2e8cc809ae"><a href="https://jira.atl.workiva.net/browse/DNA-5544">DNA-5544</a> — C360 - Create D&amp;B hierarchy table</li>
+    <li data-uuid="a7ea7b5d-dd04-4a12-a65b-c48f991cfe8d"><a href="https://jira.atl.workiva.net/browse/DNA-5690">DNA-5690</a> — [ECM] Build solution renewal metric on the Customers ARR stack</li>
+    <li data-uuid="b6def05e-f95c-4313-9bb4-440717d7e18c"><a href="https://jira.atl.workiva.net/browse/DNA-5705">DNA-5705</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva org membership</li>
+    <li data-uuid="1b712a16-e409-43a1-be3d-21eee2aa7006"><a href="https://jira.atl.workiva.net/browse/DNA-5706">DNA-5706</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva org module transform</li>
+    <li data-uuid="a22b7102-faea-4e2e-be89-cab0bf97eb7e"><a href="https://jira.atl.workiva.net/browse/DNA-5707">DNA-5707</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva retention</li>
+    <li data-uuid="96b107b1-a632-4199-802d-950627843c5d"><a href="https://jira.atl.workiva.net/browse/DNA-5708">DNA-5708</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva service provider</li>
+    <li data-uuid="49ff6f47-33cc-4c0a-8ab9-e30b394f0db6"><a href="https://jira.atl.workiva.net/browse/DNA-5712">DNA-5712</a> — Add version_start_at &lt; version_end_at dbt test to clean SCD Type 2 dim models</li>
+    <li data-uuid="a7b4d91f-7ec0-402a-b59f-b993d7fd38b3"><a href="https://jira.atl.workiva.net/browse/DNA-5717">DNA-5717</a> — [ECM] Remove never-started exclusion from non-pi bookings</li>
+    <li data-uuid="4a5b5659-2ce5-420c-b2bb-779dc19c56e3"><a href="https://jira.atl.workiva.net/browse/DNA-5722">DNA-5722</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva role assignment</li>
+    <li data-uuid="3f05ffe1-f563-4b2a-a53f-7291765f4314"><a href="https://jira.atl.workiva.net/browse/DNA-5724">DNA-5724</a> — Type error on zendesk calls</li>
     </ul>
     <h3><strong>Contact</strong></h3>
     <ul>
-      <li data-uuid="cd98dfc1-6753-441b-9b22-be914aa11156">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+      <li data-uuid="c8dd0071-ac38-4508-980c-fcad4568022c">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
     </ul>
     <p><br /></p>
   </div>
