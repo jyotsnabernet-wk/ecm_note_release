@@ -3,9 +3,9 @@ name: Release Notes Automation
 on:
   schedule:
     # Monday 19:00 UTC = 3:00 PM ET (summer). Triggers release note job.
-    - cron: '0 19 * * 1'
+    - cron: '0 18 * * 1'
     # Wednesday 19:00 UTC = 3:00 PM ET (summer). Triggers executive summary job.
-    - cron: '0 19 * * 3'
+    - cron: '0 18 * * 3'
   workflow_dispatch:
     inputs:
       job:
