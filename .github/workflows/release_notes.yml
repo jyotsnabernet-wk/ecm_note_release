@@ -1,0 +1,128 @@
+name: Release Notes Automation
+
+on:
+  schedule:
+    # Monday 19:00 UTC = 3:00 PM ET (summer). Triggers release note job.
+    - cron: '0 19 * * 1'
+    # Wednesday 19:00 UTC = 3:00 PM ET (summer). Triggers executive summary job.
+    - cron: '0 19 * * 3'
+  workflow_dispatch:
+    inputs:
+      job:
+        description: 'Which job to run'
+        required: true
+        default: 'release-note'
+        type: choice
+        options:
+          - release-note
+          - executive-summary
+          - both
+      deploy_date:
+        description: 'Override deploy date (YYYY-MM-DD, optional)'
+        required: false
+        default: ''
+      skip_confluence:
+        description: 'Skip Confluence publish (release-note only)'
+        type: boolean
+        default: false
+
+# Allow the workflow to commit output files back to the repo
+permissions:
+  contents: write
+
+jobs:
+
+  # ── Monday: full technical release note ───────────────────────────────────
+  release-note:
+    name: Release Note → Confluence + repo
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 19 * * 1') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.job == 'release-note' || inputs.job == 'both'))
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - run: pip install requests python-dotenv cursor-sdk
+
+      - name: Generate release note HTML
+        run: |
+          ARGS=""
+          if [ -n "${{ inputs.deploy_date }}" ]; then
+            ARGS="--deploy-date ${{ inputs.deploy_date }}"
+          fi
+          python jira_pipeline.py $ARGS
+        env:
+          JIRA_BASE_URL:       ${{ secrets.JIRA_BASE_URL }}
+          JIRA_AUTH_MODE:      bearer
+          JIRA_API_TOKEN:      ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_EMAIL:          ${{ secrets.JIRA_EMAIL }}
+          DNA_JIRA_PROJECT:    DNA
+          DNA_JIRA_TEAM:       Analytics Engineering
+          DNA_JIRA_TEAM_FIELD: cf[10288]
+          CURSOR_API_KEY:      ${{ secrets.CURSOR_API_KEY }}
+
+      - name: Publish to Confluence
+        if: ${{ inputs.skip_confluence != 'true' }}
+        run: python publish_to_confluence.py
+        env:
+          CONFLUENCE_BASE_URL:       ${{ secrets.CONFLUENCE_BASE_URL }}
+          CONFLUENCE_SPACE_KEY:      ${{ secrets.CONFLUENCE_SPACE_KEY }}
+          CONFLUENCE_PARENT_PAGE_ID: ${{ secrets.CONFLUENCE_PARENT_PAGE_ID }}
+          CONFLUENCE_API_TOKEN:      ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Commit HTML to repo
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add out/wiki_release_*.html
+          git diff --cached --quiet || git commit -m "chore: release note $(date -u +%Y-%m-%d)"
+          git push
+
+  # ── Wednesday: executive summary ──────────────────────────────────────────
+  executive-summary:
+    name: Executive Summary → repo
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 19 * * 3') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.job == 'executive-summary' || inputs.job == 'both'))
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - run: pip install requests python-dotenv cursor-sdk
+
+      - name: Generate executive summary
+        run: |
+          ARGS="--summary"
+          if [ -n "${{ inputs.deploy_date }}" ]; then
+            ARGS="$ARGS --deploy-date ${{ inputs.deploy_date }}"
+          fi
+          python jira_pipeline.py $ARGS
+        env:
+          JIRA_BASE_URL:       ${{ secrets.JIRA_BASE_URL }}
+          JIRA_AUTH_MODE:      bearer
+          JIRA_API_TOKEN:      ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_EMAIL:          ${{ secrets.JIRA_EMAIL }}
+          DNA_JIRA_PROJECT:    DNA
+          DNA_JIRA_TEAM:       Analytics Engineering
+          DNA_JIRA_TEAM_FIELD: cf[10288]
+          CURSOR_API_KEY:      ${{ secrets.CURSOR_API_KEY }}
+
+      - name: Commit summary to repo
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add out/executive_summary_*.md
+          git diff --cached --quiet || git commit -m "chore: executive summary $(date -u +%Y-%m-%d)"
+          git push
