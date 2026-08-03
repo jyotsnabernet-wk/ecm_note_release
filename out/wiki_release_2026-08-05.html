@@ -1,0 +1,144 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-08-03" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>FedRAMP sanitization Iceberg tables, FedRAMP cost optimization, ECM customer OBTs, ECM estimated solution totals</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="26290268-77bc-4b00-90a7-e5fe2694abe3">
+        <strong>FedRAMP Sanitization — Iceberg table exposure for Workiva modules</strong>
+        <ul>
+          <li data-uuid="0474d19a-d987-45e1-8097-022e9e0c38cf">
+            As part of the <strong>FedRAMP Sanitization</strong> project, all Workiva/Wdesk data must be sanitized before reaching Snowflake; this work builds and exposes sanitized <strong>Iceberg tables</strong> for four high-volume event modules.
+          </li>
+          <li data-uuid="76edf521-81ef-439b-b6be-a588c8e3d6e7">
+            Sanitized Iceberg tables have been created and connected to Snowflake for <u><strong>workiva_org</strong></u>, <u><strong>workiva_org_membership</strong></u>, <u><strong>workiva_org_module</strong></u>, and <u><strong>workiva_filing</strong></u>, each backed by an Athena-based pipeline.
+          </li>
+          <li data-uuid="f8c7ad05-1bbf-4bf1-b12f-d6a7530df454">
+            Every table is covered by <strong>unit tests</strong>, satisfying the Phase 1 completion criteria for sanitized data availability. (<a href="https://jira.atl.workiva.net/browse/DNA-5885">DNA-5885</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5702">DNA-5702</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5703">DNA-5703</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5721">DNA-5721</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="cb4c4240-37b8-48a0-9c20-27fb416da34b">
+        <strong>FedRAMP — Athena cost optimization for Workiva API models</strong>
+        <ul>
+          <li data-uuid="831df88f-93f5-4d64-b8b2-2217862e63d7">
+            Workiva API models have been right-sized by reducing CPU and DPU allocations and removing non-beneficial partitioning to lower monthly Athena spend.
+          </li>
+          <li data-uuid="67d9dde5-e530-4aeb-8c2c-d2ca43a92a25">
+            This optimization reduces infrastructure costs while maintaining data availability and query performance for downstream consumers. (<a href="https://jira.atl.workiva.net/browse/DNA-5742">DNA-5742</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="ab8085cb-9b69-4204-968d-645dcefbc577">
+        <strong>FedRAMP — Row access policy for Workiva document federal data</strong>
+        <ul>
+          <li data-uuid="5bf820ee-d1b5-4e92-92e6-c15980d1e91c">
+            A <strong>row access policy</strong> is being added to the <u><strong>workiva_document</strong></u> table in Snowflake to mask federal organization rows from standard consumers by default.
+          </li>
+          <li data-uuid="d51c7ad3-a76f-4323-93fa-cd1d83a6a994">
+            The <strong>SUV (Snowflake Universal View)</strong> role retains full row access to support Redshift conversion dashboards without exposing federal org data to unauthorized users. (<a href="https://jira.atl.workiva.net/browse/DNA-5887">DNA-5887</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="0977f7f8-2513-495b-a587-0d57ffccf9ae">
+        <strong>ECM — Monthly &amp; quarterly customer OBT layer</strong>
+        <ul>
+          <li data-uuid="59900ad3-a193-4772-b3dd-cc126b5f4890">
+            New <strong>OBT (One Big Table)</strong> models have been built for quarterly and monthly customer facts, joining to <u><strong>dim_accounts</strong></u> and consolidating geo and parent account attributes into the OBT layer.
+          </li>
+          <li data-uuid="f34b66e2-0eca-419c-9893-6136a693ac2f">
+            <u><strong>obt_customers_quarterly</strong></u> and <u><strong>obt_customers_monthly</strong></u> replace direct fact-table references in logic views, ensuring all downstream reporting flows through a single, consistent layer.
+          </li>
+          <li data-uuid="b8faee41-0c5f-41bf-bb19-7d6898a13a9a">
+            Logic views are re-pointed to the new OBTs, removing duplicated dimension attributes from <u><strong>fct_customers_quarterly</strong></u> and <u><strong>fct_customers_monthly</strong></u>. (<a href="https://jira.atl.workiva.net/browse/DNA-5801">DNA-5801</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="5d60efec-b795-4c5b-9e57-63607ed1bd87">
+        <strong>ECM — Estimated solution total field in OBTs</strong>
+        <ul>
+          <li data-uuid="d0bdec07-b6bd-46cb-aced-ddcbc153b5ac">
+            A new <strong>estimated solution total</strong> field is being added to the Salesforce Solution Totals object and has been requested to flow through the gold layer into ECM OBTs.
+          </li>
+          <li data-uuid="b70e42d6-70fa-4488-bcde-a0b84f46c627">
+            This field is surfaced from source into the ECM OBT layer to provide SalesOps and Finance with updated pipeline value figures in existing reports. (<a href="https://jira.atl.workiva.net/browse/DNA-5676">DNA-5676</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="04092854-2bfa-4fd1-9901-dfe7d9d51480">
+        <strong>ECM — Company transfer logic in customer models</strong>
+        <ul>
+          <li data-uuid="c0159251-9435-41dd-b61d-e426372c38bb">
+            Key edge cases identified during stakeholder review are being addressed to improve accuracy of the customer dataset, specifically around <strong>intracompany transfer</strong> scenarios.
+          </li>
+          <li data-uuid="c3afeb5a-ece6-45d7-b956-bfc16d7ca1da">
+            Logic is being implemented based on agreed acceptance criteria and test cases covering both positive and negative transfer scenarios. (<a href="https://jira.atl.workiva.net/browse/DNA-5674">DNA-5674</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="285e95bb-6caf-4e98-b93e-9939828dbc1b">
+        <strong>ECM — Non-PI bookings exclusion fix in OBT Bookings</strong>
+        <ul>
+          <li data-uuid="6e2e24ea-307e-4518-b16a-7903bbf44a21">
+            The current <u><strong>OBT_Bookings</strong></u> model incorrectly excludes valid <strong>Non-PI Bookings</strong> associated with "Never Started" contracts — a filter that should apply only to PI Bookings.
+          </li>
+          <li data-uuid="2bb73f4b-e55c-4765-ace5-4e20759da65d">
+            Logic is being updated to ensure Non-PI deals are captured correctly, with an impact analysis completed before changes are deployed. (<a href="https://jira.atl.workiva.net/browse/DNA-5717">DNA-5717</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="9415a5fb-5243-4157-b81e-f099fd58615c">
+        <strong>Customer360 — D&amp;B hierarchy table</strong>
+        <ul>
+          <li data-uuid="6ffe7055-cc6d-4422-bcf0-fd25c060cc90">
+            A new <strong>Dun &amp; Bradstreet (D&amp;B) hierarchy</strong> table is being built within the Customer360 domain to enrich account-level data with firmographic hierarchy information, enabling richer account segmentation for downstream teams. (<a href="https://jira.atl.workiva.net/browse/DNA-5544">DNA-5544</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>FedRAMP compliance &amp; cost efficiency</strong></p>
+    <ul>
+      <li data-uuid="f1a058d0-7fe9-4a46-b293-75740a27f1db">Federal risk and authorization requirements mandate that all Workiva/Wdesk data be sanitized and access-controlled before reaching Snowflake; sanitized Iceberg tables and a row access policy on <u><strong>workiva_document</strong></u> fulfill Phase 1 obligations, while model right-sizing keeps Athena infrastructure costs in check.</li>
+    </ul>
+    <p><strong>ECM reporting accuracy &amp; completeness</strong></p>
+    <ul>
+      <li data-uuid="5ad0103e-17cb-4d9d-9cd9-e00b5630482e">Finance and SalesOps rely on ECM models for pipeline and customer reporting; the OBT consolidation, estimated solution total field addition, intracompany transfer corrections, and Non-PI bookings fix collectively improve data completeness and reduce the risk of misleading figures in executive dashboards.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-08-05" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-08-05).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="285e67cc-7db1-4da5-8629-85a675688843">Snowflake consumers of <u><strong>workiva_org</strong></u>, <u><strong>workiva_org_membership</strong></u>, <u><strong>workiva_org_module</strong></u>, and <u><strong>workiva_filing</strong></u> will gain access to sanitized, fully tested Iceberg-backed data.</li>
+      <li data-uuid="1b36c1ea-5357-42fb-b879-83e09eadc2e3">All logic views and reports built on <u><strong>fct_customers_quarterly</strong></u> and <u><strong>fct_customers_monthly</strong></u> should be re-validated against the new <u><strong>obt_customers_quarterly</strong></u> and <u><strong>obt_customers_monthly</strong></u> models.</li>
+      <li data-uuid="48c371ef-583e-43c3-bf11-e7c83a809340">Downstream dashboards referencing <u><strong>OBT_Bookings</strong></u> may see row count or aggregate value changes once the Non-PI bookings exclusion fix is deployed.</li>
+      <li data-uuid="c6f76345-228c-498f-a7b4-cdc9c96d35a8">Reports consuming ECM OBTs will gain a new <strong>estimated solution total</strong> column after this release deploys.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — Validate that reports and dashboards built on <u><strong>obt_customers_quarterly</strong></u> and <u><strong>obt_customers_monthly</strong></u> reflect correct geo and parent account attributes after the OBT layer migration.</p>
+    <p>Verify — Confirm that standard Snowflake consumers of <u><strong>workiva_document</strong></u> see federal org rows masked as expected, and that the SUV role retains full row access for Redshift conversion use cases.</p>
+    <p>Verify — Review downstream bookings reports against <u><strong>OBT_Bookings</strong></u> after the Non-PI exclusion fix to confirm that previously excluded Non-PI deals now appear with correct values.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="ce010204-d71b-4828-93cc-527de6272f33"><a href="https://jira.atl.workiva.net/browse/DNA-5544">DNA-5544</a> — C360 - Create D&amp;B hierarchy table</li>
+    <li data-uuid="caadbb64-ff7c-454b-b09b-a7af71579196"><a href="https://jira.atl.workiva.net/browse/DNA-5674">DNA-5674</a> — [ECM] Implement company transfer logic in customer models</li>
+    <li data-uuid="5362398d-77e2-46e2-aefb-ed42a1f52666"><a href="https://jira.atl.workiva.net/browse/DNA-5676">DNA-5676</a> — [ECM] Add &quot;estimated&quot; solution total field to obts</li>
+    <li data-uuid="26ba2206-3f3f-4a91-a122-bd9cd43e62d6"><a href="https://jira.atl.workiva.net/browse/DNA-5702">DNA-5702</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva org membership</li>
+    <li data-uuid="631bff1e-2d14-4cf8-8666-309850286e4e"><a href="https://jira.atl.workiva.net/browse/DNA-5703">DNA-5703</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva org module</li>
+    <li data-uuid="35ba867e-009a-4303-ac57-18642557f704"><a href="https://jira.atl.workiva.net/browse/DNA-5717">DNA-5717</a> — [ECM] Remove never-started exclusion from non-pi bookings</li>
+    <li data-uuid="efc2351d-a32c-4390-9b26-ca2a9940ba14"><a href="https://jira.atl.workiva.net/browse/DNA-5721">DNA-5721</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva filing</li>
+    <li data-uuid="42c47b99-423b-4783-88fc-99e2baea874f"><a href="https://jira.atl.workiva.net/browse/DNA-5742">DNA-5742</a> — FedRAMP Downsize models to Save Costs</li>
+    <li data-uuid="fbbcc48b-51bb-4326-a5f6-6a4d0c748701"><a href="https://jira.atl.workiva.net/browse/DNA-5801">DNA-5801</a> — [ECM] OBTs for monthly and quarterly Customer models</li>
+    <li data-uuid="d27e49ca-66a2-4661-bfa9-4192c5ac2671"><a href="https://jira.atl.workiva.net/browse/DNA-5885">DNA-5885</a> — FedRAMP | Workiva: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva org</li>
+    <li data-uuid="a22421d3-f648-4d6f-aec0-5fe3758d03a7"><a href="https://jira.atl.workiva.net/browse/DNA-5887">DNA-5887</a> — FedRAMP | Workiva: Add Row Access Policy in Snowflake for workiva document to Mask Federal Orgs with SUV Exemption for Redshift Conversion</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="a1ece722-075e-4588-a239-8064e80364fc">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
