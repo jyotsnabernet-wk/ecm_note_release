@@ -202,6 +202,15 @@ def main() -> None:
                            help="Skip LLM — use heuristic section generation")
     p.add_argument("--verbose-llm", action="store_true",
                    help="Print LLM debug info to stderr")
+
+    bi_group = p.add_mutually_exclusive_group()
+    bi_group.add_argument("--bi", dest="bi_mode", action="store_const", const="download",
+                          default="download",
+                          help="(default) Download BI changes from Snowflake then append to summary")
+    bi_group.add_argument("--bi-csv", dest="bi_csv", type=Path, default=None, metavar="FILE",
+                          help="Use existing CSV instead of downloading from Snowflake")
+    bi_group.add_argument("--no-bi", dest="bi_mode", action="store_const", const="skip",
+                          help="Skip BI section entirely")
     args = p.parse_args()
 
     is_summary = args.mode == "summary"
@@ -305,6 +314,58 @@ def main() -> None:
 
         md_path = out_dir / f"executive_summary_{deploy_date}.md"
         md_path.write_text("\n".join(md_lines) + "\n", encoding="utf-8")
+
+        # ── Optional: append BI dashboard changes section ──
+        bi_csv = args.bi_csv
+        bi_mode = args.bi_mode  # "download" | "skip"
+
+        if is_summary and bi_mode != "skip":
+            bi_mod = _load_module("bi_dashboard_changes", _ROOT / "bi_dashboard_changes.py")
+            print(f"\n── BI section  ─────────────────────────────────────────", file=sys.stderr)
+
+            # Step A: resolve CSV path
+            if bi_csv and Path(bi_csv).is_file():
+                # caller supplied an explicit CSV
+                print(f"   using provided CSV: {bi_csv}", file=sys.stderr)
+            else:
+                # Try to download from Snowflake
+                try:
+                    start_d = date.fromisoformat(start_date) if start_date else date.today() - timedelta(days=6)
+                    end_d   = date.fromisoformat(end_date)   if end_date   else date.today()
+                    bi_csv  = bi_mod.download_from_snowflake(start_d, end_d, _ROOT / "BI")
+                except Exception as exc:
+                    print(f"   [warn] Snowflake download failed: {exc}", file=sys.stderr)
+                    # Fall back to latest CSV in BI/ for this deploy date
+                    bi_dir = _ROOT / "BI"
+                    if bi_dir.is_dir():
+                        candidates = sorted(
+                            bi_dir.glob(f"Results_{deploy_date}*.csv"),
+                            key=lambda p: p.stat().st_mtime,
+                            reverse=True,
+                        )
+                        if candidates:
+                            bi_csv = candidates[0]
+                            print(f"   falling back to existing CSV: {bi_csv}", file=sys.stderr)
+
+            # Step B: generate and append section
+            if bi_csv and Path(bi_csv).is_file():
+                rows_bi = bi_mod.load_csv(Path(bi_csv))
+                bi_section = bi_mod.build_bi_section(
+                    rows_bi,
+                    use_llm=use_llm,
+                    verbose=args.verbose_llm,
+                )
+                if bi_section.strip():
+                    content = md_path.read_text(encoding="utf-8").rstrip()
+                    if "\n---\n" in content:
+                        content = content.replace("\n---\n", f"\n{bi_section}\n---\n", 1)
+                    else:
+                        content = content + "\n" + bi_section
+                    md_path.write_text(content, encoding="utf-8")
+                    print(f"   ✓ BI section appended ({len(rows_bi)} changes)", file=sys.stderr)
+            else:
+                print("   no BI CSV found — skipping BI section", file=sys.stderr)
+
         print(f"\n{'━'*60}", file=sys.stderr)
         print(f"✓  {len(rows)} closed issues  →  {md_path}", file=sys.stderr)
         print(f"   Copy/paste into Slack, email, or Confluence.", file=sys.stderr)

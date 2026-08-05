@@ -1,0 +1,71 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+  <p>Sent on<strong> <time datetime="2026-08-05" />&nbsp;</strong></p>
+  <h2><strong>DnA Release Notes — How It Works</strong></h2>
+
+  <h3><strong>What Gets Published</strong></h3>
+  <table>
+    <tbody>
+      <tr>
+        <th><strong>Output</strong></th>
+        <th><strong>Audience</strong></th>
+        <th><strong>When</strong></th>
+      </tr>
+      <tr>
+        <td><strong>Release Note</strong> (<code>wiki_release_&lt;DATE&gt;.html</code>)</td>
+        <td>Engineers &amp; data consumers</td>
+        <td>Every Monday</td>
+      </tr>
+      <tr>
+        <td><strong>Executive Summary</strong> (<code>executive_summary_&lt;DATE&gt;.md</code>)</td>
+        <td>Leadership &amp; stakeholders</td>
+        <td>Every Wednesday</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Both outputs are generated automatically from Jira and published to the repo. The Release Note is also pushed to Confluence.</p>
+
+  <h3><strong>Data Source</strong></h3>
+  <p>All content is sourced from <strong>Jira</strong> (<code>jira.atl.workiva.net</code>), filtered to:</p>
+  <ul>
+    <li data-uuid="a1b2c3d4-0001-0001-0001-000000000001"><strong>Project:</strong> DNA</li>
+    <li data-uuid="a1b2c3d4-0001-0001-0001-000000000002"><strong>Team:</strong> Analytics Engineering</li>
+    <li data-uuid="a1b2c3d4-0001-0001-0001-000000000003"><strong>Issue type:</strong> Story</li>
+    <li data-uuid="a1b2c3d4-0001-0001-0001-000000000004"><strong>Created:</strong> on or after <code>2026-01-01</code></li>
+    <li data-uuid="a1b2c3d4-0001-0001-0001-000000000005"><strong>Updated:</strong> within the current sprint window (last Thursday → this Wednesday)</li>
+  </ul>
+
+  <h3><strong>Sprint Window</strong></h3>
+  <p>Each release covers a <strong>Thursday → Wednesday</strong> cycle:</p>
+  <ac:structured-macro ac:name="code">
+    <ac:plain-text-body><![CDATA[Sprint start  Thu 00:00 UTC  (6 days before deploy)
+Deploy date   Wed             (release day)]]></ac:plain-text-body>
+  </ac:structured-macro>
+  <p>The window is calculated automatically — no manual date entry needed.</p>
+
+  <h3><strong>Release Note (<code>--note</code>)</strong></h3>
+  <ul>
+    <li data-uuid="a1b2c3d4-0002-0001-0001-000000000001">Pulls <strong>In Progress + Closed</strong> tickets</li>
+    <li data-uuid="a1b2c3d4-0002-0001-0001-000000000002">LLM (Claude) generates narrative sections:
+      <ul>
+        <li data-uuid="a1b2c3d4-0002-0001-0001-000000000003">What is happening</li>
+        <li data-uuid="a1b2c3d4-0002-0001-0001-000000000004">Why it is happening</li>
+        <li data-uuid="a1b2c3d4-0002-0001-0001-000000000005">Downstream impact</li>
+        <li data-uuid="a1b2c3d4-0002-0001-0001-000000000006">Recommended actions</li>
+      </ul>
+    </li>
+    <li data-uuid="a1b2c3d4-0002-0001-0001-000000000007"><strong>Output:</strong> Confluence-ready HTML, posted automatically each Monday</li>
+  </ul>
+
+  <h3><strong>Executive Summary (<code>--summary</code>)</strong></h3>
+  <ul>
+    <li data-uuid="a1b2c3d4-0003-0001-0001-000000000001">Pulls <strong>Closed tickets only</strong> (shipped work)</li>
+    <li data-uuid="a1b2c3d4-0003-0001-0001-000000000002">LLM generates one plain-English bullet per business domain</li>
+    <li data-uuid="a1b2c3d4-0003-0001-0001-000000000003"><strong>Format:</strong> <code>**Domain** — one-sentence business outcome</code></li>
+    <li data-uuid="a1b2c3d4-0003-0001-0001-000000000004"><strong>Output:</strong> Markdown file, generated each Wednesday</li>
+  </ul>
+
+  <h3><strong>Automation</strong></h3>
+  <p>Both pipelines run on a schedule via <strong>GitHub Actions</strong> — no manual steps required once configured. Outputs are committed back to the repo, and the Release Note is published to Confluence automatically.</p>
+
+  <p><br /></p>
+</div>
