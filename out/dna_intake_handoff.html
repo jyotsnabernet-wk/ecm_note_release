@@ -1,0 +1,199 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+  <p>Sent on<strong> <time datetime="2026-08-05" />&nbsp;</strong></p>
+  <h2><strong>DnA Intelligent Intake &amp; Automation — Handoff Guide</strong></h2>
+  <h3>Summer 2026 · Workiva Data &amp; Analytics · Author: Eva Li</h3>
+
+  <h3><strong>System Overview</strong></h3>
+  <p>Stakeholders submit data requests via a Jira portal form, a Slack message to the DnA Assistant bot, or a <code>/dna</code> slash command (in progress). AI by Workato classifies the request, generates a draft ticket, and posts it to a Slack triage channel. A human approves or edits, and the ticket is created in the DNA Jira project with all required fields pre-filled.</p>
+
+  <h3><strong>Where Things Live in Workato</strong></h3>
+  <p><strong>Workspace:</strong> Workiva Workato One → Development → Agentic project</p>
+  <ul>
+    <li data-uuid="b1000001-0001-0001-0001-000000000001"><strong>Folder 1 — Knowledge:</strong> RAG / knowledge base assets (backlogged, not built out)</li>
+    <li data-uuid="b1000001-0001-0001-0001-000000000002"><strong>Folder 2 — Skills:</strong> Genie Approval beta, Genie Conversations, Jira sub-folder
+      <ul>
+        <li data-uuid="b1000001-0001-0001-0001-000000000003">Jira sub-folder: <u><strong>Create issue in Jira</strong></u> (core ticket-creation skill, Active), <u><strong>DNA Genie | Service Type Mapping</strong></u> (lookup table), <u><strong>Update status / priority</strong></u> (built by Deepak, not yet active)</li>
+      </ul>
+    </li>
+    <li data-uuid="b1000001-0001-0001-0001-000000000004"><strong>Folder 3 — UI:</strong> Admin, Core, Home, Slack Events, Slack User Feedback, Util — core pipeline lives in <strong>Slack Events</strong></li>
+  </ul>
+
+  <h3><strong>Key Recipes &amp; Data Tables</strong></h3>
+  <p><strong>Slack Events folder</strong></p>
+  <table>
+    <tbody>
+      <tr>
+        <th><strong>Recipe / Table</strong></th>
+        <th><strong>Status</strong></th>
+        <th><strong>What it does</strong></th>
+      </tr>
+      <tr>
+        <td>[Agentic] Handle Slack Notifications</td>
+        <td>Active</td>
+        <td>Entry point for all Slack messages. Runs intent classification (Category 1/2/3), checks Human Takeover state, routes to Handle User Message.</td>
+      </tr>
+      <tr>
+        <td>[Agentic] Handle User Message</td>
+        <td>Active</td>
+        <td>Runs Genie conversation logic, parses intent, resumes existing conversations, calls AI enrichment.</td>
+      </tr>
+      <tr>
+        <td>DnA Human Takeover</td>
+        <td>Data table</td>
+        <td>One row per thread a team member has manually stepped into. Bot goes silent on flagged threads.</td>
+      </tr>
+      <tr>
+        <td>DnA Team Member</td>
+        <td>Data table</td>
+        <td>Slack User IDs of all DnA team members. Controls Human Takeover detection. <strong>Add new hires here.</strong></td>
+      </tr>
+      <tr>
+        <td>[Agentic] Handle Workbot help trigger as regular user message</td>
+        <td>Never active</td>
+        <td>Built by Deepak. Not in use — confirm with team before activating or deleting.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Slack Events → Jira ticket sub-folder</strong></p>
+  <table>
+    <tbody>
+      <tr>
+        <th><strong>Recipe / Table / Connection</strong></th>
+        <th><strong>Status</strong></th>
+        <th><strong>What it does</strong></th>
+      </tr>
+      <tr>
+        <td>[FUNC] | Create Jira Ticket Command</td>
+        <td>Active</td>
+        <td>Handles the Approve button — creates the DNA ticket using data staged in DNA Jira Ticket table.</td>
+      </tr>
+      <tr>
+        <td>[FUNC] | Edit Jira Ticket Command</td>
+        <td>Active (high failure rate)</td>
+        <td>Handles the Edit button — opens a Slack modal for corrections before submission. Investigate before relying on this path — see Known Issues below.</td>
+      </tr>
+      <tr>
+        <td>[Agentic] Send New Jira ticket to Channel</td>
+        <td>Active</td>
+        <td>Posts the AI-enriched draft to the triage channel with Approve / Edit buttons.</td>
+      </tr>
+      <tr>
+        <td>DnA Jira service account</td>
+        <td>Connection</td>
+        <td>Jira API connection used by all recipes. Currently tied to an individual account — needs migration to a service account (see Open Items).</td>
+      </tr>
+      <tr>
+        <td>DNA Jira Ticket</td>
+        <td>Data table</td>
+        <td>Staging table. All AI-parsed fields are written here first, keyed by <code>ticket_key</code>. Approve / Edit buttons only pass the key — recipes look up fields from this table.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3><strong>Core Workflows</strong></h3>
+  <ul>
+    <li data-uuid="b1000002-0001-0001-0001-000000000001"><strong>Jira Portal Intake:</strong> Stakeholder submits a DATA-project ticket via the redesigned portal form (5 structured fields: service type, impact, timeline, data domains, description template). New ticket triggers the AI enrichment pipeline.</li>
+    <li data-uuid="b1000002-0001-0001-0001-000000000002"><strong>Slack Bot Intake:</strong> DnA Assistant Genie infers fields from conversation context and only asks for what it cannot infer. Optional fields output an empty string — never placeholder text like "N/A". On confirmation, a DATA ticket is created and flows into the same pipeline.</li>
+    <li data-uuid="b1000002-0001-0001-0001-000000000003"><strong>AI Parsing &amp; Auto-Comment:</strong> New Jira issue → analyze text → parse fields → write to DNA Jira Ticket table → post to Slack → auto-comment on original ticket with expected review timeline (Blocker: immediately; High: next business day; Medium: 2–3 days; Low: 5 days).</li>
+    <li data-uuid="b1000002-0001-0001-0001-000000000004"><strong>Triage → Approve / Edit → Migration:</strong> Approve creates the DNA ticket directly. Edit opens a Slack modal for corrections first. Either way: DNA ticket is created, a cross-reference comment links the two tickets, and the original DATA ticket gets a comment and closes.</li>
+    <li data-uuid="b1000002-0001-0001-0001-000000000005"><strong>Human Takeover:</strong> If a DnA team member replies in a thread that isn't their own, the thread is flagged and the bot goes silent. Category 3 messages (explicit bot requests) bypass this so the bot can still act on a flagged thread if asked.</li>
+  </ul>
+
+  <h3><strong>Known Issues — Check Before Debugging</strong></h3>
+  <table>
+    <tbody>
+      <tr>
+        <th><strong>Issue</strong></th>
+        <th><strong>What to do</strong></th>
+      </tr>
+      <tr>
+        <td>Jira enum field mismatch (ticket creation fails silently)</td>
+        <td>AI must output the <em>complete</em> Jira option string, including any parenthetical. Use <u><strong>DNA Genie | Service Type Mapping</strong></u> lookup table for fields where short AI output needs to map to a longer Jira display string.</td>
+      </tr>
+      <tr>
+        <td>Components field type mismatch</td>
+        <td>From Slack modals (<code>multi_static_select</code>): already an array — drag the datapill in directly. From AI text output: may be a comma-separated string — use <code>.split(",")</code>. Never run <code>.gsub</code> on a datapill that is already an array.</td>
+      </tr>
+      <tr>
+        <td>DNA project missing fields (screen error)</td>
+        <td><code>reporter</code>, <code>due date</code>, and some custom fields throw "Field cannot be set" errors. This is a Jira screen configuration issue — ask Jira Admin to add the field to the DNA project Create/Edit screens.</td>
+      </tr>
+      <tr>
+        <td>Issue link fails ("No link type found" or "Issue Does Not Exist")</td>
+        <td>Use a comment on both tickets cross-referencing each other's key as a fallback. If revisiting formal links, confirm the exact link type name in Project Settings → Issue Linking first.</td>
+      </tr>
+      <tr>
+        <td>Slack message shows "New message" or blank</td>
+        <td>Block exceeded Slack's 3000-character limit. Split long fields into a separate block or truncate with a link to the ticket.</td>
+      </tr>
+      <tr>
+        <td>Edit Jira Ticket Command high failure rate (4 / 38 successful)</td>
+        <td>Investigate recent failed job logs before relying on the Edit path. Likely cause: Components field type issue or missing DNA screen field. The Approve path is stable.</td>
+      </tr>
+      <tr>
+        <td>Optional fields showing "Not mentioned" or "N/A" in tickets</td>
+        <td>Verify the Genie skill prompt still instructs the AI to output an empty string for optional fields — check if this instruction was edited out during a recent prompt change.</td>
+      </tr>
+      <tr>
+        <td><code>/dna</code> slash command registered but not firing</td>
+        <td>Confirm trigger is <strong>New slash_command event to Slack Workbot</strong> (not HTTP polling). Confirm the Slack App the slash command is registered under matches the App Workato's Workbot connection is authenticated as — check the Connections page.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3><strong>Quick Troubleshooting Reference</strong></h3>
+  <table>
+    <tbody>
+      <tr>
+        <th><strong>Symptom</strong></th>
+        <th><strong>Likely cause</strong></th>
+        <th><strong>Where to look</strong></th>
+      </tr>
+      <tr>
+        <td>Bot doesn't respond to a message</td>
+        <td>Classified as Category 1, or thread is in Human Takeover</td>
+        <td>DnA Human Takeover table; classification step in Handle Slack Notifications</td>
+      </tr>
+      <tr>
+        <td>Bot keeps responding after a teammate replied</td>
+        <td>That person's Slack User ID is not in DnA Team Member</td>
+        <td>Add their ID to the DnA Team Member table</td>
+      </tr>
+      <tr>
+        <td>Ticket creation fails with a field error</td>
+        <td>Enum string mismatch, missing DNA screen field, or wrong data type</td>
+        <td>Known Issues above; check exact string, screen config, array type</td>
+      </tr>
+      <tr>
+        <td>Slack message shows placeholder or garbled text</td>
+        <td>Block over 3000-char limit, or field is genuinely null</td>
+        <td>Check DNA Jira Ticket table record for that <code>ticket_key</code></td>
+      </tr>
+      <tr>
+        <td>Approve / Edit button does nothing</td>
+        <td>Staging table lookup failed or <code>ticket_key</code> not passed correctly</td>
+        <td>Check button recipe's search step against DNA Jira Ticket table</td>
+      </tr>
+      <tr>
+        <td>Bot says "previous request still processing"</td>
+        <td>Conversation session state didn't reset</td>
+        <td>Agentic Conversation External IDs table — find the thread record and reset its status</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3><strong>Open Items — Needs Team Decision</strong></h3>
+  <ul>
+    <li data-uuid="b1000003-0001-0001-0001-000000000001"><strong>Jira Account Migration:</strong> The Workato ↔ Jira connection (<u><strong>DnA Jira service account</strong></u>) is tied to an individual engineer's account. Move to a proper service account before handing off to Data Operations.</li>
+    <li data-uuid="b1000003-0001-0001-0001-000000000002"><strong>Backfill Missing Fields on Existing DNA Tickets:</strong> Tickets created before this automation are missing Component, Work Type, and Stakeholder. Recommended: a one-time Workato recipe that reads existing summaries/descriptions, runs them through the AI enrichment logic, and proposes updates for human review. Scope to 2026 tickets.</li>
+    <li data-uuid="b1000003-0001-0001-0001-000000000003"><strong>/dna Slash Command:</strong> Slack App approved, Workbot trigger configured. Not yet confirmed firing end-to-end. Pick up from: verifying the Slack App / Workbot connection match on the Connections page.</li>
+  </ul>
+
+  <h3><strong>Contact</strong></h3>
+  <ul>
+    <li data-uuid="b1000004-0001-0001-0001-000000000001">Project sponsor: <strong>Jyotsna Bernet</strong></li>
+    <li data-uuid="b1000004-0001-0001-0001-000000000002">For recipe issues: check Workato job logs first — most failures leave a clear error message in the failed job detail view</li>
+  </ul>
+
+  <p><br /></p>
+</div>
