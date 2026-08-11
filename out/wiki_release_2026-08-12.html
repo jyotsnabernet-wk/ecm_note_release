@@ -1,0 +1,101 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-08-11" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>FedRAMP user analytics backfill, GES sanitization, ECM bookings sync, DMF resolution, Zendesk engagement ingestion</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="ab34e758-ae94-4abf-a7b9-507b78284827">
+        <strong>FedRAMP — historical user analytics backfill</strong>
+        <ul>
+          <li data-uuid="3c507fa0-629d-420c-b407-103d1e07c1c1">
+            User analytics data was not captured historically, leaving gaps in trend analysis and internal consumer reporting coverage.
+          </li>
+          <li data-uuid="197b9555-85fc-470a-b693-a1886a6333fd">
+            Backfill logic is being defined to load historical user analytics into Snowflake, ensuring complete longitudinal visibility. (<a href="https://jira.atl.workiva.net/browse/DNA-5902">DNA-5902</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="ee92b678-94ac-4639-b880-0f0903f9de0c">
+        <strong>FedRAMP — GES sanitized Iceberg table &amp; unit tests</strong>
+        <ul>
+          <li data-uuid="03979c30-329a-4cef-bf95-3a327354056b">
+            As part of the FedRAMP Sanitization project, the <u><strong>workiva.common.v0.workiva-event-log</strong></u> topic requires a sanitized Iceberg table before Phase 1 is considered complete.
+          </li>
+          <li data-uuid="7df3770b-8bcd-4cce-a295-db533fa8acf6">
+            A sanitized Iceberg table will be created, connected to Snowflake, and covered by unit tests to satisfy compliance requirements. (<a href="https://jira.atl.workiva.net/browse/DNA-5622">DNA-5622</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="8bc6969f-b0ac-40eb-aaa2-0d389050c52e">
+        <strong>ECM — bookings and SPP targets team-mapping sync</strong>
+        <ul>
+          <li data-uuid="23a2e690-3cd5-4bd0-b734-b6b914b642bd">
+            <u><strong>OBT_BOOKINGS</strong></u> and <u><strong>FCT_TARGETS_SPP</strong></u> fall out of sync when teams are absent from <u><strong>BI.TEAM_MAPPING</strong></u>, producing null team and region rows that break ECM attainment reporting.
+          </li>
+          <li data-uuid="36dee35a-6475-4740-938f-3066d870fe09">
+            Manual updates to <u><strong>BI.TEAM_MAPPING</strong></u> are currently required as a workaround; this work tracks a durable fix to keep bookings and targets in sync automatically. (<a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="cd92586a-8c8e-4a05-ba18-dab05fa9200b">
+        <strong>Data Platform — DMF issue resolution</strong>
+        <ul>
+          <li data-uuid="4ec08f24-89d5-4d8e-b66a-4612f181ff24">
+            Unexpected behavior was observed in <strong>Data Monitoring Functions (DMFs)</strong>, flagged by Data Ops as a potential data quality risk.
+          </li>
+          <li data-uuid="9e2a97f9-8d7b-40e4-82fa-272efbd98f77">
+            Investigation was completed and the issue was resolved to restore reliable monitoring function behavior. (<a href="https://jira.atl.workiva.net/browse/DNA-5901">DNA-5901</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="35683f12-0c7e-4e1e-b371-094b1858fbc3">
+        <strong>Customer Experience — Zendesk knowledge base engagement ingestion</strong>
+        <ul>
+          <li data-uuid="646720cc-be36-4b93-8579-ed29485d19e9">
+            The <u><strong>zendesk.article</strong></u> table in Snowflake is missing key engagement fields — views, comments, subscriptions, and upvotes — that are not currently pulled through Fivetran.
+          </li>
+          <li data-uuid="420769c7-e2d9-49d5-8f46-2134d13f51eb">
+            Extended ingestion logic will add these fields from the Zendesk API, giving the DX team full visibility into how users interact with knowledge base content. (<a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Compliance &amp; data completeness</strong></p>
+    <ul>
+      <li data-uuid="690071d5-5ae8-4ff3-b913-72a8bb194381">FedRAMP requirements mandate sanitized, fully tested data pipelines before Phase 1 sign-off, and historical gaps in user analytics undermine the reliability of trend reporting for internal stakeholders.</li>
+    </ul>
+    <p><strong>Operational accuracy &amp; self-service reliability</strong></p>
+    <ul>
+      <li data-uuid="97df2fef-d131-4219-bd34-2e32e2a5e0e5">Manual team-mapping updates create fragility in ECM attainment reporting; automating the sync and resolving DMF issues reduces operational toil and improves stakeholder confidence in pipeline data.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-08-12" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-08-12).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="582f911c-018c-4ba0-829f-cbd6316e992c">ECM attainment reporting surfaces are affected when <u><strong>OBT_BOOKINGS</strong></u> and <u><strong>FCT_TARGETS_SPP</strong></u> diverge due to missing rows in <u><strong>BI.TEAM_MAPPING</strong></u>.</li>
+      <li data-uuid="b49b1d1e-6c41-45c7-9c53-12aa137ca231">The <u><strong>zendesk.article</strong></u> Snowflake table will gain new engagement columns (views, comments, subscriptions, upvotes) once the extended Fivetran ingestion is complete.</li>
+      <li data-uuid="9921bc5b-5c4e-4fc2-ac1b-ab0f4241d9a2">FedRAMP-compliant Snowflake external tables sourcing from the sanitized <u><strong>workiva-event-log</strong></u> Iceberg table will become available to internal consumers after Phase 1 completion.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — ECM attainment dashboards show no null team or region rows after the <u><strong>BI.TEAM_MAPPING</strong></u> sync fix is deployed on 2026-08-12.</p>
+    <p>Verify — <strong>DMF</strong> alerts and monitoring checks are firing as expected in Snowflake following the DNA-5901 resolution.</p>
+    <p>Verify — the <u><strong>zendesk.article</strong></u> table in Snowflake contains the new engagement fields (views, comments, subscriptions, upvotes) once the DNA-5171 ingestion pipeline is activated.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="aeb36f6a-8834-49bd-9a65-1031e5ff2376"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="ada241f3-30ed-4d34-b978-f07c38a588f3"><a href="https://jira.atl.workiva.net/browse/DNA-5622">DNA-5622</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.common.v0.workiva-event-log</li>
+    <li data-uuid="b0aae497-bb93-47a3-97e0-454120f309d6"><a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a> — OBT bookings and SPP targets don’t stay in sync — manual BI.TEAM_MAPPING updates required</li>
+    <li data-uuid="62681b6f-9125-4020-9999-11a8a4c3c632"><a href="https://jira.atl.workiva.net/browse/DNA-5901">DNA-5901</a> — Troubleshoot issue with DMFs</li>
+    <li data-uuid="beecb68a-744e-4946-984d-b2afe027ea31"><a href="https://jira.atl.workiva.net/browse/DNA-5902">DNA-5902</a> — FedRAMP User Analytics | Backfill Historical Data</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="d80a4892-4418-46ff-8f7e-f41bbefdb502">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
