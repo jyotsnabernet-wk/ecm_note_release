@@ -91,7 +91,7 @@ jobs:
     name: Executive Summary → repo
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'schedule' && github.event.schedule == '0 19 * * 3') ||
+      (github.event_name == 'schedule' && github.event.schedule == '0 18 * * 3') ||
       (github.event_name == 'workflow_dispatch' && (inputs.job == 'executive-summary' || inputs.job == 'both'))
 
     steps:

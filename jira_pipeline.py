@@ -333,7 +333,7 @@ def main() -> None:
                     start_d = date.fromisoformat(start_date) if start_date else date.today() - timedelta(days=6)
                     end_d   = date.fromisoformat(end_date)   if end_date   else date.today()
                     bi_csv  = bi_mod.download_from_snowflake(start_d, end_d, _ROOT / "BI")
-                except Exception as exc:
+                except (Exception, SystemExit) as exc:
                     print(f"   [warn] Snowflake download failed: {exc}", file=sys.stderr)
                     # Fall back to latest CSV in BI/ for this deploy date
                     bi_dir = _ROOT / "BI"
