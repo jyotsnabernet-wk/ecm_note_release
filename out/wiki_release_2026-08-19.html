@@ -1,0 +1,132 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-08-19" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM retention &amp;amp; renewals, Opportunity SCD fixes, FedRAMP Amplitude compliance, Support data product, Zendesk ingestion</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="08c2f56e-5bf8-4198-ad84-8bd5558cb099">
+        <strong>ECM — Revenue retention metrics expansion</strong>
+        <ul>
+          <li data-uuid="73bfd563-cd20-4a82-9552-044d04f77d9a">
+            The <u><strong>fct_solution_retention</strong></u> model is being extended to include <strong>Net Revenue Retention (NRR)</strong> expansion metrics alongside existing GRR measures, eliminating the need for downstream tools to duplicate the quarter spine and daily snapshot logic.
+          </li>
+          <li data-uuid="a105c9fd-9c00-4e45-ba21-17c47e431be3">
+            A new <u><strong>fct_account_retention</strong></u> model is being introduced to track retention at the account (logo) level, correcting for cross-solution netting that causes the solution-level model to misrepresent overall logo retention.
+          </li>
+          <li data-uuid="2136a403-59e1-4149-b7af-87140c0f892e">
+            Projected renewal outcome and renewal quarter fields are now added to <u><strong>fct_solution_renewals</strong></u>, enabling Finance and RevOps to see forecasted outcomes for contracts that have ended but not yet reached the post-renewal measurement date. (<a href="https://jira.atl.workiva.net/browse/DNA-5926">DNA-5926</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5980">DNA-5980</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5981">DNA-5981</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="90319874-67a9-45bd-ba2c-b915f1ee4c84">
+        <strong>ECM — Bookings attainment &amp; customer model</strong>
+        <ul>
+          <li data-uuid="29cef216-b6f8-4a58-9d7d-379af47cbdfc">
+            A mapping gap between <u><strong>OBT_BOOKINGS</strong></u> and <u><strong>FCT_TARGETS_SPP</strong></u> is being resolved by automating <u><strong>BI.TEAM_MAPPING</strong></u> updates, eliminating null team and region rows that currently break ECM attainment calculations.
+          </li>
+          <li data-uuid="84d3f702-1636-47e5-9b94-7904f118cff7">
+            The customer model's XBRL product exclusion logic is being refined to filter only XBRL services rather than all XBRL subscriptions, restoring visibility into products that were incorrectly removed from the subscriptions effective daily fact. (<a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5925">DNA-5925</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="86233f06-757b-418d-b016-655fddf5abde">
+        <strong>Opportunity — SCD interval corrections</strong>
+        <ul>
+          <li data-uuid="e5805f72-34a4-429c-8eaf-6153c5f416fa">
+            The <u><strong>dim_opportunity_alignments</strong></u> model was refactored from an intersection-interval pattern to a <strong>spine-based SCD</strong> approach, eliminating 365 zero-duration rows that affected 347 opportunities and improving history scalability.
+          </li>
+          <li data-uuid="481ccc50-3d33-41d6-8d79-9ea156ee7f94">
+            The same spine pre-filter fix has been extended to three additional mart models — <u><strong>dim_opportunity_assist_summary</strong></u>, <u><strong>dim_opportunity_nda</strong></u>, and <u><strong>dim_opportunity_opp_plan</strong></u> — restoring contiguous SCD intervals across the full opportunity domain. (<a href="https://jira.atl.workiva.net/browse/DNA-5719">DNA-5719</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5968">DNA-5968</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="bd7043f6-8529-4fda-b093-066a3c887287">
+        <strong>Support — Data product layer completion</strong>
+        <ul>
+          <li data-uuid="9d9dd853-83c9-46f6-a254-33131b22adff">
+            The first release (R1) of the Support data product has completed its one-big-table (OBT), semantic views (SV), and refinement layer, marking the product ready for downstream BI consumption. (<a href="https://jira.atl.workiva.net/browse/DNA-5540">DNA-5540</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="230bfba8-44f2-44d1-b13f-9441404f6723">
+        <strong>FedRAMP — Amplitude compliance pipeline</strong>
+        <ul>
+          <li data-uuid="b0af65a1-ea1d-4295-87be-37fd2b2329dc">
+            Amplitude data is being redirected from a Snowflake direct share integration to S3, routing it through the FedRAMP sanitization layer to ensure government customer data does not bypass compliance controls.
+          </li>
+          <li data-uuid="d7c99df2-7e7f-495b-a6d4-4e6ab41c17d0">
+            AWS Glue catalog tables have been created for the Amplitude S3 data, making it queryable via Athena and enabling downstream DBT sanitization models to be constructed against a compliant source. (<a href="https://jira.atl.workiva.net/browse/DNA-5928">DNA-5928</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5944">DNA-5944</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="d4f508d2-8663-4b04-b517-d211f4dcfc1e">
+        <strong>FedRAMP — GES activity-log sanitization</strong>
+        <ul>
+          <li data-uuid="dad3e62f-5d61-47ee-a1fb-90cf8124783c">
+            A sanitized Iceberg table is being built and exposed for the <strong>workiva.om.v0.activity-log</strong> topic, connected to Snowflake and covered by unit tests, fulfilling a required deliverable for FedRAMP Phase 1 completion. (<a href="https://jira.atl.workiva.net/browse/DNA-5625">DNA-5625</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="da71b4e1-6557-427e-bf6a-9f409611e7b5">
+        <strong>Zendesk — Snapshot reliability &amp; knowledge base ingestion</strong>
+        <ul>
+          <li data-uuid="a2bd2f91-2dd3-4f9e-a0c8-fa81eb830f5b">
+            The root cause of duplicate-row failures in the <u><strong>zendesk_sla_policy_snapshot</strong></u> is under investigation, with remediation to follow once identified.
+          </li>
+          <li data-uuid="815eabf5-d6b8-4083-8bd2-fc9d117cff68">
+            Zendesk article engagement fields (views, comments, subscriptions, upvotes) are being added to the ingestion pipeline via the Zendesk API, giving the DX team visibility into knowledge base content performance that Fivetran does not currently supply. (<a href="https://jira.atl.workiva.net/browse/DNA-5921">DNA-5921</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Data quality &amp; compliance</strong></p>
+    <ul>
+      <li data-uuid="48d50cc1-9242-4f3b-a59c-02d3bb7a9927">Invalid SCD intervals in opportunity models produced misleading history windows; spine-based pre-filtering ensures contiguous, non-overlapping version intervals at scale across all opportunity mart models.</li>
+      <li data-uuid="3e3ebcf4-027b-4b98-966a-b24850e09428">FedRAMP requirements mandate that all data — including Amplitude behavioral data — pass through the sanitization layer before reaching Snowflake, closing a compliance gap for government customers and unblocking Phase 1 sign-off.</li>
+    </ul>
+    <p><strong>Operational analytics coverage</strong></p>
+    <ul>
+      <li data-uuid="05916025-74cc-4731-94e3-fcb9e2001d34">Finance and RevOps teams need projected renewal outcomes before the post-renewal measurement date to act on at-risk contracts within the quarter, a gap the existing boundary-based measurement approach could not address.</li>
+      <li data-uuid="3ce3ec79-9c5f-4b5e-b78b-b34aadb4dec1">NRR and account-level retention metrics are required for complete revenue retention reporting; GRR alone cannot capture expansion ARR or cross-solution netting that determines true logo retention.</li>
+      <li data-uuid="ea46ecf0-2a24-4961-a91c-b76584beaae6">Automating team mapping between bookings actuals and SPP targets eliminates the manual <u><strong>BI.TEAM_MAPPING</strong></u> updates that cause null team and region rows to surface in ECM attainment reporting.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-08-19" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-08-19).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="ad1ad4f0-d15a-441d-8abb-aa1e45645394"><u><strong>dim_opportunity_alignments</strong></u>, <u><strong>dim_opportunity_assist_summary</strong></u>, <u><strong>dim_opportunity_nda</strong></u>, and <u><strong>dim_opportunity_opp_plan</strong></u> all receive corrected contiguous SCD intervals; downstream models and reports that join on version windows should be validated against the updated interval boundaries.</li>
+      <li data-uuid="d780e0a0-fb4c-4c9d-89bc-de2b130bd575"><u><strong>fct_solution_renewals</strong></u> gains <u><strong>projected_renewal_outcome</strong></u> and <u><strong>renewal_quarter</strong></u> columns; BI dashboards built on this model can now surface in-quarter renewal forecasts for contracts awaiting the post-renewal snapshot date.</li>
+      <li data-uuid="8e800184-3f9c-4b25-b493-704ef7b6dec1"><u><strong>fct_solution_retention</strong></u> will gain NRR expansion columns; the net-new <u><strong>fct_account_retention</strong></u> model should be adopted by dashboards requiring logo-level retention that cross-solution netting makes inaccurate at the solution grain.</li>
+      <li data-uuid="5592ee3a-5828-4a2d-8abe-ed462210d4f2">Amplitude data previously ingested via Snowflake direct share will be sourced from S3 via the Glue catalog and Athena; any pipelines or models referencing the legacy Snowflake share source should be reviewed for continuity after the cutover.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — Validate downstream models and BI reports joining on <u><strong>dim_opportunity_alignments</strong></u>, <u><strong>dim_opportunity_assist_summary</strong></u>, <u><strong>dim_opportunity_nda</strong></u>, or <u><strong>dim_opportunity_opp_plan</strong></u> to confirm SCD interval contiguity is preserved end-to-end after the spine-based refactor.</p>
+    <p>Verify — Confirm that Amplitude-dependent pipelines and dashboards continue to function after the data source transitions from the Snowflake direct share to the S3 / Glue / Athena path, and that row counts match expectations post-cutover.</p>
+    <p>Verify — Review dashboards consuming <u><strong>fct_solution_renewals</strong></u> to incorporate the new projected renewal outcome and renewal quarter fields, and assess whether <u><strong>fct_account_retention</strong></u> should replace or supplement <u><strong>fct_solution_retention</strong></u> for logo-level reporting use cases.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="1282d656-ee9a-4632-ab80-5002f34f0978"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="5e6ca0fa-623e-4857-8ec3-5d2199641ad8"><a href="https://jira.atl.workiva.net/browse/DNA-5540">DNA-5540</a> — [Support] OBT, SV, Refinement</li>
+    <li data-uuid="58d41fab-86d0-4aec-bb12-3e9bb1489d72"><a href="https://jira.atl.workiva.net/browse/DNA-5625">DNA-5625</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.om.v0.activity-log</li>
+    <li data-uuid="d3ad16da-6b7d-40af-9d86-78a52ee86bac"><a href="https://jira.atl.workiva.net/browse/DNA-5719">DNA-5719</a> — Refactor dim_opportunity_alignments to spine based SCD intervals and fix zero duration rows</li>
+    <li data-uuid="21d2b7da-cfd4-4fa4-8e17-51ff4ebbf141"><a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a> — [ECM] OBT bookings and SPP targets don’t stay in sync — manual BI.TEAM_MAPPING updates required</li>
+    <li data-uuid="5ee416d3-f33c-4185-b331-a32d920e1e90"><a href="https://jira.atl.workiva.net/browse/DNA-5921">DNA-5921</a> — Investigate root cause of zendesk snapshot failure</li>
+    <li data-uuid="92ea19d7-9159-47cc-8008-267a42f1394f"><a href="https://jira.atl.workiva.net/browse/DNA-5925">DNA-5925</a> — [ECM] Update customer model product exclusions</li>
+    <li data-uuid="f8f1142a-25d6-42d4-8c72-675260977667"><a href="https://jira.atl.workiva.net/browse/DNA-5926">DNA-5926</a> — [ECM] Add projected renewal outcomes and renewal quarter to fct_solution_renewals</li>
+    <li data-uuid="7e4f8290-8285-4553-bcc5-68c74049dab7"><a href="https://jira.atl.workiva.net/browse/DNA-5928">DNA-5928</a> — FedRAMP | Amplitude: Redirect Amplitude Data from Snowflake Direct Share to S3</li>
+    <li data-uuid="568ae89d-e53e-44cb-aa97-16c8aaa70819"><a href="https://jira.atl.workiva.net/browse/DNA-5944">DNA-5944</a> — FedRAMP | Amplitude: Create Glue tables for Amplitude data in S3</li>
+    <li data-uuid="880dfd96-1ba2-4792-95a6-ca3425ee21a3"><a href="https://jira.atl.workiva.net/browse/DNA-5968">DNA-5968</a> — Fix non contiguous SCD intervals in opportunity spine mart models</li>
+    <li data-uuid="24be726f-0ee4-4a4c-97ef-9f53bc306c32"><a href="https://jira.atl.workiva.net/browse/DNA-5980">DNA-5980</a> — [ECM] Add Net Revenue Retention (NRR) metrics to fct_solution_retention</li>
+    <li data-uuid="944c343a-08b3-4ad5-ac0e-eedc189b69eb"><a href="https://jira.atl.workiva.net/browse/DNA-5981">DNA-5981</a> — [ECM] Create fct_account_retention model for Account level retention</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="750f45df-1108-4d93-9662-965d3cf986e8">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
