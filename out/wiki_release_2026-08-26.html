@@ -1,0 +1,73 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-08-24" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>GES Iceberg Transform, ECM Retention &amp;amp; Renewals OBTs, C360 Crosswalk</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="d7e547bf-c76a-439a-b442-031a1a6d6057">
+        <strong>FedRAMP GES — intermediate JSON-to-Iceberg transform</strong>
+        <ul>
+          <li data-uuid="fd59fc0c-05ed-4024-a2b5-6ac8c599959c">
+            GES data lands in S3 as raw JSON and is not directly usable for downstream <u><strong>Iceberg</strong></u> table creation; an intermediate transform layer is required to parse and reshape the data into a structured format.
+          </li>
+          <li data-uuid="94930830-7d84-49d9-ab36-1d2cd29603c9">
+            A <strong>Glue Python transform</strong> has been built to convert the raw GES JSON in S3 into structured Iceberg tables, enabling sanitized downstream consumption. (<a href="https://jira.atl.workiva.net/browse/DNA-6006">DNA-6006</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="4da14c96-417d-40c8-b278-7c4ea6a0f49f">
+        <strong>ECM — retention &amp; renewals OBT layer</strong>
+        <ul>
+          <li data-uuid="4e8ef0d3-ab1f-43bd-865d-04bbb4058e4c">
+            <u><strong>obt_solution_retention</strong></u>, <u><strong>obt_account_retention</strong></u>, and <u><strong>obt_solution_renewals</strong></u> are being created by joining <u><strong>fct_solution_retention</strong></u>, <u><strong>fct_account_retention</strong></u>, and <u><strong>fct_solution_renewals</strong></u> to <u><strong>dim_accounts</strong></u>.
+          </li>
+          <li data-uuid="195d3472-9d93-40bc-82d7-51cc90bbbcde">
+            Account attributes are being removed from the fact tables so that dimensions live exclusively on the OBT layer; all logic views will be repointed at the OBTs to ensure consistent reporting. (<a href="https://jira.atl.workiva.net/browse/DNA-5816">DNA-5816</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="b82733f2-8478-4ad7-8554-b4f67cb1d75a">
+        <strong>C360 — crosswalk improvement</strong>
+        <ul>
+          <li data-uuid="625ac386-0bf3-43be-8481-af66df985b0a">
+            Analysis of the <strong>crosswalk table</strong> is underway to identify gaps and implement improvements to entity resolution and matching logic. (<a href="https://jira.atl.workiva.net/browse/DNA-5920">DNA-5920</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Data usability &amp; platform readiness</strong></p>
+    <ul>
+      <li data-uuid="a5f6da0a-642f-4150-9535-06588431e550">The raw JSON format of GES data in S3 cannot feed Iceberg tables directly; the new intermediate Glue transform provides the structured layer required for reliable downstream pipelines.</li>
+    </ul>
+    <p><strong>Reporting consolidation &amp; model hygiene</strong></p>
+    <ul>
+      <li data-uuid="336f93e8-839b-4fa3-9cc3-44da33bd8a95">ECM retention and renewals fact tables carry account attributes that belong in a dimension layer; introducing OBTs centralises those attributes, reduces duplication, and gives Finance and RevOps a single, authoritative surface for reporting.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-08-26" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-08-26).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="979ba982-8915-423d-88d4-4b0810e850c9"><u><strong>obt_solution_retention</strong></u>, <u><strong>obt_account_retention</strong></u>, and <u><strong>obt_solution_renewals</strong></u> become the new authoritative models for ECM retention and renewals reporting, replacing direct references to the underlying fact tables.</li>
+      <li data-uuid="92153b06-14b0-4da5-af91-40b65702a14a">Logic views previously pointing at <u><strong>fct_solution_retention</strong></u>, <u><strong>fct_account_retention</strong></u>, and <u><strong>fct_solution_renewals</strong></u> will be redirected to the new OBT layer.</li>
+      <li data-uuid="8674bbd2-2917-47b0-9d63-31f458431c61">GES data will be available via structured Iceberg tables produced by the new intermediate Glue transform, unblocking any downstream models that depend on sanitised GES data.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — ECM reporting consumers and BI tools are referencing <u><strong>obt_solution_retention</strong></u>, <u><strong>obt_account_retention</strong></u>, and <u><strong>obt_solution_renewals</strong></u> rather than the underlying fact tables after deploy.</p>
+    <p>Verify — downstream pipelines consuming GES data are reading from the new structured Iceberg tables and that the Glue transform job is running successfully in the target environment.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="79b5242d-7358-48fe-894b-16dc50834ed7"><a href="https://jira.atl.workiva.net/browse/DNA-5816">DNA-5816</a> — [ECM] OBTs for Retention and Renewals models</li>
+    <li data-uuid="bdc92aff-1326-4ff8-9be4-e131461db7c5"><a href="https://jira.atl.workiva.net/browse/DNA-5920">DNA-5920</a> — C360 - Crosswalk improvement</li>
+    <li data-uuid="0e6b9611-e522-476a-98ee-bb5988439ada"><a href="https://jira.atl.workiva.net/browse/DNA-6006">DNA-6006</a> — FedRAMP | GES: Intermediate transform of JSON data to Iceberg tables</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="72e1f49f-e857-4d7f-8cbd-835339a9d7a0">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
