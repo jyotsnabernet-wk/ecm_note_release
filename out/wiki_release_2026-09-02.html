@@ -1,0 +1,127 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-08-31" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM Renewal model, Pipeline filter alignment, Orchestration migration assessment, C360 DUNS monitoring</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="ddfe6826-806d-4499-acae-fa1a3d5740f6">
+        <strong>ECM — Renewal model enhancements</strong>
+        <ul>
+          <li data-uuid="54660710-c72c-4868-a3de-ec812d54d111">
+            The <u><strong>fct_solution_renewals</strong></u> model is updated to evaluate each renewal event using a <strong>grace period</strong> of 90 days after a contract's <u><strong>subscription_end_date</strong></u>, replacing the previous first-day-of-quarter evaluation point.
+          </li>
+          <li data-uuid="4895fc49-a514-44bf-9815-4b55a36082a2">
+            Intra-company transfers are now included in renewal event logic, broadening the scope of renewal reporting for Finance and RevOps. (<a href="https://jira.atl.workiva.net/browse/DNA-5998">DNA-5998</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="e7a5e4c4-06e2-478b-b1d2-1d71deb1b2c3">
+        <strong>ECM — Pipeline filter alignment with L2C changes</strong>
+        <ul>
+          <li data-uuid="f44f276e-68ca-42f1-84ab-01ac8815e7d6">
+            The Salesforce opportunity field <u><strong>first_year_s_s_amt</strong></u> has been deprecated by L2C platform changes; <u><strong>fct_pipeline</strong></u> is being updated to exclude opportunities based on the <strong>summed solution total pipeline amount</strong> instead.
+          </li>
+          <li data-uuid="6d534356-5c0e-4e6c-ae04-7ac2754916a8">
+            <u><strong>fct_qualified_pipeline_generated</strong></u> is being aligned with the same exclusion logic already in <u><strong>fct_pipeline</strong></u> and <u><strong>obt_pipeline</strong></u>, replacing the legacy $0 S&amp;S filter inherited from Redshift.
+          </li>
+          <li data-uuid="4ddbb126-d2f3-4eca-a96b-fd4a07087a83">
+            New-customer opportunities are being corrected so that <u><strong>int_reporting_classification</strong></u> uses summed solution totals rather than the deprecated S&amp;S field for NL classification, and the model's dependency on <u><strong>fct_bookings</strong></u> is being removed. (<a href="https://jira.atl.workiva.net/browse/DNA-6082">DNA-6082</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6034">DNA-6034</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6004">DNA-6004</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="86c555df-3241-416e-879f-006092ee6fe5">
+        <strong>Orchestration migration — Overlord &amp; Airflow assessment</strong>
+        <ul>
+          <li data-uuid="f52a16e4-be44-4346-82b3-156a24fa02fb">
+            Specialty orchestration behaviours in <strong>Overlord</strong> (dynamic generation, bespoke interval handling) are being documented to ensure nothing is lost during migration to Airflow or an ingestion tool.
+          </li>
+          <li data-uuid="29aaef54-7aac-4ea3-968a-d5652d1887f5">
+            The current <strong>MWAA</strong> deployment is being audited for sizing, version, and configuration, with the Airflow 2.x to 3.0 breaking-change impact captured for migration planning.
+          </li>
+          <li data-uuid="e7f7447d-8bd9-4679-b27c-bd0083a7c104">
+            Every Overlord data source is being classified as <strong>standardized or custom</strong> and FedRAMP-regulated sources are being flagged to drive the wave plan and compliance design. (<a href="https://jira.atl.workiva.net/browse/DNA-6055">DNA-6055</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6054">DNA-6054</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="eda82835-d2d7-4d91-884d-73476435a250">
+        <strong>Data infrastructure — Fivetran assessment &amp; Edgar data share</strong>
+        <ul>
+          <li data-uuid="b7570da5-3a15-4ba0-943d-61c145dea344">
+            The current Fivetran license, active connectors, and spare capacity are being documented to understand under-leveraged entitlement and the updated 2026 MAR cost model (deletes now count; $5/connector minimum).
+          </li>
+          <li data-uuid="4aa4f658-6a4c-4ea3-b392-c0086d00d807">
+            Data share infrastructure is being created to bring <strong>Edgar / SEC Filings</strong> data into the warehouse, enabling new analytical use cases. (<a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5739">DNA-5739</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="a34dc203-b306-4fc9-83aa-f9e0286e3cbf">
+        <strong>Customer 360 — DUNS number monitoring</strong>
+        <ul>
+          <li data-uuid="535337dd-d7cf-49fc-972c-6714e745ab6e">
+            A Snowflake query is being developed to identify all existing, new, and deprecated <strong>DUNS numbers</strong> monitored via the D&amp;B data share.
+          </li>
+          <li data-uuid="2274ab0b-d4d5-4bcf-a91c-3b7ac88d3e9f">
+            The output will surface numbers that should be added or removed from monitoring, establishing a repeatable process for DUNS lifecycle management. (<a href="https://jira.atl.workiva.net/browse/DNA-6038">DNA-6038</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="31a7417f-bd37-4538-83da-00f000f49406">
+        <strong>DX — Zendesk Knowledge Base engagement ingestion</strong>
+        <ul>
+          <li data-uuid="b99088a3-0b5d-44f1-942e-324fb39cfe28">
+            The Zendesk article ingestion is being extended to include engagement fields (views, comments, subscriptions, upvotes) currently absent from the <u><strong>zendesk.article</strong></u> table in Snowflake.
+          </li>
+          <li data-uuid="bbab77a3-90e5-47ac-aee0-09eb81cbba59">
+            These fields will enable the DX team to measure how users interact with knowledge base content and inform content strategy. (<a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>ECM model accuracy</strong></p>
+    <ul>
+      <li data-uuid="507d4f7f-2174-47e9-93da-40c3b47b0cb3">L2C platform changes deprecated the Salesforce <u><strong>X1st_Year_S_S__c</strong></u> opportunity field, making existing pipeline and classification logic unreliable; affected models must migrate to <strong>summed solution totals</strong> to preserve accurate revenue reporting.</li>
+      <li data-uuid="99d3e033-251e-4d57-bb48-7f8e6b6ef500">The renewals model lacked a grace period and excluded intra-company transfers, causing systematic under-counting of renewal events and distorting renewal rate metrics for Finance and RevOps.</li>
+    </ul>
+    <p><strong>Platform &amp; infrastructure modernisation</strong></p>
+    <ul>
+      <li data-uuid="2d63176a-a762-423e-85f7-b6effbce0142">Planned migration away from <strong>Overlord</strong> requires up-front documentation of bespoke behaviours, source classification, and tooling coverage gaps to avoid data loss and ensure orchestration continuity.</li>
+      <li data-uuid="b37f8a96-128b-4430-9efd-d3fd4032e5f2">Fivetran under-utilisation review and the Edgar data share onboarding reflect broader efforts to rationalise ingestion costs and expand analytical data coverage ahead of the next planning cycle.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-09-02" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-09-02).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="8a907955-869e-4dfc-89b9-05fa44193bc3"><u><strong>fct_solution_renewals</strong></u> — updated grace-period and intra-company transfer logic will change renewal event counts and coverage; downstream renewal rate metrics and Finance dashboards should be validated against pre-release baselines.</li>
+      <li data-uuid="397f1ccf-f1b4-4433-bcbd-71e527dd6be1"><u><strong>fct_pipeline</strong></u> and <u><strong>obt_pipeline</strong></u> — removal of the <u><strong>first_year_s_s_amt</strong></u> filter may shift included opportunity sets and alter pipeline totals in GTM and Finance reports.</li>
+      <li data-uuid="eab1d8a9-7af5-4439-8571-0e476110d18a"><u><strong>fct_qualified_pipeline_generated</strong></u> — realigned $0 exclusion logic may change qualified pipeline figures surfaced in GTM dashboards.</li>
+      <li data-uuid="3f229ff3-6606-4134-b683-647b897ac952"><u><strong>int_reporting_classification</strong></u> and <u><strong>dim_opportunity_solution_classifications</strong></u> — corrected NL classification for new-customer opportunities will affect ECM-derived booking and classification outputs downstream.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify <u><strong>fct_solution_renewals</strong></u> renewal counts and rates post-deploy, confirming grace-period evaluations and intra-company transfers appear correctly in renewal dashboards.</p>
+    <p>Verify <u><strong>fct_pipeline</strong></u>, <u><strong>obt_pipeline</strong></u>, and <u><strong>fct_qualified_pipeline_generated</strong></u> totals against pre-release baselines to confirm the S&amp;S filter replacement produces expected pipeline figures.</p>
+    <p>Verify <u><strong>int_reporting_classification</strong></u> NL flags for new-customer opportunities are correct and that no unexpected reclassifications appear in ECM booking and classification reports.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="ac54a4c1-e84f-478e-ac8a-e2339cfbac44"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="d4763ab8-e9e6-4336-a93c-a94539a1c114"><a href="https://jira.atl.workiva.net/browse/DNA-5739">DNA-5739</a> — Create Data Share for Edgar</li>
+    <li data-uuid="504b2ea7-7887-4d14-a9c9-82ec46da70a4"><a href="https://jira.atl.workiva.net/browse/DNA-5998">DNA-5998</a> — [ECM] Updates to the Renewal model</li>
+    <li data-uuid="a6ae6178-8f53-4221-8922-0f7cb3590b19"><a href="https://jira.atl.workiva.net/browse/DNA-6004">DNA-6004</a> — Opportunities of type new customer aren&#x27;t classified as NL</li>
+    <li data-uuid="96fc510b-7c35-442c-bb2c-98b4dc5a9df9"><a href="https://jira.atl.workiva.net/browse/DNA-6034">DNA-6034</a> — [ECM] Qualified Pipeline Generated Update Exclusion</li>
+    <li data-uuid="e718280b-faf8-467d-9d79-a42de0b6a698"><a href="https://jira.atl.workiva.net/browse/DNA-6038">DNA-6038</a> — C360 - Develop query to identify all existing, new, and deprecated duns numbers to monitor</li>
+    <li data-uuid="cf98cabe-e74d-4905-9e19-54a6ae67a2bf"><a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> — Classify all sources: standardized vs custom &amp; flag FedRAMP</li>
+    <li data-uuid="4247ac63-6838-416e-bec6-95a4db43bde1"><a href="https://jira.atl.workiva.net/browse/DNA-6054">DNA-6054</a> — Audit managed Airflow (MWAA) deployment</li>
+    <li data-uuid="c9c386ad-72be-4f43-8ad8-03aedda9dcb6"><a href="https://jira.atl.workiva.net/browse/DNA-6055">DNA-6055</a> — Document Overlord specialty orchestration functionality to preserve</li>
+    <li data-uuid="9f108059-fa81-4438-84b1-2d1f2183b935"><a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a> — Assess current Fivetran entitlement &amp; usage</li>
+    <li data-uuid="f75d6f3b-6529-4a64-b5c0-6deb2ab5d75a"><a href="https://jira.atl.workiva.net/browse/DNA-6082">DNA-6082</a> — Update fct_pipeline to remove the first_year_s_s_amt filter [L2C related change]</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="6b94c94d-53d5-478f-b017-f928e60be518">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
