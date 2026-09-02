@@ -1,8 +1,6 @@
 # DnA Release — August 27 - September 2, 2026 | Executive Summary
-
-- **GTM Pipeline Reporting** — Qualified pipeline figures now use consistent exclusion logic, improving accuracy for GTM and Finance reporting.
-- **ECM Renewals** — Renewal tracking extended with a grace period window and intra-company transfers for more accurate Finance and CS team visibility.
-- **Customer 360** — Established a process to monitor and audit all tracked company identifiers, improving customer data coverage and quality.
-- **Data Platform** — Resolved a pipeline failure that blocked automated data processing, restoring reliable delivery across all downstream reports.
+- **Customer 360 Data** — Company identifier monitoring improved to ensure complete and accurate third-party coverage across all accounts.
+- **Pipeline Reporting** — Pipeline and qualified pipeline reporting updated to use solution-level amounts consistently, improving opportunity inclusion, new-customer classification, and alignment across core pipeline metrics.
+- **SEC Filings Data** — New data-sharing infrastructure established to bring Edgar / SEC Filings data into the warehouse and enable additional analytical use cases.
 
 *Need more detail? Review the technical release notes: DNA Weekly Release Sprint 8/27-9/2*
