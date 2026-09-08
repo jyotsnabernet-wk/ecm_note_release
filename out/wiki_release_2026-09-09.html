@@ -1,0 +1,128 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-09-08" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM customer model improvements, Salesforce partner ingestion, FedRAMP GES Iceberg tables, Campaign enrichment</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="44d3c7bc-63d8-4058-822d-cac785df7d01">
+        <strong>ECM — Customer model grace period &amp; reconciliation</strong>
+        <ul>
+          <li data-uuid="8d8764e6-7143-49df-b744-a3ed1f49bbc0">
+            Grace period logic has been applied to ECM customer tables: subscriptions that lapse within a configurable window (30, 60, or 90 days) before period-end while holding an open qualified opportunity are no longer classified as churn.
+          </li>
+          <li data-uuid="dccedba5-61ea-4da9-b736-e8d608454c37">
+            New tracking columns record how long a backdated subscription took to fill, improving auditability of churn adjustments.
+          </li>
+          <li data-uuid="f26e6ddf-0135-405a-b30d-54a3dfddb9c8">
+            Differences in ARR and customer count between Max Gregson's model and the production ECM model have been documented for Q2 2026, with each divergence attributed to specific ARR and customer deltas. (<a href="https://jira.atl.workiva.net/browse/DNA-5644">DNA-5644</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6039">DNA-6039</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="c1638cb6-e13b-428e-9a90-7e4846313f6a">
+        <strong>ECM — Sales hierarchy &amp; supersession netting (In Progress)</strong>
+        <ul>
+          <li data-uuid="ae56db4f-c953-41bc-bec8-2b774a921310">
+            Supersession netting logic from Max Gregson's model is being copied into the ECM customer and <u><strong>FCT_SUBSCRIPTIONS</strong></u> fact models so that superseded subscriptions are excluded from counts, aligning DNA's model with Finance.
+          </li>
+          <li data-uuid="c46b4098-a3bb-404d-803b-ccef703f5765">
+            A scalable sales hierarchy is being built to replace manual overrides in <u><strong>GOLD_PROD.BI.TEAM_MAPPING</strong></u>, eliminating null team and region rows in ECM attainment datasets surfaced in QuickSight. (<a href="https://jira.atl.workiva.net/browse/DNA-6118">DNA-6118</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="8f19af17-0294-417f-bce8-82516dc0f9b1">
+        <strong>Salesforce — Partner field ingestion &amp; pipeline visibility</strong>
+        <ul>
+          <li data-uuid="6a8d0a95-643e-44b3-9748-fa47bff74a49">
+            Salesforce Account and Opportunity partner fields are being ingested into Snowflake to support partner-influenced pipeline call-out weeks, closing a data silo around how partner relationships affect account health and revenue forecasting.
+          </li>
+          <li data-uuid="bcf0b4cc-1df8-4392-bef4-b3d21054fa9f">
+            Six new Salesforce fields — Initiative, Messaging, Budget, Budget Owner, Cost Center, and Estimated Campaign Responses — are added to the <u><strong>SILVER_PROD.CAMPAIGN</strong></u> view for richer marketing planning and spend reporting. (<a href="https://jira.atl.workiva.net/browse/DNA-6048">DNA-6048</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5910">DNA-5910</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="aae8f37e-2513-488e-8ed3-70602ac83e48">
+        <strong>FedRAMP / GES — Sanitized Iceberg table buildout</strong>
+        <ul>
+          <li data-uuid="9cc4fdf9-849c-456a-9ccb-3fec7513b33f">
+            As part of the FedRAMP Sanitization project Phase 1, five GES event topics have had sanitized Apache Iceberg tables created, connected to Snowflake, and covered by unit tests.
+          </li>
+          <li data-uuid="44176eec-1ad7-446f-a39d-ec404651901f">
+            Topics completed span two topic groups: <strong>workiva-iam</strong> (realm-domain-event, identity-provisioner-domain-event, public-api-o-auth2-client-domain-event) and <strong>workiva-activity-log</strong> (script-run-operation-event, om.v0.activity-log). (<a href="https://jira.atl.workiva.net/browse/DNA-5641">DNA-5641</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5640">DNA-5640</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5639">DNA-5639</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5626">DNA-5626</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5625">DNA-5625</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="206a95ba-e9f1-43a6-b735-f203b418468d">
+        <strong>Customer360 / D&amp;B — Monitoring API &amp; exceptions investigation (In Progress)</strong>
+        <ul>
+          <li data-uuid="f8fec474-ad07-4ab3-b898-5bcc5953b8a4">
+            A new API strategy and client for Dun &amp; Bradstreet Monitoring+ is being designed to programmatically register DUNS numbers and receive alerts on monitored companies, replacing the current unstructured interaction pattern.
+          </li>
+          <li data-uuid="eb18eaa2-e589-4e23-b372-f04f46788133">
+            The existing D&amp;B exceptions table is being investigated to determine how its data can update and enrich current D&amp;B models in Customer360. (<a href="https://jira.atl.workiva.net/browse/DNA-6044">DNA-6044</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="55073da8-0434-46bd-9715-2b9b5d30120c">
+        <strong>User Analytics — Query performance investigation (In Progress)</strong>
+        <ul>
+          <li data-uuid="aec7162e-fe12-4998-b9f5-189f07960762">
+            Queries against <u><strong>silver_prod.user_analytic</strong></u> views are timing out because filters are applied after full table scans, making even simple queries expensive; a timebox investigation is underway to identify a more performant model structure.
+          </li>
+          <li data-uuid="82d13445-c80d-404c-b1b1-31551789cd7b">
+            The investigation also covers cross-event-type data collection, which is currently difficult to perform across the existing view architecture. (<a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>ECM &amp; Finance alignment</strong></p>
+    <ul>
+      <li data-uuid="8cc7a78b-8eb5-4bad-88ee-2cd47d6476f4">Grace period logic and supersession netting bring the DNA customer model in line with Finance's methodology, reducing reconciliation overhead and improving confidence in churn and ARR figures reported to leadership.</li>
+      <li data-uuid="81b48745-7519-42f9-a2bb-5abe6ed41cd5">Documenting model divergences for Q2 2026 provides a traceable baseline so remaining gaps can be closed systematically in future sprints.</li>
+    </ul>
+    <p><strong>Data completeness &amp; compliance</strong></p>
+    <ul>
+      <li data-uuid="f9352bcc-ead2-40b3-98a7-61bf81d5c657">Ingesting Salesforce partner fields and enriching the <u><strong>SILVER_PROD.CAMPAIGN</strong></u> view closes visibility gaps for Sales and Marketing teams during pipeline call-out weeks and campaign planning cycles.</li>
+      <li data-uuid="a6dbd2be-fc42-4c10-9d1f-1f9327cfda33">FedRAMP Phase 1 sanitization of IAM and activity-log topics ensures that sensitive event data is properly controlled before landing in Snowflake, fulfilling regulatory and security requirements for the platform.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-09-09" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-09-09).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="b901b9f8-dbf1-425c-b804-cd7b3fcf0c9c">ECM churn and ARR metrics downstream of <u><strong>FCT_SUBSCRIPTIONS</strong></u> and related customer tables will reflect grace period exclusions; validate any QuickSight dashboards or reports consuming ECM attainment datasets.</li>
+      <li data-uuid="66e5d803-8385-4ef5-88c2-95df74650af8">The <u><strong>SILVER_PROD.CAMPAIGN</strong></u> view now exposes Initiative, Budget, Cost Center, Budget Owner, Messaging, and Estimated Campaign Responses fields for downstream marketing attribution and spend models.</li>
+      <li data-uuid="901cbd90-8a06-4a4a-be88-c28b38ade0c0">New Salesforce Account and Opportunity partner columns are available in the Snowflake ingestion layer for any downstream partner pipeline or co-sell reporting models.</li>
+      <li data-uuid="37209b64-6bbf-4bb5-bba6-42745957d9ab">Sanitized Iceberg tables for <strong>workiva.iam.v0</strong> (realm, identity-provisioner, public-api-oauth2-client) and <strong>workiva.om.v0.activity-log</strong> and <strong>workiva.scripting.v0.script-run-operation-event</strong> topics are now connectable to Snowflake for downstream identity and activity-log analytics models.</li>
+      <li data-uuid="f9fedcd0-0ad1-4e17-9f7d-48fade90e798">Consumers of <u><strong>silver_prod.user_analytic</strong></u> views should monitor for structural changes resulting from the performance investigation; schema or filter-pushdown changes may affect existing queries.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — ECM churn and ARR figures in QuickSight and downstream Finance reports reflect grace period exclusions after the 2026-09-09 deploy.</p>
+    <p>Verify — The six new fields (Initiative, Messaging, Budget, Budget Owner, Cost Center, Estimated Campaign Responses) are visible and populated in <u><strong>SILVER_PROD.CAMPAIGN</strong></u> after deploy.</p>
+    <p>Verify — Sanitized Iceberg tables for the five newly completed GES topics are accessible in Snowflake and all associated unit tests pass in CI.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="5ce14118-a558-4a5e-8668-8e6737384eae"><a href="https://jira.atl.workiva.net/browse/DNA-5625">DNA-5625</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.om.v0.activity-log</li>
+    <li data-uuid="5ec7d608-998c-4081-b4dd-734b8daff851"><a href="https://jira.atl.workiva.net/browse/DNA-5626">DNA-5626</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.scripting.v0.script-run-operation-event</li>
+    <li data-uuid="ed8cb22c-d86f-42e6-91b4-1e2b29cd65a8"><a href="https://jira.atl.workiva.net/browse/DNA-5639">DNA-5639</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.iam.v0.public-api-o-auth2-client-domain-event</li>
+    <li data-uuid="81205e19-e435-49d8-a40c-4900a7626244"><a href="https://jira.atl.workiva.net/browse/DNA-5640">DNA-5640</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.iam.v0.identity-provisioner-domain-event</li>
+    <li data-uuid="63f6f46d-5a93-4a8f-b5c4-c58c2a1b5862"><a href="https://jira.atl.workiva.net/browse/DNA-5641">DNA-5641</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.iam.v0.realm-domain-event</li>
+    <li data-uuid="f6e934f1-ebe6-474b-8c0f-060bd29f91bb"><a href="https://jira.atl.workiva.net/browse/DNA-5644">DNA-5644</a> — [ECM] Implement grace period logic in customer models</li>
+    <li data-uuid="23a62908-3e58-4c69-b558-f90d6fb7b095"><a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a> — [ECM] Implement Sales Hierarchy</li>
+    <li data-uuid="8a8c863e-e085-45cb-aed4-05ce47fc540b"><a href="https://jira.atl.workiva.net/browse/DNA-5910">DNA-5910</a> — Add SFDC fields to SILVER_PROD.CAMPAIGN view</li>
+    <li data-uuid="406d3b78-db0e-4e46-b1df-296a8020b873"><a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a> — C360 - Investigate D&amp;B &quot;exceptions&quot; table</li>
+    <li data-uuid="4e454b00-c8d0-4b6c-ac58-2eb40aed48b8"><a href="https://jira.atl.workiva.net/browse/DNA-6039">DNA-6039</a> — Record and document differences between Gregson&#x27;s customer model and production</li>
+    <li data-uuid="07fd003b-2a96-494f-8ed7-f959fd7093f0"><a href="https://jira.atl.workiva.net/browse/DNA-6044">DNA-6044</a> — D&amp;B Monitoring+ API Strategy &amp; Client for DUNS Registration</li>
+    <li data-uuid="d3df6586-e2b4-40a6-a2c1-512afe033d27"><a href="https://jira.atl.workiva.net/browse/DNA-6048">DNA-6048</a> — Ingest Salesforce Account and Opportunity partner fields into Snowflake for pipeline call visibility</li>
+    <li data-uuid="e08eb9c1-a271-4f51-b39b-adef45253737"><a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a> — Timebox - Look into User Analytics Models</li>
+    <li data-uuid="f56949fb-5f6e-4a2b-9d51-de328343d550"><a href="https://jira.atl.workiva.net/browse/DNA-6118">DNA-6118</a> — [ECM] Implement supersession netting in customer models</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="9052dd35-bbe5-4e8f-a0a1-15f14d04c763">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
