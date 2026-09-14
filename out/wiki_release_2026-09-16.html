@@ -1,0 +1,123 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-09-14" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM account naming, Gong data ingestion, FedRAMP GES administration sanitization, platform migration planning</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="5b9b2ee9-0b8a-4334-943a-9e03411e4fa8">
+        <strong>ECM — customer data quality &amp; ARR alignment</strong>
+        <ul>
+          <li data-uuid="d1102ce8-c767-4bde-83e7-b4d6a531c281">
+            <u><strong>fct_subscriptions_effective_daily</strong></u> previously pulled account names from <u><strong>int_accounts_scd</strong></u> point-in-time, meaning Salesforce corrections to historical names caused noisy diffs in every downstream model rebuild.
+          </li>
+          <li data-uuid="98b25b7f-1726-4752-a746-f176c2af0843">
+            The fix joins to the latest account name per account_id so that each account consistently reflects its current name regardless of snapshot date. (<a href="https://jira.atl.workiva.net/browse/DNA-6161">DNA-6161</a>)
+          </li>
+          <li data-uuid="ffbc01b1-8b2a-438f-b5e2-bc945a6184d7">
+            Quarterly ARR bridge reporting spans two grains — account-level via <u><strong>logic_view_arr_bridge_by_account</strong></u> and solution-level via <u><strong>logic_view_arr_bridge_by_solution</strong></u> — and both are being aligned on a consistent <u><strong>start_of_period_arr</strong></u> definition derived from the prior period's <u><strong>end_of_period_arr</strong></u>. (<a href="https://jira.atl.workiva.net/browse/DNA-6160">DNA-6160</a>)
+          </li>
+          <li data-uuid="7a34695d-0bc6-4d87-aae3-b32b3318e5ee">
+            An audit comparing Marketing Ops data against the DNA <u><strong>fct_qualified_pipeline_generated</strong></u> model revealed a scope gap for opportunities with qualified dates in 2023+; structural definition changes are in progress to close the discrepancy. (<a href="https://jira.atl.workiva.net/browse/DNA-6096">DNA-6096</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="e2ce82a8-83e0-4aaf-993c-19f396286faa">
+        <strong>FedRAMP / GES — administration topic sanitization</strong>
+        <ul>
+          <li data-uuid="428af23a-fa88-4ac0-84da-9a680c570f63">
+            As part of <strong>FedRAMP Sanitization Phase 1</strong>, all GES topic data in the <strong>workiva-administration</strong> topic group must be sanitized before reaching Snowflake, with automated unit tests confirming sanitization correctness.
+          </li>
+          <li data-uuid="b285eae8-9134-489f-9850-125862473916">
+            Seven Iceberg tables have been built, sanitized, and connected to Snowflake: <u><strong>organization-domain-event</strong></u>, <u><strong>organization-membership-domain-event</strong></u>, <u><strong>workspace-domain-event</strong></u>, <u><strong>workspace-membership-domain-event</strong></u>, <u><strong>configuration-domain-event</strong></u>, <u><strong>entity</strong></u>, and <u><strong>entity-assignment</strong></u>.
+          </li>
+          <li data-uuid="a87fdb65-32d0-48fc-abe5-173385c401ef">
+            Completing these tables closes the final gap required for Phase 1 sign-off and unlocks each dataset for Silver-layer modeling. (<a href="https://jira.atl.workiva.net/browse/DNA-5627">DNA-5627</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5628">DNA-5628</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5629">DNA-5629</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5630">DNA-5630</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5631">DNA-5631</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5632">DNA-5632</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5633">DNA-5633</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="02f67f7a-40ce-4f8c-83cc-7a9e27886258">
+        <strong>Data Engineering — new source ingestion</strong>
+        <ul>
+          <li data-uuid="22b41577-b769-418e-857a-f617876c1be2">
+            An automated pipeline ingests <strong>Gong Data Cloud</strong> data into Snowflake via Data Share, landing in the <u><strong>bronze</strong></u> (raw/staging) layer with access restrictions applied at the source to govern who can query conversation data. (<a href="https://jira.atl.workiva.net/browse/DNA-6141">DNA-6141</a>)
+          </li>
+          <li data-uuid="87570538-875b-4d7d-a548-1567a2abed6d">
+            The Zendesk article ingestion is being extended to include engagement fields — views, comments, subscriptions, and upvotes — currently absent from Fivetran pulls, to support the DX team's knowledge-base analytics. (<a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="38f50c38-3148-48c7-985e-f5666e6d32fe">
+        <strong>Platform — Canada environment &amp; orchestration migration</strong>
+        <ul>
+          <li data-uuid="c30e883d-9b7d-426e-881d-55a7183c909f">
+            A new Canada production environment is being introduced in the Workiva platform; the <u><strong>production_workiva_environments</strong></u> dbt seed and user analytic views must be updated to include <strong>prod-ca</strong> so that reporting reflects the new appspot. (<a href="https://jira.atl.workiva.net/browse/DNA-6002">DNA-6002</a>)
+          </li>
+          <li data-uuid="a39432c4-758b-440b-9166-e8aacce4958c">
+            The Overlord-to-Airflow migration initiative is actively underway: specialty orchestration behaviours are being documented to prevent knowledge loss, the managed MWAA deployment is being audited for sizing and upgrade impact, all ingestion sources are being classified as standardized vs. custom with FedRAMP flags applied, and Fivetran entitlement &amp; usage is being assessed against the 2026 MAR cost model. (<a href="https://jira.atl.workiva.net/browse/DNA-6055">DNA-6055</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6054">DNA-6054</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="db476379-9ab9-419f-9e18-ea3478444c82">
+        <strong>Customer360 — crosswalk mapping validation</strong>
+        <ul>
+          <li data-uuid="ff0ad309-fdc8-41ed-91c2-a42bed9b8af1">
+            The Customer360 crosswalk table is being analyzed to demonstrate the validity of identity-resolution mappings across linked entities. (<a href="https://jira.atl.workiva.net/browse/DNA-6136">DNA-6136</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Data quality &amp; compliance</strong></p>
+    <ul>
+      <li data-uuid="016277c1-fb5e-45e3-b295-a6b0e9ab707d">Stabilizing account names eliminates noise introduced by Salesforce historical corrections and gives Finance and RevOps consistent, trustworthy ARR and subscription reporting.</li>
+      <li data-uuid="d799adaf-55db-414c-8287-f2449df38f54">FedRAMP compliance requires all GES administration topic data to be sanitized before entering Snowflake; completing these seven Iceberg tables fulfills the final deliverable for Phase 1 and mitigates regulatory risk.</li>
+    </ul>
+    <p><strong>Platform growth &amp; modernization</strong></p>
+    <ul>
+      <li data-uuid="4144da06-f5ec-4f2b-ad80-a73392f7a1b4">Ingesting Gong and extending Zendesk coverage lays the data foundation for richer go-to-market and customer success analytics across the organization.</li>
+      <li data-uuid="f4da9a78-2145-4f48-927c-993ef940a218">The Canada environment expansion and Overlord migration planning position the platform to serve new geographies and transition to a more maintainable, scalable orchestration stack.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-09-16" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-09-16).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="9d95b504-4d73-4313-96d5-612ae0f8768c">Models downstream of <u><strong>fct_subscriptions_effective_daily</strong></u> — including <u><strong>logic_view_arr_bridge_by_account</strong></u> and <u><strong>logic_view_arr_bridge_by_solution</strong></u> — will reflect stabilized account names; expect historical diffs to clear on the first full refresh after deploy.</li>
+      <li data-uuid="997bd055-50bc-4adc-8c6f-5a9e0942aee8">The new Gong dataset lands in the <u><strong>bronze</strong></u> layer only; no existing Silver or Gold dbt models are impacted until downstream models are explicitly built on top of it.</li>
+      <li data-uuid="7ad287c9-07d5-4235-9840-c806e490aa2b">Sanitized Iceberg tables for <u><strong>organization-domain-event</strong></u>, <u><strong>organization-membership-domain-event</strong></u>, <u><strong>workspace-domain-event</strong></u>, <u><strong>workspace-membership-domain-event</strong></u>, <u><strong>configuration-domain-event</strong></u>, <u><strong>entity</strong></u>, and <u><strong>entity-assignment</strong></u> are now available as declared sources for Silver-layer dbt models.</li>
+      <li data-uuid="be05df6b-2a9e-4747-9763-eb7ca3bc151b"><u><strong>fct_qualified_pipeline_generated</strong></u> will undergo structural definition changes post In-Progress completion; all pipeline reporting dashboards and downstream models consuming this fact table should be validated after that deploy.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — downstream models and dashboards consuming <u><strong>fct_subscriptions_effective_daily</strong></u> show stabilized account names and that historical diffs are fully resolved after the 2026-09-16 deploy.</p>
+    <p>Verify — Gong bronze data in Snowflake is accessible only to authorized roles and that access restriction policies are enforced as designed.</p>
+    <p>Verify — all seven FedRAMP GES administration Iceberg tables are connected to Snowflake, unit tests are passing green, and data is available for Silver-layer source declarations.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="d992b446-7d7e-4042-b80b-b93cc43713a7"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="1c15befe-2025-41f5-a803-8bb773682f4d"><a href="https://jira.atl.workiva.net/browse/DNA-5627">DNA-5627</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.administration.v0.organization-domain-event</li>
+    <li data-uuid="04fb4357-99d9-4fe8-8eaa-8a2ff2d0ed84"><a href="https://jira.atl.workiva.net/browse/DNA-5628">DNA-5628</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.administration.v0.organization-membership-domain-event</li>
+    <li data-uuid="e7e07ece-4078-4db2-8ccf-a6e028783465"><a href="https://jira.atl.workiva.net/browse/DNA-5629">DNA-5629</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.administration.v0.workspace-domain-event</li>
+    <li data-uuid="64de27ce-d567-49f3-a93b-0bbc72df724a"><a href="https://jira.atl.workiva.net/browse/DNA-5630">DNA-5630</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.administration.v0.workspace-membership-domain-event</li>
+    <li data-uuid="9dcf7d03-2ccd-4d55-bdee-8d79375cbefb"><a href="https://jira.atl.workiva.net/browse/DNA-5631">DNA-5631</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.administration.v0.configuration-domain-event</li>
+    <li data-uuid="30ecc0e0-b7c5-4982-94f8-72a0042e31f5"><a href="https://jira.atl.workiva.net/browse/DNA-5632">DNA-5632</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.administration.v0.entity</li>
+    <li data-uuid="3882175c-a11e-4e9d-9650-9c0b213c999f"><a href="https://jira.atl.workiva.net/browse/DNA-5633">DNA-5633</a> — FedRAMP | GES: Expose Sanitized Iceberg Table &amp; Unit Tests for workiva.administration.v0.entity-assignment</li>
+    <li data-uuid="c9903892-14ff-494c-9f13-0ba84b75947e"><a href="https://jira.atl.workiva.net/browse/DNA-6002">DNA-6002</a> — Prod CA Environment in Snowflake Silver</li>
+    <li data-uuid="dd4c182d-5fa4-456b-a203-c26bb9c76536"><a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> — Classify all sources: standardized vs custom &amp; flag FedRAMP</li>
+    <li data-uuid="bd08e67d-4a48-4236-b542-760037993919"><a href="https://jira.atl.workiva.net/browse/DNA-6054">DNA-6054</a> — Audit managed Airflow (MWAA) deployment</li>
+    <li data-uuid="0c66c9f8-4e4b-44d8-9e1a-f160ddf763e8"><a href="https://jira.atl.workiva.net/browse/DNA-6055">DNA-6055</a> — Document Overlord specialty orchestration functionality to preserve</li>
+    <li data-uuid="7a8ba6c1-8b6f-4824-9ee0-dfa6619d8d40"><a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a> — Assess current Fivetran entitlement &amp; usage</li>
+    <li data-uuid="557012d9-2d3e-462a-a9a7-5d68c3602216"><a href="https://jira.atl.workiva.net/browse/DNA-6096">DNA-6096</a> — [ECM] Align fct_qualified_pipeline_generated model with Marketing definitions</li>
+    <li data-uuid="64303203-3fcf-47ec-a7b9-46fe4ffa3c60"><a href="https://jira.atl.workiva.net/browse/DNA-6136">DNA-6136</a> — C360 - Crosswalk validation</li>
+    <li data-uuid="1c512198-6759-4b1e-b2fc-5ba6c40b63f5"><a href="https://jira.atl.workiva.net/browse/DNA-6141">DNA-6141</a> — [DE] Ingest Gong Data Cloud into Snowflake Bronze Layer with Access Restrictions</li>
+    <li data-uuid="263e0b08-8202-4550-9cb3-b5e11ff95ed0"><a href="https://jira.atl.workiva.net/browse/DNA-6160">DNA-6160</a> — [EMC] Bridge Account Level &amp; Solution Level Start of Period ARR</li>
+    <li data-uuid="9adff825-214b-4a80-9190-fc9d6ad0b5c9"><a href="https://jira.atl.workiva.net/browse/DNA-6161">DNA-6161</a> — [ECM]Standardize Account Names in Customers models</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="ecc2b45a-a218-45f2-bcd3-3e3793b6d2ef">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
