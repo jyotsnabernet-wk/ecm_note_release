@@ -1,143 +1,157 @@
 <div class="mceContentBody aui-theme-default wiki-content fullsize">
     <p>
-      Sent on<strong> <time datetime="2026-09-18" />&nbsp;</strong>
+      Sent on<strong> <time datetime="2026-09-21" />&nbsp;</strong>
     </p>
     <h2><strong>Release Notification</strong></h2>
-    <h3>ECM bookings, freshness &amp;amp; hierarchy, Salesforce field enrichment, D&amp;amp;B API, FedRAMP security tags</h3>
+    <h3>ECM Pipeline Alignment, Salesforce Hierarchy Table, Reference Table Performance Tuning</h3>
     <h3><strong>What is happening</strong></h3>
     <p>This week's DnA release covers the following Analytics Engineering stories.</p>
     <ul>
-      <li data-uuid="3f043795-4939-4f81-92b0-1b17505c333a">
-        <strong>ECM — Parseport bookings integration &amp; renewal model updates</strong>
+      <li data-uuid="681171f4-fc6d-4c7a-9548-e065f614d548">
+        <strong>ECM — qualified pipeline model alignment with Marketing</strong>
         <ul>
-          <li data-uuid="c0e8cf34-0906-40d3-8393-596f70f5e20c">
-            Workiva acquired Parseport, and its deal data has been migrated from HubSpot into the standard Salesforce instance; the team is integrating those deals directly into the core bookings model rather than relying on a static UNION query.
+          <li data-uuid="ed1be973-9db3-4232-aff6-e7fad7e6f734">
+            An audit comparing the Marketing Ops table against the DNA model revealed a structural scope discrepancy in <u><strong>fct_qualified_pipeline_generated</strong></u> for opportunities with qualified dates from 2023 onward.
           </li>
-          <li data-uuid="7096e004-d31a-43d7-aaa1-985ed8a1b851">
-            Renewal model logic is also under active revision to ensure contract-lifecycle accuracy across ECM reporting surfaces.
-          </li>
-          <li data-uuid="a772ebc5-1669-40bd-bb48-e90191e8d387">
-            Contract fields are being added to the subscription fact to support contract-related reporting and lay the groundwork for a future contract-grain data model. (<a href="https://jira.atl.workiva.net/browse/DNA-5795">DNA-5795</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6213">DNA-6213</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6117">DNA-6117</a>)
+          <li data-uuid="19c64c57-a2ce-4ce8-b5c4-5680dd68b498">
+            Although both models calculate value identically for overlapping opportunities, definition differences caused Finance and RevOps to see a smaller opportunity set than Marketing. The model has been updated to resolve the scope gap and align with Marketing's definition. (<a href="https://jira.atl.workiva.net/browse/DNA-6096">DNA-6096</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="09735e85-45c3-426b-8d78-1a7f61af93f5">
-        <strong>ECM — Sales hierarchy &amp; attainment mapping</strong>
+      <li data-uuid="ff1fb6db-076d-46d3-a9af-92294b8623bb">
+        <strong>ECM — renewal logic enhancements for complex deal structures</strong>
         <ul>
-          <li data-uuid="996f1b75-e6ce-4ca9-8a28-f5133452b2f8">
-            Current bookings-to-target mapping relies on a manually maintained <u><strong>GOLD_PROD.BI.TEAM_MAPPING</strong></u> table, which breaks when sales roles or teams change and causes null team/region rows in QuickSight attainment dashboards.
+          <li data-uuid="5f609a9f-b11c-4d21-9a74-b45b28687930">
+            The <u><strong>fct_solution_renewals</strong></u> model requires logic updates to handle three scenarios surfaced in stakeholder feedback: mid-cycle (early) renewals, granular ARR risk tracking across multiple subscriptions within a single solution, and solution swaps (records where <strong>churn_reason = 'Exchanged Solution'</strong>).
           </li>
-          <li data-uuid="ceb0adf3-c84a-4c1f-89a1-5a565e5da210">
-            A scalable <strong>sales hierarchy</strong> is being implemented to replace manual overrides by deriving team and region assignments programmatically from the Salesforce org structure. (<a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a>)
+          <li data-uuid="c0dc98cc-29d8-4099-9165-e5238d4bf9a1">
+            These gaps are also present in the related raw renewal tables, so fixes will be applied consistently across the renewal data layer. Work is in progress. (<a href="https://jira.atl.workiva.net/browse/DNA-6222">DNA-6222</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="e17e9419-b007-4de2-9338-11a206ab1545">
-        <strong>ECM — Gold model data freshness</strong>
+      <li data-uuid="e47933be-62b4-4ff9-876a-44c6ddb84db7">
+        <strong>ECM — contract fields added to OBTs</strong>
         <ul>
-          <li data-uuid="11193205-9c8f-49fc-ba5e-b80565b32492">
-            Most ECM Gold models currently rebuild only during the nightly run, creating up to 24 hours of data lag and prompting users to bypass governed Gold models and query Silver directly.
+          <li data-uuid="74869ac8-4ca7-48ad-a81f-bd104baef16a">
+            New contract-level fields are being introduced to the ECM opportunity-based tables (OBTs) to support expanded revenue and contract reporting requirements.
           </li>
-          <li data-uuid="35c61ee5-2998-44b7-885a-51a72d1a1224">
-            A dedicated ~2-hour refresh cadence is being introduced for ECM Gold models to close this freshness gap without destabilising the Gold layer or significantly increasing compute costs. (<a href="https://jira.atl.workiva.net/browse/DNA-5617">DNA-5617</a>)
+          <li data-uuid="fa0f189e-94a4-4b2d-a731-49a099608489">
+            Scope is being finalized with stakeholders; implementation is in progress. (<a href="https://jira.atl.workiva.net/browse/DNA-6119">DNA-6119</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="8ba46035-c61c-4f9a-8299-ceeb3b9c05b1">
-        <strong>Salesforce Gold layer — field enrichment</strong>
+      <li data-uuid="ad5da838-e4a7-45d9-80fd-e32515f6a392">
+        <strong>Data Platform — Salesforce account hierarchy scheduled table</strong>
         <ul>
-          <li data-uuid="5c0d36f7-80e1-4492-afdd-95a890d6512b">
-            The <strong>CSRD_Customer</strong> checkbox from Salesforce is being added to <u><strong>GOLD_PROD.MARTS.DIM_ACCOUNTS</strong></u> to enable consistent Sustainability customer tracking across Salesforce, Gainsight, and Workiva.
+          <li data-uuid="f448954f-9997-4c28-9caa-969ca5de03c0">
+            Salesforce account hierarchy mappings were previously retrieved via a resource-intensive Splunk query that caused Splunk to become unresponsive during execution.
           </li>
-          <li data-uuid="6a22fdb7-4d70-49f9-a60f-4d197b2d7461">
-            The <strong>Next_Gen_GRC_Upgrade_Status__c</strong> field is being surfaced in the <u><strong>DIM_SOLUTIONS</strong></u> Gold model to support CPX reporting and Controls Management platform-transition tracking.
-          </li>
-          <li data-uuid="a5b6aa05-61b4-44f4-8e93-86ce406c1661">
-            The <strong>Private_Account__c</strong> field from the Salesforce account object is being propagated to the silver and Gold warehouse layers to eliminate the need for manual Python-based account lists. (<a href="https://jira.atl.workiva.net/browse/DNA-6108">DNA-6108</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6185">DNA-6185</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5908">DNA-5908</a>)
+          <li data-uuid="32b22e18-756e-42ea-9fa1-9146a5ab308c">
+            A persistent scheduled table is being built to replace that query, improving reliability and satisfying a legal data requirement for FIGMA-related account hierarchy lookups. (<a href="https://jira.atl.workiva.net/browse/DNA-5990">DNA-5990</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="8730030b-5877-410c-9109-1a7b2685120e">
-        <strong>Customer 360 — D&amp;B Monitoring+ API &amp; data quality</strong>
+      <li data-uuid="242c8588-5818-4699-a8ab-bed9172941aa">
+        <strong>Data Platform — reference table performance tuning</strong>
         <ul>
-          <li data-uuid="549ab36e-1e05-4301-830e-7818e25ee80d">
-            A new API client and strategy for Dun &amp; Bradstreet Monitoring+ is being designed to support programmatic registration of DUNS numbers and receipt of company-change alerts.
+          <li data-uuid="071ada85-0800-4136-91a2-c4783df1f10c">
+            The most upstream reference tables were reviewed and their materializations and deduplication logic updated to improve query efficiency.
           </li>
-          <li data-uuid="f5e55343-d5bd-4a15-add3-54dd0d9878e0">
-            An investigation into the D&amp;B <strong>exceptions</strong> table is underway to determine how its data can be used to update and improve existing D&amp;B models. (<a href="https://jira.atl.workiva.net/browse/DNA-6044">DNA-6044</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a>)
+          <li data-uuid="38980c5d-a0c0-4a6b-8091-04106c20a2c5">
+            The changes are scoped to ensure reference tables perform reliably within hourly dbt Cloud CI jobs. (<a href="https://jira.atl.workiva.net/browse/DNA-6217">DNA-6217</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="a05896bb-9b30-4ef4-96d8-441c5278e196">
-        <strong>FedRAMP — Security tag replication for IAM event stream</strong>
+      <li data-uuid="74307298-f67c-493e-8a56-6fc053d4fecf">
+        <strong>Customer 360 — crosswalk validation</strong>
         <ul>
-          <li data-uuid="bceb4db0-a909-4284-beaa-a834cce8ff61">
-            Snowflake security tags from the original <u><strong>workiva.iam.v0.realm-domain-event</strong></u> table are being mirrored to the corresponding sanitised Iceberg table to satisfy FedRAMP compliance requirements.
-          </li>
-          <li data-uuid="ca86a432-a5b5-478c-a4dd-f06d8845bbab">
-            Acceptance criteria require that all tags are present and correctly configured on the Iceberg table with no missing or misconfigured entries. (<a href="https://jira.atl.workiva.net/browse/DNA-5841">DNA-5841</a>)
+          <li data-uuid="a3689d15-bccf-4053-aa5f-44f442490049">
+            The Customer 360 crosswalk table is being analyzed to validate entity-mapping accuracy and demonstrate the integrity of records linked across source systems. (<a href="https://jira.atl.workiva.net/browse/DNA-6136">DNA-6136</a>)
           </li>
         </ul>
       </li>
-      <li data-uuid="df65e2c1-7b58-4a13-8cad-6ed897369f3b">
-        <strong>User Analytics — query performance investigation</strong>
+      <li data-uuid="3b4a6473-2bca-4cc3-a817-902defcc0e06">
+        <strong>Platform — Canada production environment in Snowflake Silver</strong>
         <ul>
-          <li data-uuid="a00e390e-c906-40e0-96dc-5dd8f6532d7d">
-            Queries against <u><strong>silver_prod.user_analytic</strong></u> views are timing out because filters are applied after a full table scan, making even simple queries expensive.
+          <li data-uuid="fdacb7eb-665d-48a3-942a-23131718f3dc">
+            Workiva is introducing a new Canada production environment (<strong>prod-ca</strong>) that requires updates to the <u><strong>production_workiva_environments</strong></u> dbt seed and associated user analytic views in Snowflake Silver.
           </li>
-          <li data-uuid="f6b27d37-3ab4-426e-ba2d-fb1fa8b957bd">
-            A timebox investigation is in progress to identify structural optimisations and determine how to enable efficient cross-event-type analysis. (<a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a>)
+          <li data-uuid="64af2dab-c53e-4799-9fc5-ea61650df0c9">
+            Once complete, reporting off the Canadian appspot will be enabled for all Silver-layer consumers. (<a href="https://jira.atl.workiva.net/browse/DNA-6002">DNA-6002</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="a1c018b1-355d-46d8-8bc0-627282ed053d">
+        <strong>Orchestration Migration — Overlord to Airflow &amp; Fivetran assessment</strong>
+        <ul>
+          <li data-uuid="4ac30af3-f3fc-45b8-9e43-0209e5a091ca">
+            A structured migration planning workstream is underway to transition from the Overlord orchestration system to Airflow (MWAA) and Fivetran, covering source inventory classification, MWAA deployment auditing, and specialty behaviour documentation.
+          </li>
+          <li data-uuid="960f3e22-e227-4f7e-929f-d79bda76235f">
+            Every Overlord source is being classified as standardized or custom, and FedRAMP-regulated sources (e.g. Workday) are being flagged to drive the migration wave plan and compliance handling design.
+          </li>
+          <li data-uuid="d2cde301-44d7-42e4-8de9-419442cbef95">
+            Fivetran's current license, active connectors, spare capacity, and the 2026 MAR cost model changes (deletes now count; $5 per-connector minimum) are being documented to optimize connector usage. (<a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6054">DNA-6054</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6055">DNA-6055</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="f2d0acef-a626-4668-bd2a-b4b7f252c76c">
+        <strong>Zendesk — Knowledge Base engagement field ingestion</strong>
+        <ul>
+          <li data-uuid="a232eec2-4e94-4b96-89a4-81a34482114f">
+            The Zendesk article ingestion pipeline is being extended to pull engagement fields — views, comments, subscriptions, and upvotes — that are currently absent from both the Redshift and Snowflake <u><strong>zendesk.article</strong></u> tables.
+          </li>
+          <li data-uuid="799b2dcf-001c-4c39-bb60-99ded2cb4406">
+            These fields are required by the DX team to understand how users interact with Knowledge Base content. (<a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
           </li>
         </ul>
       </li>
     </ul>
     <h3><strong>Why it is happening</strong></h3>
-    <p><strong>ECM pipeline completeness &amp; reporting accuracy</strong></p>
+    <p><strong>Data quality &amp; stakeholder alignment</strong></p>
     <ul>
-      <li data-uuid="e8cb232b-7931-46dc-a81c-0c62dae80c5e">Integrating Parseport bookings and adding contract fields closes revenue-reporting gaps that emerged from the Workiva acquisition, ensuring Finance and RevOps work from a single governed data source.</li>
-      <li data-uuid="23780916-d5ee-4a14-ab39-41d3a394f167">Implementing a programmatic sales hierarchy removes a persistent source of attainment-reporting failures driven by manual mapping table maintenance.</li>
-      <li data-uuid="989fe280-19be-4002-beb4-99886aa86bf9">A 2-hour Gold model refresh cadence eliminates the data-lag workaround of querying ungoverned Silver tables directly.</li>
+      <li data-uuid="cfb44d1e-0626-4c0c-be72-8bb7b5187b82">Marketing, Finance, and RevOps depend on consistent pipeline and renewal metrics; structural mismatches in <u><strong>fct_qualified_pipeline_generated</strong></u> and missing edge-case logic in <u><strong>fct_solution_renewals</strong></u> created reporting gaps that stakeholders escalated for resolution.</li>
+      <li data-uuid="b80473f7-12e6-47c8-a63f-4a6998f2d894">Salesforce account hierarchy data was served via an unstable Splunk query; a scheduled table delivers a reliable, legally compliant source for FIGMA and related downstream workflows.</li>
     </ul>
-    <p><strong>Platform data quality &amp; compliance</strong></p>
+    <p><strong>Platform reliability &amp; migration readiness</strong></p>
     <ul>
-      <li data-uuid="2672373c-4930-4264-922a-7c6f0006c1ea">Propagating Salesforce fields (CSRD, Private Account, Next Gen GRC status) into the Gold layer ensures downstream consumers have accurate, up-to-date account attributes without manual intervention.</li>
-      <li data-uuid="3bb59977-152c-4af6-b02a-329693420b24">Replicating security tags to the Iceberg table satisfies FedRAMP compliance obligations and prevents data-access policy gaps in the sanitised environment.</li>
-      <li data-uuid="0cb9cf2d-6348-4964-b264-3d1eba69b7f8">The D&amp;B API client and exceptions investigation strengthen the Customer 360 foundation by enabling automated DUNS monitoring and systematic data-quality remediation.</li>
+      <li data-uuid="79313e39-0084-47a9-90ca-647d2c42c7b8">Reference table performance tuning reduces unnecessary compute overhead in hourly CI runs, improving overall pipeline stability and cost efficiency.</li>
+      <li data-uuid="0789d462-9a8a-4266-9354-aeeaca774352">The Overlord-to-Airflow migration assessment ensures that bespoke orchestration behaviours are preserved, FedRAMP-regulated sources are handled appropriately, and the team enters the migration with a clear wave plan and tooling cost model.</li>
     </ul>
     <h3><strong>When it will happen</strong></h3>
     <p>Deploy on <time datetime="2026-09-23" /></p>
     <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-09-23).</p>
     <h3><strong>Downstream impact</strong></h3>
     <ul>
-      <li data-uuid="ededad84-0db5-4eb3-a6ce-3649ab3171a1"><u><strong>obt_bookings</strong></u> will include Parseport deal records after integration; downstream QuickSight bookings dashboards and any models joining to <u><strong>obt_bookings</strong></u> should be validated for correct totals.</li>
-      <li data-uuid="5f1eb518-5378-4279-a1dd-097b1d89a2ee"><u><strong>fct_subscription</strong></u> will gain new contract fields; reports and models consuming the subscription fact may surface additional columns and should be checked for schema compatibility.</li>
-      <li data-uuid="b9682066-6ef4-4445-8c3a-5fa1a1f549d4"><u><strong>GOLD_PROD.MARTS.DIM_ACCOUNTS</strong></u> will include new <strong>CSRD_Customer</strong> and <strong>Private_Account__c</strong> columns; consumers relying on the account dimension should verify no breaking schema changes occur.</li>
-      <li data-uuid="1f2bd529-c654-4ba0-beb9-a67f1d1f79de"><u><strong>DIM_SOLUTIONS</strong></u> will expose <strong>Next_Gen_GRC_Upgrade_Status__c</strong>; CPX and GRC reporting models joining on the solutions dimension will have access to the new transition-status field.</li>
-      <li data-uuid="90a8e100-628a-418a-9bd4-1f32431e2fb2">The sanitised Iceberg table for <u><strong>workiva.iam.v0.realm-domain-event</strong></u> will have security tags applied; access-control policies dependent on tag configuration should be re-verified post-deploy.</li>
-      <li data-uuid="a28fcbb4-1c21-450e-bfeb-8bc4ee7303ed"><u><strong>silver_prod.user_analytic</strong></u> views may be restructured or replaced following the performance investigation; consumers of those views should monitor for schema or access changes.</li>
+      <li data-uuid="ec150fd0-ef96-478e-8927-bb4e17d0d015"><u><strong>fct_qualified_pipeline_generated</strong></u> — updated scope aligns with Marketing Ops definitions; all downstream pipeline dashboards and reports will reflect the corrected opportunity set.</li>
+      <li data-uuid="9c94fdd3-ac3b-4976-8c17-905b4ff774e4"><u><strong>fct_solution_renewals</strong></u> — mid-cycle renewal, multi-subscription ARR risk, and solution-swap logic changes will affect renewal dashboards and ARR waterfall reports consuming this model.</li>
+      <li data-uuid="ee544e49-a811-4757-a2e0-d9e8b1cf2119">Salesforce account hierarchy scheduled table — FIGMA workflows and any report relying on account hierarchy mappings will read from the new scheduled table instead of the legacy ad-hoc Splunk query.</li>
+      <li data-uuid="f875e2b9-6668-429c-b0ce-e7b700141c4e">Reference tables — updated materializations and deduplication logic affect all models that join upstream reference data; hourly dbt Cloud CI run times are expected to decrease.</li>
+      <li data-uuid="64859a64-7d93-43a5-82b2-b1998ca61eb2"><u><strong>production_workiva_environments</strong></u> seed &amp; user analytic views — addition of the <strong>prod-ca</strong> environment will surface Canada data across all Silver-layer models that filter on environment.</li>
+      <li data-uuid="ddff7f61-08b7-4e26-a510-f84a21ceb72f"><u><strong>zendesk.article</strong></u> — once engagement fields are ingested, DX team dashboards and Knowledge Base analytics will gain access to views, comments, subscriptions, and upvote counts.</li>
     </ul>
     <h3><strong>Recommended actions</strong></h3>
-    <p>Verify — confirm <u><strong>obt_bookings</strong></u> contains Parseport deal records and that QuickSight bookings reports reflect correct totals after the 2026-09-23 deploy.</p>
-    <p>Verify — check that <u><strong>GOLD_PROD.MARTS.DIM_ACCOUNTS</strong></u> exposes <strong>CSRD_Customer</strong> and <strong>Private_Account__c</strong> and that downstream account-dimension consumers are not broken by the schema additions.</p>
-    <p>Verify — confirm that security tags on the sanitised Iceberg table for <u><strong>workiva.iam.v0.realm-domain-event</strong></u> match those on the source Snowflake table and that no FedRAMP access-control policies are misconfigured.</p>
+    <p>Verify — Marketing Ops, Finance, and RevOps stakeholders should validate pipeline opportunity counts against <u><strong>fct_qualified_pipeline_generated</strong></u> after the 2026-09-23 deploy to confirm alignment with Marketing definitions.</p>
+    <p>Verify — Renewal reporting consumers should review ARR risk totals and renewal record counts in <u><strong>fct_solution_renewals</strong></u> once mid-cycle renewal and solution-swap logic ships, paying particular attention to multi-subscription solutions and records with <strong>churn_reason = 'Exchanged Solution'</strong>.</p>
+    <p>Verify — Any team querying Salesforce account hierarchy data should confirm that downstream queries reference the new scheduled table rather than the legacy Splunk source after the deploy.</p>
     <h3><strong>Links</strong></h3>
     <ul>
-    <li data-uuid="424c3827-afea-4f34-aa8e-06becdd19da0"><a href="https://jira.atl.workiva.net/browse/DNA-5617">DNA-5617</a> — [ECM] Implement dedicated 2 hour freshness cadence for ECM Gold models</li>
-    <li data-uuid="afa710f4-286c-4107-b424-cbfadea45cc7"><a href="https://jira.atl.workiva.net/browse/DNA-5795">DNA-5795</a> — [ECM] Discovery: Integrate Parseport Bookings into obt_bookings</li>
-    <li data-uuid="555c327e-e827-46e3-b74a-f6d07f9413fa"><a href="https://jira.atl.workiva.net/browse/DNA-5841">DNA-5841</a> — FedRAMP | Workiva: Replicate Security Tags in Snowflake for workiva.iam.v0.realm-domain-event</li>
-    <li data-uuid="0c6bc600-ac62-4343-a541-adcc218251e8"><a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a> — [ECM] Implement Sales Hierarchy</li>
-    <li data-uuid="0bd5b116-0a37-4d00-a172-5ae7988866a0"><a href="https://jira.atl.workiva.net/browse/DNA-5908">DNA-5908</a> — Add Private_Account__c field from SFDC account object to silver/gold warehouse layers</li>
-    <li data-uuid="01ccc8e5-6f50-406f-adea-cd0d1865377d"><a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a> — C360 - Investigate D&amp;B &quot;exceptions&quot; table</li>
-    <li data-uuid="20276f51-36aa-481f-9590-912d1708392e"><a href="https://jira.atl.workiva.net/browse/DNA-6044">DNA-6044</a> — D&amp;B Monitoring+ API Strategy &amp; Client for DUNS Registration</li>
-    <li data-uuid="4d901581-2aa2-4a11-9e78-d792e94e7606"><a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a> — Timebox - Look into User Analytics Models</li>
-    <li data-uuid="a73d57c6-ee99-4e81-9ebb-4259775fc762"><a href="https://jira.atl.workiva.net/browse/DNA-6108">DNA-6108</a> — Add Salesforce CSRD_Customer checkbox to GOLD_PROD.MARTS.DIM_ACCOUNTS</li>
-    <li data-uuid="0a9ef32b-41d9-42d3-9290-f27b54da1ee1"><a href="https://jira.atl.workiva.net/browse/DNA-6117">DNA-6117</a> — [ECM] Add contract fields to subscription fact</li>
-    <li data-uuid="dfdaa5e2-f88c-42d9-89ed-c5b167ee0cf6"><a href="https://jira.atl.workiva.net/browse/DNA-6185">DNA-6185</a> — Surface Next_Gen_GRC_Upgrade_Status__c in DIM_SOLUTIONS Gold Model</li>
-    <li data-uuid="418905ad-d5f2-4700-b011-d2718b8afd91"><a href="https://jira.atl.workiva.net/browse/DNA-6213">DNA-6213</a> — [ECM] Renewal model updates</li>
+    <li data-uuid="83bd3af5-401e-46ca-98e3-1f8e806f1ed0"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="4755d839-2a5a-4bd1-8552-be1b19a86db2"><a href="https://jira.atl.workiva.net/browse/DNA-5990">DNA-5990</a> — Create scheduled table for Salesforce account hierarchy mappings to replace resource-intensive Splunk query</li>
+    <li data-uuid="e5d9e0fe-24b1-42d0-8cf0-673399cbaed8"><a href="https://jira.atl.workiva.net/browse/DNA-6002">DNA-6002</a> — Prod CA Environment in Snowflake Silver</li>
+    <li data-uuid="c6f58b09-600d-4dfe-93ac-8cfba13bc73e"><a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> — Classify all sources: standardized vs custom &amp; flag FedRAMP</li>
+    <li data-uuid="e3d18ac1-44f7-425f-a62c-dded3c67a1f5"><a href="https://jira.atl.workiva.net/browse/DNA-6054">DNA-6054</a> — Audit managed Airflow (MWAA) deployment</li>
+    <li data-uuid="f22e1ab0-dd59-4285-a6af-363bbea36897"><a href="https://jira.atl.workiva.net/browse/DNA-6055">DNA-6055</a> — Document Overlord specialty orchestration functionality to preserve</li>
+    <li data-uuid="657fa7ff-23d0-436c-948c-036b59498607"><a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a> — Assess current Fivetran entitlement &amp; usage</li>
+    <li data-uuid="51593af5-4b7b-4378-af79-614aa3ff58b2"><a href="https://jira.atl.workiva.net/browse/DNA-6096">DNA-6096</a> — [ECM] Align fct_qualified_pipeline_generated model with Marketing definitions</li>
+    <li data-uuid="04156aa2-5b73-42c5-acce-773e68161d9e"><a href="https://jira.atl.workiva.net/browse/DNA-6119">DNA-6119</a> — [ECM] Add contract fields to OBTs</li>
+    <li data-uuid="ae0ab02d-b933-4404-bf7d-6a01c7bd3154"><a href="https://jira.atl.workiva.net/browse/DNA-6136">DNA-6136</a> — C360 - Crosswalk validation</li>
+    <li data-uuid="66c61d5a-c138-4fcb-8743-b28fb6cc13d0"><a href="https://jira.atl.workiva.net/browse/DNA-6217">DNA-6217</a> — Performance tune reference tables</li>
+    <li data-uuid="68acc2e2-b7f1-4686-b9cb-fead963cf7d8"><a href="https://jira.atl.workiva.net/browse/DNA-6222">DNA-6222</a> — [ECM] Update Renewal Logic for Mid Cycle Renewals, Multi Subscription at risk ARR, and Solution Swaps</li>
     </ul>
     <h3><strong>Contact</strong></h3>
     <ul>
-      <li data-uuid="fbf3687e-50bc-402f-bfba-5eb2be79dd22">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+      <li data-uuid="db7de1db-fbb2-49a2-8050-a3cdc131337d">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
     </ul>
     <p><br /></p>
   </div>
