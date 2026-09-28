@@ -1,0 +1,131 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-09-28" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM Bookings Accuracy &amp;amp; Freshness, FedRAMP Test Fix, EDGAR Refinement, C360 D&amp;amp;B, Platform Enablement</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="7ccf438f-6d5d-4cba-9a07-dfeaa24bb3e9">
+        <strong>ECM — Bookings data completeness &amp; accuracy</strong>
+        <ul>
+          <li data-uuid="31b0793e-ebb3-43e2-a38b-962f56541ba8">
+            Historical ParsePort bookings, previously held in a standalone Finance table, are being unioned into <u><strong>obt_bookings</strong></u> to support total company-level bookings analysis across all booking sources.
+          </li>
+          <li data-uuid="25a68313-7783-4005-a326-22e2fa9f3b43">
+            The <strong>is_metric</strong> flag logic in <u><strong>obt_bookings</strong></u> is being updated to exclude future-dated records, ensuring metrics reflect only realized, historical bookings rather than anticipated ones.
+          </li>
+          <li data-uuid="b93d07a0-8704-4b00-9646-18220e90813c">
+            Historical New Logo (NL) opportunities are being reclassified by applying pre-QTC conditional logic, restoring accuracy to segment breakdowns that were previously masking NLs as NS. (<a href="https://jira.atl.workiva.net/browse/DNA-6211">DNA-6211</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6210">DNA-6210</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6204">DNA-6204</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="1fe7eb78-f416-4846-ac94-e5627bf36ab7">
+        <strong>ECM — Freshness cadence, sales hierarchy &amp; solution discrepancies</strong>
+        <ul>
+          <li data-uuid="ec24208a-245a-4e43-8363-d05eafad3a78">
+            A dedicated <strong>2-hour refresh cadence</strong> is being implemented for ECM Gold models, cutting data lag from up to 24 hours and discouraging direct queries against ungoverned Silver layers.
+          </li>
+          <li data-uuid="4e8e4f29-8cf0-4d77-b5f4-ef0f8c0e903a">
+            Sales hierarchy mapping is being automated to replace manual overrides in <u><strong>gold_prod.bi.team_mapping</strong></u>, eliminating null team and region rows that currently cause reporting failures in QuickSight attainment datasets.
+          </li>
+          <li data-uuid="d3246522-c936-4a92-b241-d77dc6c465a9">
+            Discrepancies in solution category allocations within customer models are under investigation, with findings expected to surface Salesforce data quality issues affecting the solution hierarchy. (<a href="https://jira.atl.workiva.net/browse/DNA-5617">DNA-5617</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6159">DNA-6159</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="7daf1ed2-5422-4ae3-b610-5f466f550f13">
+        <strong>FedRAMP &amp; Amplitude — Compliance sanitization</strong>
+        <ul>
+          <li data-uuid="b1a4639d-c9f9-4993-9d46-c3c0ba21cd9f">
+            The broken test <u><strong>assert_workiva_ges_script_run_operation_event_no_fedramp_sensitive_leakage</strong></u> is being fixed to accurately detect sensitive data leakage rather than falsely flagging records with no relevant columns.
+          </li>
+          <li data-uuid="3d21152a-db64-4750-8dbc-6473fe6a0431">
+            DBT sanitization models are being built in the Athena project to produce compliant Iceberg table outputs from Amplitude data, with dedicated unit tests for each sanitization macro. (<a href="https://jira.atl.workiva.net/browse/DNA-6254">DNA-6254</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5945">DNA-5945</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="ce521ed9-acca-45e7-8d96-8df309998997">
+        <strong>Customer 360 — D&amp;B intelligence &amp; monitoring</strong>
+        <ul>
+          <li data-uuid="a320a9da-d740-4b4f-83d0-3145b43a9447">
+            The D&amp;B exceptions table is being investigated to determine how its data can enrich and update existing <strong>D&amp;B models</strong> powering account intelligence.
+          </li>
+          <li data-uuid="ab41e4ba-a6dc-4e45-8616-01be60df6308">
+            A structured API client and registration strategy for D&amp;B Monitoring+ is being designed to support programmatic DUNS number management and automated alert workflows. (<a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6044">DNA-6044</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="dbd8c648-2524-4060-b11d-5d3ea846937e">
+        <strong>EDGAR — Data model refinement</strong>
+        <ul>
+          <li data-uuid="7192145c-6271-4d9f-93e8-1b4d71702819">
+            The EDGAR data model is being scoped for refinement; at minimum, account prioritization scoring requires ingestion of '33 Act registration filings (S-1, S-4, 424B) as a prerequisite dependency. (<a href="https://jira.atl.workiva.net/browse/DNA-6232">DNA-6232</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="08b683e6-b792-4893-b7b5-5888865511f6">
+        <strong>Platform — Semantic views, user analytics &amp; OpenFlow</strong>
+        <ul>
+          <li data-uuid="67d39deb-16ac-44a9-ac09-f7756a78aac3">
+            <strong>Semantic View</strong> support is being added in Snowflake to expose governed, business-friendly query surfaces for downstream consumers.
+          </li>
+          <li data-uuid="4dbf1522-09f6-4716-abf8-9503c13511a6">
+            User analytics views in <u><strong>silver_prod.user_analytic</strong></u> are being investigated to resolve query timeout issues caused by post-scan filtering applied across full table scans.
+          </li>
+          <li data-uuid="cd3d9f43-cbff-4cf0-b5d2-a857db9b7e78">
+            OpenFlow environment prerequisites — including Terms of Service acceptance and runtime setup — are being prepared ahead of a planned proof-of-concept session. (<a href="https://jira.atl.workiva.net/browse/DNA-6208">DNA-6208</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6228">DNA-6228</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>ECM data quality &amp; reporting fidelity</strong></p>
+    <ul>
+      <li data-uuid="0313c88e-6632-4266-96bd-638a9074f5e7">Finance and RevOps depend on <u><strong>obt_bookings</strong></u> for pipeline and attainment reporting; incomplete historical data, future-dated metric flags, and misclassified NLs all distort those outputs and erode trust in governed models.</li>
+      <li data-uuid="471fcb99-9378-447b-aa87-b1a0164e6969">Stale ECM Gold models — lagging up to 24 hours behind Salesforce Silver — push analysts toward ungoverned Silver queries, creating metric inconsistency and increased compute risk.</li>
+    </ul>
+    <p><strong>Compliance, platform reliability &amp; intelligence expansion</strong></p>
+    <ul>
+      <li data-uuid="3f33b54a-dc6f-4ff7-b5d8-2b2fa16f34c3">A falsely-triggering FedRAMP leakage test generates compliance noise and must be corrected before Amplitude sanitization models can safely move to production.</li>
+      <li data-uuid="a433eb43-6dc5-4407-a9d6-c3ef30232c4d">Expanding D&amp;B and EDGAR intelligence supports the account prioritization roadmap, while platform improvements such as semantic views and user analytics optimization reduce engineering toil and improve self-serve reliability.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-09-30" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-09-30).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="3432be40-83e2-4202-8476-714040641b6c"><u><strong>obt_bookings</strong></u> will reflect the full ParsePort historical bookings universe and will enforce future-date exclusion on all <strong>is_metric</strong> flags — downstream Finance aggregations and QuickSight pipeline reports should be validated for row counts and metric totals.</li>
+      <li data-uuid="885c0ea8-1b18-498e-b15f-75797675bf7b"><u><strong>fct_targets_spp</strong></u> and QuickSight ECM attainment datasets will benefit from automated sales hierarchy mapping, removing null team and region rows previously caused by missing manual overrides in <u><strong>gold_prod.bi.team_mapping</strong></u>.</li>
+      <li data-uuid="896018fd-69ac-42d7-89a2-c3106687d0ec">ECM Gold models will refresh on a <strong>2-hour cadence</strong>, reducing report staleness and decreasing ad-hoc direct queries against Silver layers by downstream BI consumers.</li>
+      <li data-uuid="8eabfd84-3a4a-431f-aeff-9b17cb4128f6">Amplitude Athena <strong>Iceberg tables</strong> (sanitized DBT outputs) will become the compliant source for federal-adjacent analytics consumers once sanitization models are fully deployed and tested.</li>
+      <li data-uuid="c3700e0c-3c8d-4ad6-9029-da190a378430"><u><strong>silver_prod.user_analytic</strong></u> views are under active optimization; downstream consumers should expect improved query performance and reduced timeout failures once restructuring is complete.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — Validate <u><strong>obt_bookings</strong></u> row counts and bookings metric totals in Finance and RevOps QuickSight dashboards after ParsePort historical data is unioned in (DNA-6211).</p>
+    <p>Verify — Confirm the <u><strong>assert_workiva_ges_script_run_operation_event_no_fedramp_sensitive_leakage</strong></u> test passes cleanly in CI after the fix is deployed (DNA-6254).</p>
+    <p>Verify — Review ECM attainment QuickSight reports for null team and region rows once the sales hierarchy automation (DNA-5893) and NL reclassification changes (DNA-6204) are promoted to production.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="b83fa3ff-96e2-4723-8cca-abe2cbab3f1a"><a href="https://jira.atl.workiva.net/browse/DNA-5617">DNA-5617</a> — [ECM] Implement dedicated 2 hour freshness cadence for ECM Gold models</li>
+    <li data-uuid="986e81d3-093f-4e04-9bfd-3c23c99599a8"><a href="https://jira.atl.workiva.net/browse/DNA-5893">DNA-5893</a> — [ECM] Implement Sales Hierarchy</li>
+    <li data-uuid="088370a8-537d-4149-8a5a-9dd140b13ba8"><a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a> — C360 - Investigate D&amp;B &quot;exceptions&quot; table</li>
+    <li data-uuid="53ec77ae-35c1-4a86-b05f-c7cd4d418a01"><a href="https://jira.atl.workiva.net/browse/DNA-5945">DNA-5945</a> — FedRAMP | Amplitude: Build sanitized Iceberg tables in Athena DBT</li>
+    <li data-uuid="99c6a5b9-026f-4175-8a10-25d981df2fdd"><a href="https://jira.atl.workiva.net/browse/DNA-6044">DNA-6044</a> — D&amp;B Monitoring+ API Strategy &amp; Client for DUNS Registration</li>
+    <li data-uuid="1a87d33b-18d9-4840-b43a-5066be04fc39"><a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a> — Timebox - Look into User Analytics Models</li>
+    <li data-uuid="168df7be-6a8d-4c72-9b45-6041e535461a"><a href="https://jira.atl.workiva.net/browse/DNA-6159">DNA-6159</a> — [ECM] Investigate Solution Hierarchy Discrepancies in customer models</li>
+    <li data-uuid="b0feb320-9073-492d-b08f-fec9a90ce142"><a href="https://jira.atl.workiva.net/browse/DNA-6204">DNA-6204</a> — [ECM] Support historic NLs in reporting classification</li>
+    <li data-uuid="e23be0e2-4a40-4a5d-a3b0-8332e96247eb"><a href="https://jira.atl.workiva.net/browse/DNA-6208">DNA-6208</a> — Support Semantic View</li>
+    <li data-uuid="77d03d74-55ea-4c13-81b9-e1ff8a50fbcd"><a href="https://jira.atl.workiva.net/browse/DNA-6210">DNA-6210</a> — [ECM] Update is_metric logic in obt_bookings to exclude future bookings</li>
+    <li data-uuid="befbb314-1017-49ee-877a-eebc7f16e68f"><a href="https://jira.atl.workiva.net/browse/DNA-6211">DNA-6211</a> — [ECM] ParsePort Historical Bookings integration into obt_bookings</li>
+    <li data-uuid="76f50404-5d1b-49c6-aaa3-ecb2124adc96"><a href="https://jira.atl.workiva.net/browse/DNA-6228">DNA-6228</a> — OpenFlow POC Prep</li>
+    <li data-uuid="941af266-0c47-4a13-b733-13821a218035"><a href="https://jira.atl.workiva.net/browse/DNA-6232">DNA-6232</a> — EDGAR Data Model Refinement</li>
+    <li data-uuid="f87134ba-a4e6-4628-8591-b78affebf1f7"><a href="https://jira.atl.workiva.net/browse/DNA-6254">DNA-6254</a> — Fix broken test assert_workiva_ges_script_run_operation_event_no_fedramp_sensitive_leakage</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="ac4066cd-cdc6-4ff7-9d77-5b0cc597c384">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
