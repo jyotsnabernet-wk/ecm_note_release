@@ -1,0 +1,121 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-10-05" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM customer data integrity, FedRAMP access governance, orchestration migration readiness</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="1f8ca4b1-e6ce-4a87-8f20-082fe51a10da">
+        <strong>ECM — subscription data quality &amp; cycle time metrics</strong>
+        <ul>
+          <li data-uuid="d6d06524-00ff-4de0-ab68-e29af0407959">
+            The internal <strong>WF Test</strong> account (0014000000YgdVaAAJ) was incorrectly passing through filters and appearing in customer-facing subscription models; the fix enforces the <u><strong>is_test_or_internal_account</strong></u> exclusion logic across <u><strong>fct_subscriptions_effective_daily</strong></u> and all downstream models.
+          </li>
+          <li data-uuid="b43ff61e-82ca-40db-b7f8-05c05872dc03">
+            New <strong>cycle time metric flags</strong> are being added to <u><strong>obt_bookings</strong></u> to enable downstream metric tracking at configurable dimension granularities such as solution_group and bookings_category; dbt schema documentation will be updated to reflect the new flag definitions.
+          </li>
+          <li data-uuid="6c63b118-ed7b-44c8-bb6c-28dac0414435">
+            An ECM model deep-dive preparation is also underway to inform upcoming architectural improvements. (<a href="https://jira.atl.workiva.net/browse/DNA-6279">DNA-6279</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6209">DNA-6209</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6286">DNA-6286</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="0ca4f072-5169-4e81-8d2e-71fc0f46954c">
+        <strong>FedRAMP — access governance &amp; data parity</strong>
+        <ul>
+          <li data-uuid="c6c492cc-189f-4064-9fd0-9a57a9c2eaa3">
+            The <strong>APP_INGESTION_*</strong> role is being granted equivalent privileges on <strong>Iceberg tables</strong> as it holds for regular tables, views, and other objects, closing an access gap in the FedRAMP sanitized environment.
+          </li>
+          <li data-uuid="ea150a55-f609-40d8-bafc-49dd28783ef0">
+            A partition column gap in Workiva source tables is being resolved by switching from the <strong>timestamp</strong> column to <strong>partition_0</strong> on Glue-defined tables, restoring complete dataset retrieval on full refreshes.
+          </li>
+          <li data-uuid="23f212cf-3d7f-43e9-8bf8-8afcc3ff80fb">
+            Row-count parity checks between production and FedRAMP replicas for Wdesk Classic tables are in progress to validate completeness and identify any missing rows. (<a href="https://jira.atl.workiva.net/browse/DNA-6296">DNA-6296</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6301">DNA-6301</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6291">DNA-6291</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="f36b87ff-653f-4798-964c-8e3f6140d093">
+        <strong>Platform — orchestration migration readiness</strong>
+        <ul>
+          <li data-uuid="86d9f0c2-8bc2-4d7b-ad6e-04365a6077cc">
+            Specialty behaviors in <strong>Overlord</strong> — including dynamic DAG generation and bespoke interval handling — have been identified, mapped to target-tool coverage, and flagged as migration gaps where no equivalent exists.
+          </li>
+          <li data-uuid="fed52047-e4d0-4c88-8caf-ef5ef4761d10">
+            The managed <strong>Airflow (MWAA)</strong> deployment has been audited for sizing, version, and configuration, with Airflow 2.x to 3.0 breaking-change impact documented to support migration planning.
+          </li>
+          <li data-uuid="c5471794-1677-40a4-a33b-ca93e0bd0eb0">
+            Every Overlord source is being classified as standardized or custom with FedRAMP-relevant sources flagged to drive the wave plan; Fivetran license, connector usage, and MAR cost model are being assessed in parallel to inform replatforming decisions. (<a href="https://jira.atl.workiva.net/browse/DNA-6055">DNA-6055</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6054">DNA-6054</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="8e9cd813-c471-4215-af8d-97f5eff53af1">
+        <strong>Customer 360 &amp; Semantic Views — account spine exploration</strong>
+        <ul>
+          <li data-uuid="9f594e5d-18ca-40d7-a182-92caa2e27281">
+            A semantic view approach is being evaluated for the <strong>account spine / crosswalk</strong> to improve Customer 360 flexibility and reusability across analytics consumers.
+          </li>
+          <li data-uuid="5642a75b-3dba-4f0f-9f8c-d4bc4b69abb0">
+            A semantic view for <strong>Survey</strong> data is under investigation to standardize access patterns; a design worksheet has been shared for stakeholder review. (<a href="https://jira.atl.workiva.net/browse/DNA-6138">DNA-6138</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6294">DNA-6294</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="2b1bb6a7-92eb-4f91-8a41-d635d8cbeff1">
+        <strong>EU Replication &amp; Zendesk Ingestion — data availability</strong>
+        <ul>
+          <li data-uuid="fb0250e4-8393-47b7-8bb8-a1a368db5a9b">
+            The <strong>Intact EU replication</strong> go-live checklist is being completed, covering Coupa ingestion handoff, GL Detail historical job, Snowflake EU replication strategy selection, and hourly job configuration.
+          </li>
+          <li data-uuid="3a470440-5de3-4086-a75c-6e196021be54">
+            Zendesk article ingestion is being extended to include <strong>knowledge base engagement fields</strong> (views, comments, subscriptions, upvotes) currently absent from the Fivetran pull, enabling DX team content analytics. (<a href="https://jira.atl.workiva.net/browse/DNA-6240">DNA-6240</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Data quality &amp; governance</strong></p>
+    <ul>
+      <li data-uuid="fad9f310-cfce-4d33-9823-c799f9dafaeb">Allowing an internal test account to persist in customer models risks overstating subscription counts and distorting Finance and RevOps pipeline reporting; the fix enforces the intended exclusion logic across the full subscription model chain.</li>
+      <li data-uuid="f538ba09-e8f9-40b3-8718-b21c4990a942">Extending FedRAMP Iceberg grants and correcting Workiva partition gaps ensures regulated-environment consumers have complete, consistent access equivalent to the standard production environment.</li>
+    </ul>
+    <p><strong>Platform migration readiness</strong></p>
+    <ul>
+      <li data-uuid="e670b284-c7e3-47da-8d18-c78adcc81fdf">Documenting Overlord specialty behaviors and auditing MWAA prevents institutional knowledge loss and surfaces breaking-change risks before orchestration migration begins, ensuring nothing bespoke is silently dropped.</li>
+      <li data-uuid="4835ec54-d19c-4da7-a9f7-a1a5c8630b32">Classifying all sources and assessing Fivetran capacity provides the factual basis for wave sequencing and cost-optimized replatforming decisions across the data platform.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-10-07" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-10-07).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="4e6c93ef-5c7c-4032-bb02-b2ef69aaa897"><u><strong>fct_subscriptions_effective_daily</strong></u> and all models downstream of it will reflect corrected customer-only data after the WF Test exclusion fix is deployed; validate row counts and subscription totals in dependent reporting layers.</li>
+      <li data-uuid="ccfebb13-bef6-4b5a-bf8a-42af4fc50776"><u><strong>obt_bookings</strong></u> will gain new cycle time flag columns; downstream models and dashboards consuming this table should be reviewed after the field additions are released to confirm schema compatibility.</li>
+      <li data-uuid="bcf71a07-b058-4300-9d0f-4b6fc841107d">FedRAMP-environment consumers of Iceberg tables exposed via the <strong>APP_INGESTION_*</strong> role will regain full read access; Workiva-sourced models rebuilt on <strong>partition_0</strong> will return complete row sets on the next full refresh run.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — confirm that WF Test (0014000000YgdVaAAJ) no longer appears in <u><strong>fct_subscriptions_effective_daily</strong></u> or any downstream subscription models after deploy on 2026-10-07.</p>
+    <p>Verify — validate that <strong>APP_INGESTION_*</strong> role holders can query all Iceberg tables in the FedRAMP sanitized environment after the updated grants are applied.</p>
+    <p>Verify — confirm that full-refresh runs on Workiva Glue-defined tables return complete, gap-free row counts once the <strong>partition_0</strong> column switch is deployed.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="c6e2d493-0ace-4c24-92a3-c14fbad97f05"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="fe6f187a-76ad-41b7-9e40-e8fadd93dc4f"><a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> — Classify all sources: standardized vs custom &amp; flag FedRAMP</li>
+    <li data-uuid="97c4d40b-32ac-4073-9419-fe851813a35c"><a href="https://jira.atl.workiva.net/browse/DNA-6054">DNA-6054</a> — Audit managed Airflow (MWAA) deployment</li>
+    <li data-uuid="63c9afcd-d4fa-4272-95da-88d8c5629bee"><a href="https://jira.atl.workiva.net/browse/DNA-6055">DNA-6055</a> — Document Overlord specialty orchestration functionality to preserve</li>
+    <li data-uuid="88cbd4f8-2cfd-43b5-86ae-19752192bae1"><a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a> — Assess current Fivetran entitlement &amp; usage</li>
+    <li data-uuid="d4417bdb-e590-4e15-8fe3-45e622df267f"><a href="https://jira.atl.workiva.net/browse/DNA-6138">DNA-6138</a> — C360 - Investigate semantic view on account spine / crosswalk</li>
+    <li data-uuid="dd648c15-4b3c-4cf2-81cc-bbb16674f827"><a href="https://jira.atl.workiva.net/browse/DNA-6209">DNA-6209</a> — [ECM] Add cycle time metric flags to obt_bookings</li>
+    <li data-uuid="e6d553dc-7bff-4dc5-a5c9-7d208c59eba7"><a href="https://jira.atl.workiva.net/browse/DNA-6240">DNA-6240</a> — Intact EU Replication Go Live</li>
+    <li data-uuid="998526d5-098e-4e45-bee3-028ab2b75044"><a href="https://jira.atl.workiva.net/browse/DNA-6279">DNA-6279</a> — [ECM] Exclude WF Test from customer models</li>
+    <li data-uuid="bcd48fa8-ec2b-4496-927c-bad91f4cc7d5"><a href="https://jira.atl.workiva.net/browse/DNA-6286">DNA-6286</a> — [ECM] ECM model deep dive prep</li>
+    <li data-uuid="a7a50d58-f544-4c45-a9c8-d8aacbf6dc84"><a href="https://jira.atl.workiva.net/browse/DNA-6291">DNA-6291</a> — FedRAMP | Parity Checks for Wdesk Classic pt. 5</li>
+    <li data-uuid="d51fdc18-be11-445c-90f2-085a5c843444"><a href="https://jira.atl.workiva.net/browse/DNA-6294">DNA-6294</a> — Survey Semantic View</li>
+    <li data-uuid="e9d6af5c-7f29-473f-b773-ec5ecf32f2d0"><a href="https://jira.atl.workiva.net/browse/DNA-6296">DNA-6296</a> — FedRAMP | Add Iceberg grants to APP_INGESTION_</li>
+    <li data-uuid="3e100f0d-0257-42f1-a874-20d3fc2e1178"><a href="https://jira.atl.workiva.net/browse/DNA-6301">DNA-6301</a> — FedRAMP | Fix partition gap on Workiva models</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="a9fc9ac1-1697-48b5-9946-03c1288a5311">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
