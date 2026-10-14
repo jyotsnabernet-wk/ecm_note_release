@@ -1,0 +1,117 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-10-14" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM ParsePort region routing, renewal reporting updates, FedRAMP parity checks, user analytics and D&amp;amp;B investigations</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="0da387f8-2111-47f3-89dc-3ba8a6562231">
+        <strong>ECM — ParsePort deals routed to EMEA</strong>
+        <ul>
+          <li data-uuid="77abf4f5-f945-4dc1-9ce1-3f0077211d8e">
+            ParsePort deals are now mapped so their <strong>Opportunity Alignment Region</strong> is set to <strong>EMEA</strong>.
+          </li>
+          <li data-uuid="87e98744-538b-40db-849e-f3aa587c25b5">
+            The change covers historical ParsePort booking records, which are updated to the new region.
+          </li>
+          <li data-uuid="b4b7e95f-2cc6-4dfd-ad40-83dce9219cd6">
+            Integration logic for incoming Salesforce data is also updated, so new ParsePort deals inherit the EMEA assignment automatically. (<a href="https://jira.atl.workiva.net/browse/DNA-6293">DNA-6293</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="5f690b17-73c2-46a1-8c6e-8c2e5e8f9d2f">
+        <strong>ECM — renewal reporting aligned to stakeholder feedback</strong>
+        <ul>
+          <li data-uuid="49366efe-68bd-4fa8-8cd9-62624ff262b2">
+            <u><strong>fct_solution_renewals</strong></u> is updated to exclude <strong>Capital Markets</strong> from the reporting metric. The model itself still includes it.
+          </li>
+          <li data-uuid="87295626-f802-446b-9b96-8c9232608cc4">
+            Early renewals now roll into their <strong>subscription-end quarter</strong>, while outcomes are still resolved at the actual churn or renewal date.
+          </li>
+          <li data-uuid="72ae90eb-ba22-424f-8915-59214f56ee92">
+            Two metric variants are exposed: one that allows <strong>growth credit</strong> and one <strong>capped at 100%</strong>. (<a href="https://jira.atl.workiva.net/browse/DNA-6305">DNA-6305</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="132131d1-d461-4459-9941-2c59d7cd9a97">
+        <strong>FedRAMP — GES parity checks</strong>
+        <ul>
+          <li data-uuid="cfa7cd7d-ab42-4f89-bddd-29374171931c">
+            Analysis in Snowflake compares row counts by month between the paired tables to confirm they are 1:1.
+          </li>
+          <li data-uuid="b248f485-b410-458a-a2c7-f068966f2ca8">
+            Where counts differ, the work checks whether duplicates explain the gap. Duplicates are noted without further investigation, and any other missing rows are traced to find where they were lost.
+          </li>
+          <li data-uuid="a7b1ffe6-858c-467c-805f-9ac02ef02e53">
+            This work is still in progress. (<a href="https://jira.atl.workiva.net/browse/DNA-6308">DNA-6308</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="ee42accc-8ec6-4c54-8dc9-da7aa2c2fb75">
+        <strong>User analytics — view performance timebox</strong>
+        <ul>
+          <li data-uuid="c643c365-bfbc-465f-b88a-d28655e1f101">
+            Queries against the <u><strong>silver_prod.user_analytic</strong></u> views are timing out because filters are applied after a full table scan.
+          </li>
+          <li data-uuid="13e9b315-28be-418b-a112-39b5dcf4ce21">
+            This makes even simple queries expensive and makes analysis across all event types difficult.
+          </li>
+          <li data-uuid="0c11c357-c2e0-431d-8523-c14818040604">
+            A timeboxed investigation is under way to find a better approach. (<a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="e763c7cb-b324-4d13-aecb-bf34d8ad1bbe">
+        <strong>Customer360 — D&amp;B exceptions table investigation</strong>
+        <ul>
+          <li data-uuid="9ba7a390-656f-4c96-b629-d039c6fbd7a5">
+            The team is investigating what data the D&amp;B <strong>exceptions</strong> table holds.
+          </li>
+          <li data-uuid="c9394312-21fd-405d-896d-3163b91574f1">
+            The goal is to decide how that data can be used to update the existing D&amp;B models.
+          </li>
+          <li data-uuid="a20c4ebf-e1a5-488e-8322-1b7f27c0dcef">
+            This work is still in progress. (<a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Reporting accuracy &amp; stakeholder alignment</strong></p>
+    <ul>
+      <li data-uuid="5a10076b-6d07-4130-a830-41294736b2a4">ParsePort deals need a consistent EMEA region so regional bookings reporting is accurate for both historical and new records.</li>
+      <li data-uuid="b26e82f7-2bdf-4fd0-a9dd-90df07151007">Renewal metrics needed to match stakeholder expectations on early renewals, Capital Markets treatment and growth-credit handling.</li>
+    </ul>
+    <p><strong>Platform readiness &amp; data quality</strong></p>
+    <ul>
+      <li data-uuid="c7c6e64e-3b37-409b-8cd2-11906c2202c5">Parity checks give confidence that FedRAMP tables match their counterparts, and they surface duplicate or missing rows.</li>
+      <li data-uuid="5e04ee2c-d171-456c-9b5f-446887519553">The user analytics and D&amp;B investigations aim to cut query cost and make better use of available data in future releases.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-10-14" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-10-14).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="91a076bb-926b-4582-8cd8-52167a7f6e48">Bookings reporting: the <strong>Opportunity Alignment Region</strong> field now returns EMEA for all ParsePort deals, both historical and newly synced from Salesforce, so regional rollups shift accordingly.</li>
+      <li data-uuid="317d477e-6f93-48ff-b621-7f740b0c3494">Renewals reporting: <u><strong>fct_solution_renewals</strong></u> now excludes Capital Markets from the reporting metric and assigns early renewals to their subscription-end quarter. It also exposes both a growth-credit metric and a metric capped at 100%.</li>
+      <li data-uuid="cf7ffa7b-4374-4877-b2ce-5ff51c04f282">User analytics: no change has shipped yet to the <u><strong>silver_prod.user_analytic</strong></u> views, which are under investigation.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — ParsePort bookings show <strong>Opportunity Alignment Region</strong> = EMEA in regional bookings dashboards, for both historical and new deals.</p>
+    <p>Verify — <u><strong>fct_solution_renewals</strong></u> dashboards use the intended metric variant (growth credit or capped at 100%). Also confirm that Capital Markets exclusion and early-renewal quarter placement match expectations.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="7b318929-009f-4ca2-a7e3-afdcf928ea0b"><a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a> — C360 - Investigate D&amp;B &quot;exceptions&quot; table</li>
+    <li data-uuid="4e6be91f-b8f9-43bb-951a-a95e375c1cd2"><a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a> — Timebox - Look into User Analytics Models</li>
+    <li data-uuid="168606a8-97be-4e63-8b5e-d4fe17ff09ae"><a href="https://jira.atl.workiva.net/browse/DNA-6293">DNA-6293</a> — [ECM] Route all ParsePort deals (historical &amp; incoming) to Opportunity Alignment Region = EMEA</li>
+    <li data-uuid="77158d3b-db2d-4522-a209-bec92910a551"><a href="https://jira.atl.workiva.net/browse/DNA-6305">DNA-6305</a> — [ECM]  Align Renewal models to stakeholders feedback - early renewal quarters, CM exclusion, dual metrics</li>
+    <li data-uuid="4e42df7f-9c76-41cc-b55c-ebb8db152dd7"><a href="https://jira.atl.workiva.net/browse/DNA-6308">DNA-6308</a> — FedRAMP | Parity Checks for GES pt. 2</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="50c9695f-4e06-4499-9101-0b1af920b17d">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
