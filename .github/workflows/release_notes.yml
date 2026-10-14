@@ -66,6 +66,7 @@ jobs:
           DNA_JIRA_TEAM_FIELD: cf[10288]
           DNA_JIRA_BASE_JQL:   "project = DNA AND issuetype = Story AND created >= \"2026-01-01\""
           CURSOR_API_KEY:      ${{ secrets.CURSOR_API_KEY }}
+          CURSOR_AGENT_MODEL:  claude-sonnet-5-5
 
       - name: Publish to Confluence
         if: ${{ inputs.skip_confluence != 'true' }}
@@ -120,6 +121,7 @@ jobs:
           DNA_JIRA_TEAM_FIELD: cf[10288]
           DNA_JIRA_BASE_JQL:   "project = DNA AND issuetype = Story AND created >= \"2026-01-01\""
           CURSOR_API_KEY:      ${{ secrets.CURSOR_API_KEY }}
+          CURSOR_AGENT_MODEL:  claude-sonnet-5-5
           SNOWFLAKE_ACCOUNT:                      ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER:                         ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_WAREHOUSE:                    ${{ secrets.SNOWFLAKE_WAREHOUSE }}
