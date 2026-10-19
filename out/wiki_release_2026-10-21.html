@@ -1,0 +1,98 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-10-19" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>Intact EU replication, Customer360 and Support semantic views, Overlord source migration planning, Zendesk Knowledge ingestion</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="282f580d-15c2-4fd1-b1f9-cd72fe823de2">
+        <strong>Intact — EU replication go-live readiness</strong>
+        <ul>
+          <li data-uuid="46bc33de-ac18-4869-9018-2ebc5a1a2bb5">
+            Tracks the checklist of items required before <strong>EU replication</strong> can go live, including handing off <strong>Coupa ingestion</strong> to a new owner.
+          </li>
+          <li data-uuid="1abb84ba-3e7d-4ff4-9614-aafc968ac828">
+            Includes kicking off the <strong>GLDetail historical job</strong>, evaluating <strong>Snowflake EU replication strategies</strong> with cost estimates for two options, and covering hourly jobs. (<a href="https://jira.atl.workiva.net/browse/DNA-6240">DNA-6240</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="f5b2f74c-b09d-421a-a6ee-8b02624f4763">
+        <strong>Customer360 &amp; Support — Snowflake semantic views</strong>
+        <ul>
+          <li data-uuid="66bdd69e-37d6-478d-9ee9-be8807f4496d">
+            Investigates whether a <strong>semantic view</strong> should be built on the <strong>account spine / crosswalk</strong> for Customer360.
+          </li>
+          <li data-uuid="05c31383-dd5e-468f-9158-53f8954cdd07">
+            Defines and implements the <strong>Signals &amp; Actions</strong> tied to the <u><strong>sv_support_ticket</strong></u> semantic view for use with <strong>Snowflake Cortex Analyst</strong>.
+          </li>
+          <li data-uuid="9fdbe368-7c91-4aae-bdce-c8002ff936dc">
+            Business stakeholders are still aligning on the exact Signals and Actions list in the specification sheet. (<a href="https://jira.atl.workiva.net/browse/DNA-6138">DNA-6138</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6249">DNA-6249</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="fe9ff006-f15f-4967-b1fe-294ed55afb2f">
+        <strong>Platform — Overlord source migration planning</strong>
+        <ul>
+          <li data-uuid="e0aa04e9-8651-45ce-b153-031216321cdc">
+            Classifies every Overlord source as <strong>standardized</strong> or <strong>custom</strong> and flags sources holding <strong>FedRAMP-regulated</strong> data, such as Workday. The output feeds the migration wave plan and the FedRAMP handling design.
+          </li>
+          <li data-uuid="8bada5a8-6916-4c52-8b22-baea0960d6fd">
+            Assesses current <strong>Fivetran entitlement and usage</strong>: the license, the connectors in use, and spare capacity.
+          </li>
+          <li data-uuid="935dadc6-550e-4a50-ade0-bf3fdd442067">
+            Also documents the <strong>MAR per-connector cost model</strong>, including the 2026 changes where deletes count and each connector has a $5 minimum. (<a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="26fb8e4c-2036-4db8-9873-506f09ea751f">
+        <strong>Zendesk — Knowledge Base engagement fields</strong>
+        <ul>
+          <li data-uuid="d8bba4d1-84fd-4a72-a324-f66d401939a4">
+            The <u><strong>zendesk.article</strong></u> table exists in Redshift and Snowflake but lacks engagement fields: <strong>views</strong>, <strong>comments</strong>, <strong>subscriptions</strong> and <strong>upvotes</strong>. Fivetran does not currently pull these fields.
+          </li>
+          <li data-uuid="8b9f494e-5c54-4267-b02f-269f8db8b135">
+            The work extends Zendesk article ingestion to include them, so the DX team can see how users engage with knowledge base content. (<a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Platform &amp; migration readiness</strong></p>
+    <ul>
+      <li data-uuid="70d2ee58-cb6c-4b58-974a-788f57291ee5">EU replication and the Overlord migration need clear ownership, cost visibility, source classification and FedRAMP handling before go-live and wave planning can proceed.</li>
+      <li data-uuid="ff94305f-0c8b-4072-89ce-1d3f0d39d90c">Understanding Fivetran usage and the MAR cost model helps the team use existing licensed capacity and avoid unexpected connector costs.</li>
+    </ul>
+    <p><strong>Analytics &amp; customer insight</strong></p>
+    <ul>
+      <li data-uuid="dee978d5-17f7-437b-98e6-c3ceb50d2205">Semantic views for Customer360 and Support let Snowflake Cortex Analyst answer business questions consistently from governed definitions.</li>
+      <li data-uuid="ca1641c8-6931-4262-9a8d-214b1f86957c">Zendesk engagement fields give the DX team the data to measure and improve knowledge base content.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-10-21" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-10-21).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="fb104a4d-6515-4500-9ee0-a84fe76a572a">Support semantic view: the <u><strong>sv_support_ticket</strong></u> semantic view will gain Signals &amp; Actions once the specification is finalized, which affects Cortex Analyst consumers.</li>
+      <li data-uuid="74cc57a5-08e0-4437-b127-694dd2ffad14">Zendesk Knowledge: <u><strong>zendesk.article</strong></u> will gain engagement fields in Snowflake once ingestion is extended, which affects DX reporting that reads from it.</li>
+      <li data-uuid="9a4badb2-dd29-401c-8ca8-fd41d1bc2241">Customer360: the account spine / crosswalk models may later be exposed through a semantic view, depending on the investigation outcome.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — Confirm that the new engagement fields in <u><strong>zendesk.article</strong></u> populate correctly in Snowflake once DNA-5171 is released.</p>
+    <p>Verify — Review the Signals &amp; Actions definitions for <u><strong>sv_support_ticket</strong></u> with Support stakeholders before relying on them in Cortex Analyst.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="8dacc62d-0ee6-45ef-9a34-c0ff2d62f998"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="dbd5ac20-a386-479b-9afb-fbcc03e60c4e"><a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> — Classify all sources: standardized vs custom &amp; flag FedRAMP</li>
+    <li data-uuid="182ab78b-b2e7-4a55-8104-6a4741b2ea53"><a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a> — Assess current Fivetran entitlement &amp; usage</li>
+    <li data-uuid="29208f64-21f6-4fd5-91a9-f2b23d0458e4"><a href="https://jira.atl.workiva.net/browse/DNA-6138">DNA-6138</a> — C360 - Investigate semantic view on account spine / crosswalk</li>
+    <li data-uuid="fd0d44c7-dbd5-4a74-8836-86906503d738"><a href="https://jira.atl.workiva.net/browse/DNA-6240">DNA-6240</a> — Intact EU Replication Go Live</li>
+    <li data-uuid="a92e41af-9ed5-4b03-8437-223406e45ad5"><a href="https://jira.atl.workiva.net/browse/DNA-6249">DNA-6249</a> — Support Semantic View: Signals &amp; Actions</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="663e27ac-1179-4e4e-9d0b-b41d1a2ac948">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
