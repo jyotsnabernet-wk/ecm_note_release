@@ -1,0 +1,130 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-10-26" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>ECM retention &amp;amp; solution category, Partner dashboard fields, FedRAMP prod-CA, User analytics contract</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="a5f5b9de-092c-4f37-b414-00413ae71dff">
+        <strong>ECM — Capital Markets excluded from retention</strong>
+        <ul>
+          <li data-uuid="d07b3bf6-016e-4a5e-81f7-744968cc3ca1">
+            Capital Markets ARR is removed from account-level and solution-level retention calculations because it is out of scope for standard retention reporting.
+          </li>
+          <li data-uuid="10e4aa0c-0f1e-425a-8e97-684442fb6ee0">
+            <u><strong>fct_solution_renewals</strong></u> already excludes Capital Markets via <u><strong>is_metric_solution_renewal</strong></u>, with rows retained for drill-down.
+          </li>
+          <li data-uuid="41e59158-b663-4954-9c25-0f80eaeb69c6">
+            <u><strong>fct_solution_retention</strong></u> and <u><strong>fct_account_retention</strong></u> previously still included Capital Markets ARR and are aligned to the same exclusion. (<a href="https://jira.atl.workiva.net/browse/DNA-6327">DNA-6327</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="9cd6ffba-eb70-4663-b556-6cce17e37a7b">
+        <strong>ECM — combined ESG &amp; Sustainability solution category</strong>
+        <ul>
+          <li data-uuid="62a1cff5-953d-4ee6-940b-400bd8070e5e">
+            Users saw ESG and Sustainability as separate <strong>Solution Category</strong> filter values, while the business wants a single combined value for reporting and filtering.
+          </li>
+          <li data-uuid="8d833133-8e35-47eb-a6e2-0d5a87fa9905">
+            A canonical combined label is applied in the OBT / dimension layer, including <u><strong>OBT_BOOKINGS</strong></u> and <u><strong>OBT_PIPELINE</strong></u>. (<a href="https://jira.atl.workiva.net/browse/DNA-5806">DNA-5806</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="b4f7f931-97d9-428d-85b5-35183bf8e457">
+        <strong>Partnerships &amp; Alliances — opportunity-level partner relationship field</strong>
+        <ul>
+          <li data-uuid="d4ff7d17-5166-45b2-9623-4f10113ee8b3">
+            Q2 2026 KPIs on the new Partnerships &amp; Alliances Dashboard did not match the old dashboard for Sourced + Direct % of Bookings, Win Rate, Partner Delivery %, and ADS.
+          </li>
+          <li data-uuid="655c1b49-560e-4082-b05e-faffc45246e0">
+            The mismatch traced to scope differences, including the reporting classification: the old dashboard used a New Logo + New Solution slice, while the new one used all reporting types unless filtered.
+          </li>
+          <li data-uuid="e7bf1802-a684-43c0-a3e4-4dc09edf7c06">
+            An opportunity-level <strong>partner relationship</strong> field is added to <u><strong>OBT_PARTNER_BOOKINGS</strong></u> and <u><strong>OBT_PARTNER_PIPELINE</strong></u> so the new dashboard can apply the old dashboard's rules. (<a href="https://jira.atl.workiva.net/browse/DNA-5821">DNA-5821</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="6d5c3d1c-aa23-46e9-b28a-edaf3082468f">
+        <strong>FedRAMP — prod-Canada sanitization pipeline</strong>
+        <ul>
+          <li data-uuid="fb1bd93d-2924-42bd-ae6c-df1cfcb0db9f">
+            The <strong>GES pre-format Glue jobs</strong> are updated to include the new <strong>prod-Canada</strong> app spot, and history for that app spot is backfilled.
+          </li>
+          <li data-uuid="c50d5620-5a45-43c2-8b87-9d49a23b92d5">
+            Success means prod-ca data flows as expected through the sanitization pipeline (<a href="https://jira.atl.workiva.net/browse/DNA-6387">DNA-6387</a>).
+          </li>
+          <li data-uuid="d6f44943-6802-44ca-a5d8-2e8e747e6923">
+            Separately, work is in progress to investigate causes of <strong>parity failures</strong> in FedRAMP sanitization. Trivial causes will be fixed, and others will be ticketed with documented fixes. (<a href="https://jira.atl.workiva.net/browse/DNA-6368">DNA-6368</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="f81c92f5-102e-44f2-9b9c-e2594e65df15">
+        <strong>User analytics — shared product event contract</strong>
+        <ul>
+          <li data-uuid="0cc8f342-a5b5-427f-b6f0-307b3915d4a0">
+            Work is in progress to align the <u><strong>int_user_analytics_*</strong></u> models to a shared product event contract, including adding <strong>source_system</strong>.
+          </li>
+          <li data-uuid="5baf2b91-aefe-4c13-97d7-39a72b225d60">
+            A timebox is looking at <u><strong>silver_prod.user_analytic</strong></u> views that time out because filters are applied after a full table scan, and at the difficulty of analyzing across all event types.
+          </li>
+          <li data-uuid="6a30a259-4c26-4941-a4bb-9d7f73625ef3">
+            Discovery is also underway for <strong>SEC Reporting Advanced</strong> (Financial Reporting) usage data to assess event tracking and data readiness for future modeling. (<a href="https://jira.atl.workiva.net/browse/DNA-6459">DNA-6459</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6365">DNA-6365</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="68f31446-95c1-45da-81b1-71ea6f9a9727">
+        <strong>CData &amp; Customer360 — Silver models and D&amp;B investigation</strong>
+        <ul>
+          <li data-uuid="f24ac2b2-4ed7-460a-965a-45f9bdfb8d51">
+            Work is in progress to create CData-sourced models in Silver, aligning with Data Engineering on naming, directory structure, materialization, incremental strategy, metadata columns, testing, and governance tagging for financial data.
+          </li>
+          <li data-uuid="129453bb-aae0-4658-aa32-9dbee9df26cd">
+            An investigation is examining the D&amp;B <strong>exceptions</strong> table and how it can be used to update the existing D&amp;B models. (<a href="https://jira.atl.workiva.net/browse/DNA-6417">DNA-6417</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Reporting accuracy &amp; consistency</strong></p>
+    <ul>
+      <li data-uuid="3d412537-6a6b-41e3-a705-36d408513421">Capital Markets is out of scope for standard retention reporting, so retention metrics should exclude it consistently across renewals, solution retention, and account retention.</li>
+      <li data-uuid="edde3b24-9f8e-4d4e-867a-6404ecc6514a">Finance and RevOps users need a single ESG &amp; Sustainability filter value, and the new Partnerships &amp; Alliances Dashboard needs to reconcile with the old dashboard's KPIs.</li>
+    </ul>
+    <p><strong>Platform &amp; data foundation</strong></p>
+    <ul>
+      <li data-uuid="b9f0b7c7-9f37-4f5e-a8a3-fb58502f657e">FedRAMP coverage must extend to the prod-Canada app spot, with parity issues understood and resolved.</li>
+      <li data-uuid="73f1ec88-ba13-4a17-b074-2d21acb42876">A shared product event contract, better-performing user analytics views, and Silver-layer CData and D&amp;B models lay the groundwork for future product and customer analytics.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-10-28" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-10-28).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="612ff0e4-a003-4b11-808a-3899cbe57da5">Retention reporting that reads <u><strong>fct_solution_retention</strong></u> and <u><strong>fct_account_retention</strong></u> will show lower ARR where Capital Markets was previously included.</li>
+      <li data-uuid="b02d8304-a46d-409f-a3a7-c15c105103d0">ECM Solution Category filters built on <u><strong>OBT_BOOKINGS</strong></u> and <u><strong>OBT_PIPELINE</strong></u> will show a single combined ESG &amp; Sustainability value instead of two separate values.</li>
+      <li data-uuid="23f2d196-0fe6-43b4-b05a-0720f2800983">The Partnerships &amp; Alliances Dashboard consuming <u><strong>OBT_PARTNER_BOOKINGS</strong></u> and <u><strong>OBT_PARTNER_PIPELINE</strong></u> gains the opportunity-level partner relationship field, which may change filtered KPI values such as Win Rate and Partner Delivery %.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — Account and solution retention figures in <u><strong>fct_account_retention</strong></u> and <u><strong>fct_solution_retention</strong></u> exclude Capital Markets ARR as expected.</p>
+    <p>Verify — The ECM Solution Category filter shows one combined ESG &amp; Sustainability value, and Partnerships &amp; Alliances KPIs align with the old dashboard when the partner relationship field is applied.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="8d25a83a-7a54-4803-b661-df24028d3287"><a href="https://jira.atl.workiva.net/browse/DNA-5806">DNA-5806</a> — Combine ESG and Sustainability in solution_category (OBT) for ECM Solution Category filter</li>
+    <li data-uuid="cb07b2a7-77fa-4705-ab54-720adc2dcf90"><a href="https://jira.atl.workiva.net/browse/DNA-5821">DNA-5821</a> — Add the opportunity-level partner relationship field to OBT_PARTNER_BOOKINGS and OBT_PARTNER_PIPELINE so the new Partnerships &amp; Alliances Dashboard can match the old dashboard rules.</li>
+    <li data-uuid="06d9cf87-d8cd-4cf3-aa9a-ded7a41f21fd"><a href="https://jira.atl.workiva.net/browse/DNA-5922">DNA-5922</a> — C360 - Investigate D&amp;B &quot;exceptions&quot; table</li>
+    <li data-uuid="526ef69a-6eb4-4f05-951b-ab692e05a34b"><a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a> — Timebox - Look into User Analytics Models</li>
+    <li data-uuid="40767438-b66b-453a-becb-4a445177af1a"><a href="https://jira.atl.workiva.net/browse/DNA-6327">DNA-6327</a> — [ECM] Exclude Capital Markets ARR from account and solution level retention metrics</li>
+    <li data-uuid="20f0badd-e45d-4cc6-81c4-cf41c2e8ff2e"><a href="https://jira.atl.workiva.net/browse/DNA-6365">DNA-6365</a> — [Discovery] SEC Reporting Advanced (Financial Reporting) Usage Data</li>
+    <li data-uuid="1a9bb0a9-76ab-4639-a794-96fc5d7407cd"><a href="https://jira.atl.workiva.net/browse/DNA-6368">DNA-6368</a> — FedRAMP | Investigate causes of parity failures</li>
+    <li data-uuid="68def610-d8ad-4750-b5c3-627c9553d640"><a href="https://jira.atl.workiva.net/browse/DNA-6387">DNA-6387</a> — FedRAMP |  Add Prod-CA to GES pre-format jobs</li>
+    <li data-uuid="4de01b4c-0ef8-4d34-8c12-3aa33167b94a"><a href="https://jira.atl.workiva.net/browse/DNA-6417">DNA-6417</a> — CData - Create Models In Silver</li>
+    <li data-uuid="db508f1d-25a9-4598-818f-6281f88bd4c4"><a href="https://jira.atl.workiva.net/browse/DNA-6459">DNA-6459</a> — Align int_user_analytics models to the shared product event contract</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="f6d27181-2d60-455c-b2fd-4b070a408583">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
