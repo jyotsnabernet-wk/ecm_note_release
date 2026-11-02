@@ -1,0 +1,130 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-11-02" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>Customer360 D&amp;amp;B hierarchy, FedRAMP parity checks &amp;amp; alerting, product feature-event catalog, Salesforce Chatter ingestion</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="f9d62277-2d74-4230-bfb5-1ea9ee2a9f8e">
+        <strong>Customer360 — D&amp;B hierarchy and account spine</strong>
+        <ul>
+          <li data-uuid="ed339967-e853-4f59-8b8a-368d7716ae2f">
+            A new <strong>D&amp;B hierarchy</strong> table was created for Customer360 to represent parent and child company relationships.
+          </li>
+          <li data-uuid="13f972eb-b1ac-465f-8e27-5a6619f82ff0">
+            The team also investigated whether a <strong>semantic view</strong> can sit on top of the <strong>account spine / crosswalk</strong> to simplify customer lookups. (<a href="https://jira.atl.workiva.net/browse/DNA-5544">DNA-5544</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6138">DNA-6138</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="d7f0463b-1c76-4034-a18b-2cedf53ece1e">
+        <strong>FedRAMP — GES parity checks, alerting and source classification</strong>
+        <ul>
+          <li data-uuid="bc98726d-4114-4020-b9f9-6022ad584279">
+            Three rounds of <strong>parity checks</strong> for GES tables were completed in Snowflake. Each compared row counts by month between table pairs and checked whether differences came from duplicates or missing rows.
+          </li>
+          <li data-uuid="37dd2313-ee3e-4f66-a82e-f5c48291335c">
+            <strong>Splunk alerting</strong> was configured for the customer export notebook pipeline. It covers task failures, unexpected data presence in Snowflake, and sanitization errors, with on-call routing defined.
+          </li>
+          <li data-uuid="d562ea1e-3161-4468-a8b2-99527623ea7f">
+            Related work is in progress to classify every Overlord source as <strong>standardized or custom</strong> and flag FedRAMP-regulated sources such as Workday. This feeds the migration wave plan. (<a href="https://jira.atl.workiva.net/browse/DNA-6300">DNA-6300</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6308">DNA-6308</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6310">DNA-6310</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5947">DNA-5947</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="26d21681-6df9-42e4-98ca-ef79903ecef4">
+        <strong>Product analytics — feature-event catalog foundation</strong>
+        <ul>
+          <li data-uuid="c0120ec7-2070-46fa-8b43-e6ee039a5b34">
+            Empty foundational structures were staged for feature-event reporting: a <strong>feature event catalog</strong>, a <strong>bridge of workspace solution to product area</strong>, and the classification rules.
+          </li>
+          <li data-uuid="7434f058-9cb6-4a5f-97fd-d542349bed4a">
+            Each list can live in a macro or seed, and an intermediate model renders it for review. (<a href="https://jira.atl.workiva.net/browse/DNA-6488">DNA-6488</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="548c38ef-cb75-4dd3-af1c-ee60d3ecd40f">
+        <strong>Salesforce — Chatter ingestion and sales reporting</strong>
+        <ul>
+          <li data-uuid="b09e894a-b5c5-4094-9419-253f8bf42e91">
+            Salesforce <strong>Case and Chatter comment</strong> ingestion was extended for the Quote-to-Cash initiative. Sales Operations can now analyze why Opportunities request Deal Desk support and what causes deal friction.
+          </li>
+          <li data-uuid="97999907-2e05-443b-9f83-dd9a4023b48f">
+            In progress: models to compare Bookings are being built, because <u><strong>obt_bookings</strong></u> reflects the latest Salesforce status and reported month-end or quarter-end numbers drift over time.
+          </li>
+          <li data-uuid="16c6cc52-671c-4079-a18b-ec1a5a5bf16c">
+            In progress: the refresh cadence of <u><strong>FCT_FORECAST_HISTORY</strong></u> is being moved to Wednesday and Thursday at 5pm Central, with new Account Owner-related fields added. (<a href="https://jira.atl.workiva.net/browse/DNA-6342">DNA-6342</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6463">DNA-6463</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6346">DNA-6346</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="cb7cd40d-99d1-4f15-964b-299d5b5aa9da">
+        <strong>Semantic views — Signals &amp; Actions for support</strong>
+        <ul>
+          <li data-uuid="b7a063c7-2c10-4a93-ac4e-81829af7553a">
+            Work is in progress to define and implement <strong>Signals &amp; Actions</strong> for the <u><strong>sv_support_ticket</strong></u> semantic view, for use with Snowflake Cortex Analyst.
+          </li>
+          <li data-uuid="9352970d-3b95-47c5-96bb-fb92b8a9e44c">
+            The business stakeholders' specification sheet will determine the final list. (<a href="https://jira.atl.workiva.net/browse/DNA-6249">DNA-6249</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="b7f9f734-d004-4b1a-ab03-92c9cd42109f">
+        <strong>Ingestion platform — Fivetran assessment and Zendesk Knowledge</strong>
+        <ul>
+          <li data-uuid="13d925aa-607e-4fdb-a18c-7c12d7f22fd4">
+            An assessment of current <strong>Fivetran entitlement and usage</strong> is under way. It covers licensed connectors, spare capacity, and the MAR per-connector cost model.
+          </li>
+          <li data-uuid="1a010460-c939-4c04-80c4-2c413f57c52f">
+            Work is also in progress to extend <u><strong>zendesk.article</strong></u> ingestion with engagement fields (views, comments, subscriptions, upvotes) that the DX team needs. (<a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Data trust &amp; compliance</strong></p>
+    <ul>
+      <li data-uuid="dc8492dd-8313-4a40-a83a-24c02fe7bb88">FedRAMP parity checks and Splunk alerting confirm regulated data pipelines match existing outputs and that failures or unsanitized data are caught quickly.</li>
+      <li data-uuid="eb12ba53-df1a-4c9f-94a8-ad9f52c06541">Source classification and the Fivetran assessment guide migration planning and cost decisions.</li>
+    </ul>
+    <p><strong>Business analytics enablement</strong></p>
+    <ul>
+      <li data-uuid="f5a31df2-1eb4-4671-a169-c33973c76eca">Customer hierarchy, feature-event classification, Chatter ingestion, and bookings comparison give Finance, Sales Operations, and Product teams more complete, repeatable reporting.</li>
+      <li data-uuid="f1179417-5048-4c54-9fd3-aab0681e3be9">Semantic views and the Zendesk engagement fields support self-service analysis for Support and DX.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-11-04" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-11-04).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="a93e2016-d62f-4b81-91ac-4e560143d7b8">Customer360 consumers may see the new D&amp;B hierarchy table and any account spine or crosswalk changes alongside existing customer models.</li>
+      <li data-uuid="f4045e4f-251d-44bd-b454-b8743f0d08e1">Salesforce Case and Chatter ingestion changes may add new source data for Quote-to-Cash analysis in Salesforce-based models.</li>
+      <li data-uuid="1202285f-d4be-4e7a-bd3c-44a63451e6a6">Bookings reporting built on <u><strong>obt_bookings</strong></u> is the basis for the new comparison models, which will help explain differences against previously reported numbers.</li>
+      <li data-uuid="a715fb59-9f5a-4341-9d53-0ebe47bd5367">Consumers of <u><strong>FCT_FORECAST_HISTORY</strong></u> will see a new refresh schedule once the in-progress change ships.</li>
+      <li data-uuid="324d7cae-567d-4d47-8008-b6fb47148fe6">Users of the <u><strong>sv_support_ticket</strong></u> semantic view and <u><strong>zendesk.article</strong></u> may see new Signals, Actions, and engagement fields as in-progress work completes.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — Customer360 consumers confirm the new D&amp;B hierarchy table returns expected parent and child relationships.</p>
+    <p>Verify — Salesforce Case and Chatter users confirm the new data is available and expected before relying on it for Quote-to-Cash analysis.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="7f6d069e-a00c-4657-8a6f-9f1b77605e94"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="8322da0b-7267-45c0-a923-7d0b93a60b3d"><a href="https://jira.atl.workiva.net/browse/DNA-5544">DNA-5544</a> — C360 - Create D&amp;B hierarchy table</li>
+    <li data-uuid="cf73ac3e-d5dc-4481-be85-a17691ff303e"><a href="https://jira.atl.workiva.net/browse/DNA-5947">DNA-5947</a> — FedRAMP | Alerting: Set up task failure alerts into Splunk for customer export notebook</li>
+    <li data-uuid="42aae467-6136-4309-8f2e-dac2a743545c"><a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> — Classify all sources: standardized vs custom &amp; flag FedRAMP</li>
+    <li data-uuid="941dac1f-26a9-48b4-a5f5-cab0d7f0c9ee"><a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a> — Assess current Fivetran entitlement &amp; usage</li>
+    <li data-uuid="795fb478-118c-4641-bb96-6bb5d67902d8"><a href="https://jira.atl.workiva.net/browse/DNA-6138">DNA-6138</a> — C360 - Investigate semantic view on account spine / crosswalk</li>
+    <li data-uuid="56b01c73-7916-4fc9-a968-6068ec7b3a23"><a href="https://jira.atl.workiva.net/browse/DNA-6249">DNA-6249</a> — Support Semantic View: Signals &amp; Actions</li>
+    <li data-uuid="5afb8437-6b30-4e4e-b69e-1c6e64f2695c"><a href="https://jira.atl.workiva.net/browse/DNA-6300">DNA-6300</a> — FedRAMP | Parity Checks for GES pt. 1</li>
+    <li data-uuid="8d3feabd-7801-4204-b9b8-3f1c7dc52537"><a href="https://jira.atl.workiva.net/browse/DNA-6308">DNA-6308</a> — FedRAMP | Parity Checks for GES pt. 2</li>
+    <li data-uuid="9575891e-b9e9-43d4-b4bd-37ab34e8596c"><a href="https://jira.atl.workiva.net/browse/DNA-6310">DNA-6310</a> — FedRAMP | Parity Checks for GES pt. 3</li>
+    <li data-uuid="2b417a65-f29a-43fb-add8-4ddd9c171b39"><a href="https://jira.atl.workiva.net/browse/DNA-6342">DNA-6342</a> — Extend Salesforce case and Chatter ingestion for Quote-to-Cash analysis</li>
+    <li data-uuid="956f689f-f67d-4b15-8cc1-377fd1368fac"><a href="https://jira.atl.workiva.net/browse/DNA-6346">DNA-6346</a> — Change FCT_FORECAST_HISTORY refresh cadence and add Account Owner field</li>
+    <li data-uuid="8e2c4ec3-7c64-4236-a898-24b6a76721f3"><a href="https://jira.atl.workiva.net/browse/DNA-6463">DNA-6463</a> — Models to compare Bookings</li>
+    <li data-uuid="73aea09f-6202-4676-9c51-f70bc3dce325"><a href="https://jira.atl.workiva.net/browse/DNA-6488">DNA-6488</a> — Stage the feature-event catalog, classification, and rules</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="9866fd19-d6d0-4a27-bdfd-b615e7f806a2">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
