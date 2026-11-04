@@ -1,11 +1,11 @@
 # DnA Release — October 29 - November 4, 2026 | Executive Summary
 
-- **Federal Compliance (FedRAMP)** — Verified data consistency, added alerting, and put classic data on hourly refresh to keep federal customer data monitored and sanitized.
-- **Europe Data Readiness** — Completed preparations for regional data replication, supporting a smooth go-live for European customers.
-- **Finance and Customer Success** — Delivered a combined account view linking Finance, customer success owners, and employee records, unblocking automation work.
-- **Product Analytics** — Established usage data foundations for SEC reporting and platform events, enabling clearer insight into feature adoption.
-- **Customer 360** — Advanced company hierarchy and account relationship views, giving teams a more complete picture of customers.
-- **Sales Operations** — Expanded case and discussion data availability, helping teams understand causes of deal friction and Deal Desk requests.
-- **User Analytics** — Streamlined user activity data by removing reference-only tables, improving accuracy and reliability of usage reporting.
+- **Federal Compliance** — Strengthened security parity, monitoring and alerting so Federal customer data stays accurately sanitized and protected.
+- **Product Analytics** — Delivered a unified view of product usage and a foundation for measuring feature adoption by product area.
+- **Finance** — Connected account data to customer success owners and employee IDs, enabling automation teams to begin testing.
+- **Customer 360** — Advanced account hierarchy and relationship insights for a more complete view of customers.
+- **Sales Operations** — Expanded Salesforce case and discussion data to reveal causes of deal friction and Deal Desk requests.
+- **Document Data** — Preserved full document name history for non-Federal customers, improving traceability and reporting.
+- **Europe Data Platform** — Completed readiness work for European data replication go-live.
 
 *Need more detail? Review the technical release notes: DNA Weekly Release Sprint 10/29-11/4*
