@@ -1,0 +1,135 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-11-09" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>FedRAMP Athena and Snowflake readiness, customer activity models, user analytics performance, PnC data discovery</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="51b3434d-3a84-45c3-8b7d-9b8413ba2709">
+        <strong>FedRAMP — daily history cleanup fix and pipeline linkage</strong>
+        <ul>
+          <li data-uuid="5f7406e4-2f49-41d5-ac45-b2c98b314d0b">
+            The dbt Athena post hook for daily history cleanup is fixed. It previously failed because not every model was on table version 2 and because of a map key incompatibility in <u><strong>user_analytic</strong></u>.
+          </li>
+          <li data-uuid="2450832b-6ec4-43b9-a0e9-a41e000c42c6">
+            Daily cleanup now runs without those failures, so history can be cleaned up as Federal customers change.
+          </li>
+          <li data-uuid="02218673-9bd5-4cb8-b8e7-0b9b1845cfcd">
+            Work continues to link dbt Athena to dbt Snowflake for Iceberg tables. Snowflake typically breaks when the upstream Athena process does a full replacement or table drop, even with <strong>AUTO_REFRESH = true</strong>. The goal is to run DDL after hourly runs using macros and config files, with no manual relationship maintenance (<a href="https://jira.atl.workiva.net/browse/DNA-6621">DNA-6621</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6663">DNA-6663</a>).
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="3f8b4ef2-766a-4e7a-b56a-b1799d3638a0">
+        <strong>FedRAMP — Snowflake parity checks for user analytics</strong>
+        <ul>
+          <li data-uuid="6a2acdb1-f46c-42cb-81cf-9125dec61a3e">
+            Row-count parity analyses in Snowflake are in progress for the <strong>User Analytic Live</strong> and <strong>User Analytic History</strong> tables. They confirm the tables match 1:1 and that timestamps are in UTC.
+          </li>
+          <li data-uuid="8e6a7ee1-8e83-4b5f-a56d-7d9d3fa161dd">
+            These tables hold billions of rows, so comparisons may need ranges smaller than monthly to avoid query timeouts (<a href="https://jira.atl.workiva.net/browse/DNA-6623">DNA-6623</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6622">DNA-6622</a>).
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="ea4d7791-a5a0-46c0-a269-f6fdbe1cac9d">
+        <strong>FedRAMP — runbooks for Amplitude and Wdesk Classic models</strong>
+        <ul>
+          <li data-uuid="11eb5b98-91c7-4691-a6d8-0b97343f0d04">
+            README runbooks are being created in the repo for the Amplitude and Wdesk Classic models in dbt Athena, using an AI tool to draft them.
+          </li>
+          <li data-uuid="1a844b21-dc5d-4ff1-b8b4-8486290de5ef">
+            Each runbook covers how to rerun the hourly refresh and the daily run, how to correct history, and how to backfill it. Each also covers the extra steps needed if the models must be fully refreshed (<a href="https://jira.atl.workiva.net/browse/DNA-6638">DNA-6638</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6628">DNA-6628</a>).
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="b7f69fdc-d5bd-490c-aa1f-61f6cae2470f">
+        <strong>FedRAMP — role permission parity for sanitized tables</strong>
+        <ul>
+          <li data-uuid="6a4d40c8-49d6-477c-851e-f312f4df000c">
+            Role grants on the new Workiva, Amplitude, and GES tables are being compared with the existing grants, with the exception of ownership.
+          </li>
+          <li data-uuid="3c9a197b-6f36-4e01-ac55-af0d67c2552d">
+            Any grants that do not match will be run so security is identical across the sanitized tables (<a href="https://jira.atl.workiva.net/browse/DNA-6636">DNA-6636</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6637">DNA-6637</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6642">DNA-6642</a>).
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="43f96f8f-5efa-4079-8a76-a800e6cdd844">
+        <strong>Product usage — feature events and shared customer activity spine</strong>
+        <ul>
+          <li data-uuid="3b89b49b-4208-46f9-8733-6bfc4727e5eb">
+            A new <u><strong>fct_feature_events</strong></u> model is being built with one row per raw event and feature event. <u><strong>feature_event_key</strong></u> is a hash of <u><strong>event_key</strong></u> and <u><strong>feature_event_name</strong></u>, so a raw event matching two rules for the same feature event is stored once.
+          </li>
+          <li data-uuid="cd01abe5-1635-4f8b-897d-9d33d9de6d72">
+            Employees, internal workspaces, and non-production environments stay on this fact, and population filters are applied downstream. A macro reads <strong>feature_event_rules()</strong> and generates one select per rule.
+          </li>
+          <li data-uuid="f2c4e2b2-59b9-4f31-8c96-080aa7bafa85">
+            <u><strong>fct_user_workspace_usage_daily</strong></u> is being updated to serve as the shared daily customer activity spine for product usage reports. Today it still keeps employees, unknown users, internal workspaces, internal organizations, and days with a missing workspace or organization, so each report has to remove those rows again (<a href="https://jira.atl.workiva.net/browse/DNA-6490">DNA-6490</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6495">DNA-6495</a>).
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="7d9d6cc0-fa67-47b6-80a2-6f12052740be">
+        <strong>User analytics — query performance investigation</strong>
+        <ul>
+          <li data-uuid="b7403983-72d7-4cda-8299-42a5d814f61b">
+            A timeboxed investigation is looking at why queries against the <u><strong>silver_prod.user_analytic</strong></u> views time out. The views apply filters after a full table scan, which makes even simple queries expensive.
+          </li>
+          <li data-uuid="b73b5052-445e-4063-8e92-1f7fc5e50c7c">
+            Analysis across all event types is also difficult today, because the data is spread across the event type views in Snowflake (<a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a>).
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="6cbe5b3b-3471-4070-bc9a-071291eb88ac">
+        <strong>PnC — Snowflake dataset discovery</strong>
+        <ul>
+          <li data-uuid="20400232-721b-4e0d-9c86-099a8d56149b">
+            A timeboxed discovery is under way to find what PnC data already exists in Snowflake. It will support the Headcount and Talent Acquisition efforts (<a href="https://jira.atl.workiva.net/browse/DNA-6656">DNA-6656</a>).
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>FedRAMP &amp; platform reliability</strong></p>
+    <ul>
+      <li data-uuid="1e40d788-e11f-4c22-9960-b80ae3cc51cf">Federal customer data must be kept accurate, cleaned up daily, and consistent between Athena and Snowflake without manual upkeep.</li>
+      <li data-uuid="f8bbe5f0-8723-4465-b035-3456a69e94fb">Parity checks, matching role grants, and runbooks give the team evidence of data and security equivalence. They also give operators clear recovery steps when hourly or daily runs fail.</li>
+    </ul>
+    <p><strong>Product &amp; customer analytics</strong></p>
+    <ul>
+      <li data-uuid="816b1571-8b12-44e2-9e55-ec286621589f">A shared, pre-filtered activity spine and a rule-driven feature events fact remove the need for each product usage report to re-apply the same exclusions.</li>
+      <li data-uuid="cd7aabb4-bf5c-4b0d-aacd-d9cab0a6694f">The user analytics and PnC investigations clarify where performance and data coverage gaps are before more models are built.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-11-11" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-11-11).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="f54d2785-c9a1-4bf9-a686-7e4490c45844">Product usage reports that read <u><strong>fct_user_workspace_usage_daily</strong></u> may see fewer rows once employees, unknown users, internal workspaces and organizations, and days with missing workspace or organization are excluded.</li>
+      <li data-uuid="3cd54e8b-e002-42de-ac54-27447005fa41">The new <u><strong>fct_feature_events</strong></u> model adds a feature event fact that keeps employee, internal, and non-production events. Downstream consumers must apply their own population filters.</li>
+      <li data-uuid="1d3be7c5-e28f-4103-8b22-611cb9f52e4b">Federal Athena and Snowflake models, including <u><strong>user_analytic</strong></u>, depend on the corrected daily history cleanup post hook and on Iceberg table linkage after hourly refreshes.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p><strong>Verify</strong> — after the deploy, daily Athena post hook runs for the FedRAMP models complete without table version or <u><strong>user_analytic</strong></u> map key errors.</p>
+    <p><strong>Verify</strong> — product usage dashboards that use <u><strong>fct_user_workspace_usage_daily</strong></u> still reconcile once internal and unknown rows are excluded.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="08e73c6e-d987-4867-9cac-5cbda31e3ece"><a href="https://jira.atl.workiva.net/browse/DNA-6093">DNA-6093</a> — Timebox - Look into User Analytics Models</li>
+    <li data-uuid="42b2bbbe-6d2d-47d7-a9a3-fafed2619b08"><a href="https://jira.atl.workiva.net/browse/DNA-6490">DNA-6490</a> — Build fct_feature_events model</li>
+    <li data-uuid="a179650f-4472-4828-919e-a91d9c32af35"><a href="https://jira.atl.workiva.net/browse/DNA-6495">DNA-6495</a> — Make fct_user_workspace_usage_daily the shared customer activity spine</li>
+    <li data-uuid="7598f8fd-006d-4215-a53e-eed829fafbac"><a href="https://jira.atl.workiva.net/browse/DNA-6621">DNA-6621</a> — FedRAMP | fix daily cleanup</li>
+    <li data-uuid="b81ec55c-1f17-4418-94df-198e65a268a8"><a href="https://jira.atl.workiva.net/browse/DNA-6622">DNA-6622</a> — FedRAMP | Parity Checks for User Analytic History</li>
+    <li data-uuid="30c21739-d0e7-4442-89d7-1331820fd079"><a href="https://jira.atl.workiva.net/browse/DNA-6623">DNA-6623</a> — FedRAMP | Parity Checks for User Analytic Live</li>
+    <li data-uuid="a53f0abc-9ebd-4338-b960-cba9d0daefdf"><a href="https://jira.atl.workiva.net/browse/DNA-6628">DNA-6628</a> — FedRAMP | Create Runbook for Wdesk Classic Models</li>
+    <li data-uuid="7b45e56a-09c9-40f9-830c-9f94fffdea64"><a href="https://jira.atl.workiva.net/browse/DNA-6636">DNA-6636</a> — FedRAMP | Mirror role permissions for Workiva</li>
+    <li data-uuid="db30a9ae-b639-4138-b9a5-219ae99c21f9"><a href="https://jira.atl.workiva.net/browse/DNA-6637">DNA-6637</a> — FedRAMP | Mirror role permissions for Amplitude</li>
+    <li data-uuid="56242205-86b9-4bc5-bbb1-9dadf73bf545"><a href="https://jira.atl.workiva.net/browse/DNA-6638">DNA-6638</a> — FedRAMP | Create Runbook for Amplitude Models</li>
+    <li data-uuid="88128b22-5205-49fd-901b-e124ee42c7a3"><a href="https://jira.atl.workiva.net/browse/DNA-6642">DNA-6642</a> — FedRAMP | Mirror role permissions for GES</li>
+    <li data-uuid="eff7de7e-d974-47ab-bbd6-5817f1c3175c"><a href="https://jira.atl.workiva.net/browse/DNA-6656">DNA-6656</a> — PnC - Investigate current dataset on Snowflake</li>
+    <li data-uuid="8edffddf-c4ea-4653-8c99-fea726dc8ab5"><a href="https://jira.atl.workiva.net/browse/DNA-6663">DNA-6663</a> — FedRAMP | Link dbt athena to dbt snowflake for iceberg tables</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="899ef303-22da-4776-abfe-d75bbc1d7f95">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
