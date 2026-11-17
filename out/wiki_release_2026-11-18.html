@@ -1,0 +1,169 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-11-17" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>Semantic views, Customer360 hierarchy, product &amp;amp; GES events, FedRAMP WDesk cutover, platform upkeep</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="4b94b96e-1759-42d0-ab3d-3cb885e0718c">
+        <strong>Support — semantic view evaluation &amp; actions</strong>
+        <ul>
+          <li data-uuid="cd785cdf-52a3-43aa-b28d-7aee239d4d00">
+            The <u><strong>obt_support_ticket</strong></u> Support Ticket semantic view was evaluated and hardened for <strong>Text-to-SQL</strong> performance in Cortex Analyst, using the Data Science evaluation framework, ahead of exposing it to the GTM Assistant in Claude via MCP.
+          </li>
+          <li data-uuid="2114d045-3066-41ca-b052-8652afd3816d">
+            Work is still in progress to define and implement <strong>Signals &amp; Actions</strong> for the <u><strong>sv_support_ticket</strong></u> semantic view, aligned with business stakeholders on the required list.
+          </li>
+          <li data-uuid="3c72c253-2902-483f-a1b8-3cc68139d2af">
+            (<a href="https://jira.atl.workiva.net/browse/DNA-6627">DNA-6627</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6249">DNA-6249</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="3d57cb60-9439-4ae4-8d9e-5880cd3d2507">
+        <strong>Customer360 — account hierarchy &amp; parent discovery</strong>
+        <ul>
+          <li data-uuid="b194c5c6-3baa-4d63-922e-ffa1bce1a00a">
+            The D&amp;B API was reviewed as a way to identify all parents of an account at once, instead of gathering the hierarchy one account at a time.
+          </li>
+          <li data-uuid="3ceea50d-d39f-43f4-858e-c331441d12c0">
+            The account hierarchy semantic view was verified as a tool in a multi-agent setup, alongside others such as bookings, to confirm it produces accurate answers.
+          </li>
+          <li data-uuid="805794ff-254b-40fc-b0e4-61bfac2a7eff">
+            (<a href="https://jira.atl.workiva.net/browse/DNA-6036">DNA-6036</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6657">DNA-6657</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="0ac010c2-b9c1-428c-b53a-bfac9c1312d4">
+        <strong>Product usage &amp; GES events — new event facts</strong>
+        <ul>
+          <li data-uuid="6b703834-404b-4fda-9e48-c14a4aeac6ab">
+            The new <u><strong>fct_user_analytics_events</strong></u> fact replaces the planned <u><strong>int_user_analytics</strong></u> intermediate model and reads <strong>USER_ANALYTIC.CERBERUS_COMMIT</strong> directly from the lake, because the silver views cannot prune and the intermediate pattern does not scale.
+          </li>
+          <li data-uuid="e2c13dcd-9b30-46d6-b9c6-8fd187e28ce4">
+            <u><strong>fct_ges_events</strong></u> now includes the <strong>SCRIPT_RUN_OPERATION_EVENT</strong> topic (modeled in silver as <u><strong>workiva_script_run_operation_event</strong></u>) alongside <u><strong>workiva_event_log</strong></u>.
+          </li>
+          <li data-uuid="65913fd6-364b-4915-abec-bfdc3af1662d">
+            Gen AI feature events are being onboarded into the shared feature events layer (<u><strong>fct_feature_events</strong></u> and related catalog/rules) so Gen AI activity is counted through the standard product usage path. This work is in progress.
+          </li>
+          <li data-uuid="31c741cc-1dee-44c1-8f73-2aa70c537213">
+            (<a href="https://jira.atl.workiva.net/browse/DNA-6667">DNA-6667</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6669">DNA-6669</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6728">DNA-6728</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="62b7bb3c-f25e-49dd-9b27-56d0ce9f9f17">
+        <strong>FedRAMP — WDesk Classic cutover &amp; Workiva merge strategy</strong>
+        <ul>
+          <li data-uuid="10d045a5-7be5-4b4d-aade-cac1e11442ff">
+            Multiple parts of the <strong>WDesk Classic</strong> production cutover are in progress, directly replacing WDesk Classic table references in dbt, with basic QA focused on code compile in a personal SILVER_TEST schema.
+          </li>
+          <li data-uuid="41d9225e-bc0c-49ae-ac19-c3f742644e22">
+            Workiva models are being switched from <strong>append</strong> to <strong>merge</strong> on the appropriate keys to improve speed and data accuracy without losing rows skipped by the OR predicate.
+          </li>
+          <li data-uuid="89be548c-4b00-4d29-8e3d-c78f6f0fda46">
+            Overlord sources are being classified as standardized or custom, with FedRAMP-regulated sources (e.g. Workday) flagged to drive the migration wave plan.
+          </li>
+          <li data-uuid="916d0644-29ea-4ad5-ac88-ca394dd91f0b">
+            (<a href="https://jira.atl.workiva.net/browse/DNA-6437">DNA-6437</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6579">DNA-6579</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6580">DNA-6580</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6581">DNA-6581</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6743">DNA-6743</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="e4dc67f6-c95e-4436-8bb3-27362c23f7f2">
+        <strong>Platform — dbt Cloud OAuth &amp; Lambda runtime</strong>
+        <ul>
+          <li data-uuid="c8e26932-9483-4889-9fe9-5aca2ee13d76">
+            The dbt Cloud Snowflake OAuth redirect URI was migrated with steps designed to avoid downtime, after the dbt Cloud change had locked users out of onboarding and connection refreshes.
+          </li>
+          <li data-uuid="354a063c-bd98-4380-abb6-5196bfdadd5f">
+            Three Lambdas (ito-ds-user-analytic-s3, ito-AnalyticDeaggregator, ito-AnalyticDeaggregator-Reprocessor) are being moved off the Python 3.10 runtime, which AWS is retiring, to the newest feasible Python version. This work is in progress.
+          </li>
+          <li data-uuid="16eca98d-f64e-4bc2-98ed-f3feeaf02509">
+            (<a href="https://jira.atl.workiva.net/browse/DNA-6713">DNA-6713</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6162">DNA-6162</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="2097d941-6d3c-4e00-ac42-e9e36418cb4f">
+        <strong>GTM &amp; Finance — bookings comparison &amp; forecast history</strong>
+        <ul>
+          <li data-uuid="5961bf24-f67c-4026-b6a3-356ec8412906">
+            New models are in progress to compare Bookings between reporting points, since <u><strong>obt_bookings</strong></u> reflects the latest Salesforce status and reported month-end or quarter-end numbers can stop matching.
+          </li>
+          <li data-uuid="de3735db-ba07-452b-bf33-5e703b388d6e">
+            <u><strong>FCT_FORECAST_HISTORY</strong></u> is being updated to refresh Wednesday 5pm CT and Thursday 5pm CT instead of weekly on Mondays, with additional Account Owner fields added. This work is in progress.
+          </li>
+          <li data-uuid="2173c8fe-6220-4122-adad-6496c3f820ef">
+            (<a href="https://jira.atl.workiva.net/browse/DNA-6463">DNA-6463</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6346">DNA-6346</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="965ad91d-149d-4c3c-a7d2-ed4d13dc7e76">
+        <strong>Data ingestion — Snowflake availability &amp; source assessment</strong>
+        <ul>
+          <li data-uuid="56240699-85bd-4a87-8c8d-f3b598419dd1">
+            The Redshift table <strong>cpx_dna.cpxdna_retention_renewal_solution_quarter</strong> was brought into Snowflake for a CPX solution churn proof of concept.
+          </li>
+          <li data-uuid="6e53e752-5e9b-4ad0-a337-785e8e6886e7">
+            Zendesk article ingestion is being extended with engagement fields (views, comments, subscriptions, upvotes) for the DX team, and the current Fivetran entitlement, connectors, and MAR cost model are being assessed. Both are in progress.
+          </li>
+          <li data-uuid="eae797f0-b9ca-48c4-9405-0e221b954e11">
+            (<a href="https://jira.atl.workiva.net/browse/DNA-4281">DNA-4281</a> / <a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>Analytics &amp; AI readiness</strong></p>
+    <ul>
+      <li data-uuid="7d0fba75-5481-4a5f-8987-81fd316698b7">Validating the Support and account hierarchy semantic views makes Text-to-SQL and agent answers trustworthy before wider GTM use.</li>
+      <li data-uuid="c70831c2-8dd4-4e68-97ac-238ae79dfbd7">Moving user analytics to a lake-based fact, adding script run events, and onboarding Gen AI feature events give customer and product metrics fuller, more scalable coverage.</li>
+    </ul>
+    <p><strong>Platform, compliance &amp; data access</strong></p>
+    <ul>
+      <li data-uuid="dc32b153-f4e9-4309-ab9e-c04479769619">The FedRAMP cutover, merge strategy and source classification prepare the pipelines for FedRAMP-regulated data handling and better performance.</li>
+      <li data-uuid="435fa010-7ed1-4f38-a21e-384f561895f9">The OAuth fix, Lambda runtime upgrade, and ingestion work restore tool access, avoid unsupported runtimes, and give teams the data they requested.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-11-18" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-11-18).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="808e79d3-666c-4363-b09a-64812c6ab290">Support and AI consumers of <u><strong>obt_support_ticket</strong></u> and <u><strong>sv_support_ticket</strong></u> will see an evaluated semantic view, with Signals &amp; Actions to follow.</li>
+      <li data-uuid="69535a43-906f-4e98-9396-e69b309acf42">Product usage reporting gains <u><strong>fct_user_analytics_events</strong></u>, and <u><strong>fct_ges_events</strong></u> now includes script run events from <u><strong>workiva_script_run_operation_event</strong></u> alongside <u><strong>workiva_event_log</strong></u>.</li>
+      <li data-uuid="f56bc387-5a72-40c1-ace8-4f73d5d4b742">Anything built on the former <u><strong>int_user_analytics</strong></u> path or <u><strong>fct_product_events</strong></u> wiring should use <u><strong>fct_user_analytics_events</strong></u> instead.</li>
+      <li data-uuid="2ee10cd1-037b-4c5b-bc1f-c00e7ed9aba5">Models that reference WDesk Classic tables, and Workiva models moving to merge, may change as the FedRAMP cutover completes.</li>
+      <li data-uuid="c5e847b3-2e70-4d2f-9df2-1252c72d3222">Consumers of <u><strong>FCT_FORECAST_HISTORY</strong></u> and <u><strong>obt_bookings</strong></u> should expect the refresh cadence and new comparison models to change once those in-progress items ship.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — Downstream users of <u><strong>fct_ges_events</strong></u> and <u><strong>fct_user_analytics_events</strong></u> confirm row counts and event types look as expected, including script run events.</p>
+    <p>Verify — Any dashboards or queries that referenced <u><strong>int_user_analytics</strong></u> now point to <u><strong>fct_user_analytics_events</strong></u>.</p>
+    <p>Verify — dbt Cloud users can authenticate to Snowflake and refresh existing connections after the OAuth redirect URI change.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="aa0e06dd-8afb-4738-b281-1072accf6b59"><a href="https://jira.atl.workiva.net/browse/DNA-4281">DNA-4281</a> — Redshift -&gt; Snowflake Table</li>
+    <li data-uuid="8d64a43f-7c44-41cf-8b2d-7c77d0166470"><a href="https://jira.atl.workiva.net/browse/DNA-5171">DNA-5171</a> — Ingest Zendesk Knowledge: Knowledge Base engagement fields</li>
+    <li data-uuid="6e86cb0f-d1c1-48bf-a88d-739dcb11a60b"><a href="https://jira.atl.workiva.net/browse/DNA-6036">DNA-6036</a> — C360 - Review D&amp;B API for account parents</li>
+    <li data-uuid="84c39628-df93-4224-94be-9b8ddab1c996"><a href="https://jira.atl.workiva.net/browse/DNA-6053">DNA-6053</a> — Classify all sources: standardized vs custom &amp; flag FedRAMP</li>
+    <li data-uuid="a0a7c88f-942e-4e8f-9b18-4ddb15cfdd88"><a href="https://jira.atl.workiva.net/browse/DNA-6056">DNA-6056</a> — Assess current Fivetran entitlement &amp; usage</li>
+    <li data-uuid="0dae00bf-b91d-4744-a5bd-5242e572fb40"><a href="https://jira.atl.workiva.net/browse/DNA-6162">DNA-6162</a> — Upgrade python on lambdas</li>
+    <li data-uuid="f44be5ba-e795-413f-b68c-26e24db31203"><a href="https://jira.atl.workiva.net/browse/DNA-6249">DNA-6249</a> — Support Semantic View: Signals &amp; Actions</li>
+    <li data-uuid="cba1722e-eb13-4c90-8105-181a92d642fb"><a href="https://jira.atl.workiva.net/browse/DNA-6346">DNA-6346</a> — Change FCT_FORECAST_HISTORY refresh cadence and add Account Owner field</li>
+    <li data-uuid="0a0b9a68-d515-4b51-8d9f-e59b219b5f90"><a href="https://jira.atl.workiva.net/browse/DNA-6437">DNA-6437</a> — FedRAMP | Prod CutOver WDesk Classic Part 2</li>
+    <li data-uuid="ded6a691-1aa2-4d22-aba1-86368d72394e"><a href="https://jira.atl.workiva.net/browse/DNA-6463">DNA-6463</a> — Models to compare Bookings</li>
+    <li data-uuid="3526e598-9bd2-4d1b-aa4a-4f60ce64a9fb"><a href="https://jira.atl.workiva.net/browse/DNA-6579">DNA-6579</a> — FedRAMP | Prod CutOver WDesk Classic Part 3</li>
+    <li data-uuid="4c6175cf-1964-47eb-84c3-18dd2142ca06"><a href="https://jira.atl.workiva.net/browse/DNA-6580">DNA-6580</a> — FedRAMP | Prod CutOver WDesk Classic Part 4</li>
+    <li data-uuid="8569bc41-9cab-4a0d-b65e-647664d2d7dc"><a href="https://jira.atl.workiva.net/browse/DNA-6581">DNA-6581</a> — FedRAMP | Prod CutOver WDesk Classic Part 5</li>
+    <li data-uuid="8cc44558-f20c-470d-a732-ea9b4c21d59c"><a href="https://jira.atl.workiva.net/browse/DNA-6627">DNA-6627</a> — Support Semantic View - Evaluation &amp; Monitoring</li>
+    <li data-uuid="08a70e46-af12-4435-b556-15e7ca450aaf"><a href="https://jira.atl.workiva.net/browse/DNA-6657">DNA-6657</a> — C360 - Verify account hierarchy semantic view in mulit-agent</li>
+    <li data-uuid="4cdc6d13-52bf-4311-9f28-935f21c262e0"><a href="https://jira.atl.workiva.net/browse/DNA-6667">DNA-6667</a> — Build fct_user_analytics_events (pivot from int_user_analytics path)</li>
+    <li data-uuid="1e6888e2-6746-404f-b2c7-53a2eb675fc9"><a href="https://jira.atl.workiva.net/browse/DNA-6669">DNA-6669</a> — Add SCRIPT_RUN_OPERATION_EVENT to fct_ges_events alongside workiva_event_log</li>
+    <li data-uuid="b4992903-db82-4504-a207-d97a9562c13b"><a href="https://jira.atl.workiva.net/browse/DNA-6713">DNA-6713</a> — Fix Redirect URI change for DBT Cloud Snowflake OAuth</li>
+    <li data-uuid="54ea053a-68ac-4712-acbc-8be2e225c51f"><a href="https://jira.atl.workiva.net/browse/DNA-6728">DNA-6728</a> — Add Gen AI feature events to the product usage feature-events pipeline</li>
+    <li data-uuid="5ddd8cdc-a2d9-4af9-bd62-dd3bc2e9811f"><a href="https://jira.atl.workiva.net/browse/DNA-6743">DNA-6743</a> — FedRAMP | Workiva: merge strategy</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="771cd53a-85a2-47c0-982b-ea677f46a6ef">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
