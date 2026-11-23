@@ -1,0 +1,136 @@
+<div class="mceContentBody aui-theme-default wiki-content fullsize">
+    <p>
+      Sent on<strong> <time datetime="2026-11-23" />&nbsp;</strong>
+    </p>
+    <h2><strong>Release Notification</strong></h2>
+    <h3>FedRAMP parity &amp;amp; cutover, user analytics consolidation, FX rates, GES ingestion fix, workspace modules, absences</h3>
+    <h3><strong>What is happening</strong></h3>
+    <p>This week's DnA release covers the following Analytics Engineering stories.</p>
+    <ul>
+      <li data-uuid="0de0c0ea-4e07-48eb-8c39-c54995869147">
+        <strong>FedRAMP — parity checks, backups, and production cutover</strong>
+        <ul>
+          <li data-uuid="060a6918-7925-46ae-93bb-886e48e5b693">
+            Row-count parity analyses between legacy and FedRAMP tables were completed for Workiva and GES sources, comparing counts by month and checking whether differences come from duplicates or missing rows. Rechecks for GES are finished for parts 1 and 2, and part 3 is still in progress.
+          </li>
+          <li data-uuid="f07ef8b7-5c2b-4fc9-93d2-33d5d54baac8">
+            The WDesk Classic production cutover (part 1) replaced legacy table references in dbt with their FedRAMP equivalents, validated through compile-focused QA in a personal SILVER_TEST schema. The matching Workiva cutover (part 1) is still in progress.
+          </li>
+          <li data-uuid="88b3bc06-4310-44ed-8cf1-6a4ff3cc76fd">
+            A sanitized historical backup of user analytics data was unloaded to S3, partitioned by year and month, to support disaster recovery if the table is accidentally dropped.
+          </li>
+          <li data-uuid="4f7df303-7dae-4c05-8c2c-6ac3393dcb18">
+            The Amplitude history leakage notebook was run over 4/17/2026 to the present in roughly five-day chunks to identify any days with leaked data, and the results table was verified as populated. (<a href="https://jira.atl.workiva.net/browse/DNA-6304">DNA-6304</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6582">DNA-6582</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6583">DNA-6583</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6584">DNA-6584</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6436">DNA-6436</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6831">DNA-6831</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6821">DNA-6821</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6729">DNA-6729</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="3c9eeab4-4752-4357-bff5-093b26566ece">
+        <strong>Product usage analytics — consolidated gold event model</strong>
+        <ul>
+          <li data-uuid="3ffe5421-1676-499b-9ecd-0fe4f589ef83">
+            Legacy USER_ANALYTIC event tables that BI and CPX previously read from silver full-scan dedupe views were added to the <u><strong>user_analytics_lake_events</strong></u> allow list and are now built through <u><strong>fct_user_analytics_events</strong></u>, so consumers query gold instead of silver.
+          </li>
+          <li data-uuid="2bc69d0f-7a2c-4e56-beab-12a2ca4d9058">
+            A new <strong>product_usage_full_refresh</strong> variable (default false) keeps <u><strong>fct_user_analytics_events</strong></u>, <u><strong>fct_ges_events</strong></u> and <u><strong>fct_feature_events</strong></u> incremental under production CI <strong>--full-refresh</strong> runs, preventing timeouts caused by rebuilding from <strong>product_usage_start_date</strong>.
+          </li>
+          <li data-uuid="fc8b6d76-9efe-4016-b5ee-0485c346d836">
+            Amplitude region codes (us, eu, apac, ca) are now normalized to Workiva environment names (production, prod-eu, prod-apac, prod-ca) when building <u><strong>fct_feature_events</strong></u>, so Amplitude rows join correctly to <u><strong>fct_user_workspace_usage_daily</strong></u> and <u><strong>workiva_user</strong></u>.
+          </li>
+          <li data-uuid="0abf1439-0f0f-4afd-bf6d-822e1c5796ff">
+            Retirement of the grouped <strong>int_user_analytics_</strong> intermediate layer, along with the macros and seeds that exist only to build it, is in progress now that product usage flows through <u><strong>fct_user_analytics_events</strong></u>. (<a href="https://jira.atl.workiva.net/browse/DNA-6744">DNA-6744</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6808">DNA-6808</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6792">DNA-6792</a> / <a href="https://jira.atl.workiva.net/browse/DNA-6735">DNA-6735</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="d55d991d-f8a2-40df-9f57-c19447f68599">
+        <strong>FX Rates — additional Oanda currency pairs</strong>
+        <ul>
+          <li data-uuid="c87819b5-d992-4a57-a97f-222c74373669">
+            Three currency pairs (USD/MXN, USD/COP, USD/CHF) were added to the Oanda FX rates feed in <u><strong>OANDA_RATES_CANDLE</strong></u>, with history loaded back to July 1, 2022.
+          </li>
+          <li data-uuid="9de3c21f-16bc-4cc3-b61a-3f3aff215d44">
+            The new pairs were also added to the related gold views so Finance can use them in currency reporting. (<a href="https://jira.atl.workiva.net/browse/DNA-6823">DNA-6823</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="0acbfd7e-16b7-49e9-9be8-578b28770ea2">
+        <strong>GES ingestion — hourly S3 COPY fix</strong>
+        <ul>
+          <li data-uuid="042848d1-d6ed-407d-90d1-ef3026e60e9b">
+            The <strong>load_staging_hourly</strong> DAG built its S3 folder path from the date at DAG parse time, so after midnight UTC the previous day's folder was never read again.
+          </li>
+          <li data-uuid="1a44efe9-7427-43fc-b8d7-c048efd4bde3">
+            Files landing after the last 23:00 UTC run of each day could therefore be missed when copying GES topics into <u><strong>LAKE_PROD.GES</strong></u>. The fix ensures those late files are loaded. (<a href="https://jira.atl.workiva.net/browse/DNA-6468">DNA-6468</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="a632568e-854d-4025-9a53-1cfcd5ac262a">
+        <strong>Workspace modules — Type 2 SCD dimension</strong>
+        <ul>
+          <li data-uuid="0dd660a6-0cb8-4fb5-9e4a-e08cb3660765">
+            A new gold model, <u><strong>dim_workspace_modules</strong></u>, is being built as a table following the Type 2 SCD pattern with <strong>version_start_at</strong>, <strong>version_end_at</strong> and <strong>is_latest</strong>.
+          </li>
+          <li data-uuid="9ae68c65-4e74-46b7-9cf9-15a9b2a5dc84">
+            It is sourced from silver <u><strong>workiva_workspace_module_history</strong></u>, enabling point-in-time lookups and current-state filtering. (<a href="https://jira.atl.workiva.net/browse/DNA-6674">DNA-6674</a>)
+          </li>
+        </ul>
+      </li>
+      <li data-uuid="5e465714-3b41-4587-8a2e-221350c728db">
+        <strong>People &amp; Culture — absences fact table</strong>
+        <ul>
+          <li data-uuid="7c3aa304-dc4b-4b8e-ac7e-51f26e50602c">
+            A new absences fact table is in progress to supply absence information required by many headcount dimensions. (<a href="https://jira.atl.workiva.net/browse/DNA-6784">DNA-6784</a>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3><strong>Why it is happening</strong></h3>
+    <p><strong>FedRAMP readiness</strong></p>
+    <ul>
+      <li data-uuid="583ea8d4-3aeb-4ef6-8c61-0500e6e5097e">Parity checks, a disaster-recovery backup and leakage review reduce risk before production references are cut over to FedRAMP sources.</li>
+      <li data-uuid="db6ba2e6-127e-4e37-9ab2-53460adc869d">Replacing legacy table references in dbt keeps downstream models compiling cleanly against the new environment.</li>
+    </ul>
+    <p><strong>Reliable, consistent analytics</strong></p>
+    <ul>
+      <li data-uuid="18933d2e-1259-437c-b329-bb1aff01285c">Consolidating usage events in gold and normalizing environment names makes product usage reporting consistent and joinable across customer activity models.</li>
+      <li data-uuid="2940c8db-f112-4b3f-ad56-a45e366d925a">Keeping usage facts incremental under CI and fixing the hourly S3 COPY gap avoids timeouts and missing data, and new FX pairs and dimensions extend reporting coverage.</li>
+    </ul>
+    <h3><strong>When it will happen</strong></h3>
+    <p>Deploy on <time datetime="2026-11-25" /></p>
+    <p>Consumers relying on any changed columns should validate and update downstream references within 30 days of the deploy (2026-11-25).</p>
+    <h3><strong>Downstream impact</strong></h3>
+    <ul>
+      <li data-uuid="6870e623-f7c4-44ad-9ddc-dfe6575f38ff">Product usage consumers (BI and CPX) should read the newly added USER_ANALYTIC event tables from <u><strong>fct_user_analytics_events</strong></u> in gold instead of silver dedupe views.</li>
+      <li data-uuid="6292816f-ce54-47bc-8ffb-6e331fb359b8"><u><strong>fct_feature_events</strong></u> Amplitude rows now carry Workiva environment names, which affects joins to <u><strong>fct_user_workspace_usage_daily</strong></u> and <u><strong>workiva_user</strong></u>.</li>
+      <li data-uuid="6ab82c99-f643-4f54-9c1d-33e0f88f0fad">Production CI runs that rebuild <u><strong>fct_user_analytics_events</strong></u>, <u><strong>fct_ges_events</strong></u> and <u><strong>fct_feature_events</strong></u> now stay incremental unless <strong>product_usage_full_refresh</strong> is enabled.</li>
+      <li data-uuid="012329c8-9e40-4078-9e40-fb45415478d3">Finance FX reporting sourced from <u><strong>OANDA_RATES_CANDLE</strong></u> and the related gold views now includes USD/MXN, USD/COP and USD/CHF.</li>
+      <li data-uuid="723bf735-6e6e-4706-9d7d-a6a142332c66">GES tables in <u><strong>LAKE_PROD.GES</strong></u> will now include files that previously landed after the last hourly run of a UTC day.</li>
+    </ul>
+    <h3><strong>Recommended actions</strong></h3>
+    <p>Verify — Amplitude-sourced rows in <u><strong>fct_feature_events</strong></u> join to <u><strong>fct_user_workspace_usage_daily</strong></u> and <u><strong>workiva_user</strong></u> using production, prod-eu, prod-apac and prod-ca.</p>
+    <p>Verify — BI and CPX queries previously reading USER_ANALYTIC silver views return expected results from <u><strong>fct_user_analytics_events</strong></u>.</p>
+    <p>Verify — USD/MXN, USD/COP and USD/CHF appear in <u><strong>OANDA_RATES_CANDLE</strong></u> and the related gold views with history back to July 1, 2022.</p>
+    <h3><strong>Links</strong></h3>
+    <ul>
+    <li data-uuid="204378d6-2c6e-4000-b53f-8ab74da2e7db"><a href="https://jira.atl.workiva.net/browse/DNA-6304">DNA-6304</a> — FedRAMP | Parity Checks for Workiva pt. 1</li>
+    <li data-uuid="cd5cf1ae-8881-4c47-99db-676867cc3687"><a href="https://jira.atl.workiva.net/browse/DNA-6436">DNA-6436</a> — FedRAMP | Prod CutOver WDesk Classic Part 1</li>
+    <li data-uuid="e73c2189-fb43-453b-8647-3fa0590a119c"><a href="https://jira.atl.workiva.net/browse/DNA-6468">DNA-6468</a> — Fix hourly S3 COPY missing files written after the last run of each UTC day</li>
+    <li data-uuid="9d688445-4b99-41c7-8c20-bec46249f7a4"><a href="https://jira.atl.workiva.net/browse/DNA-6582">DNA-6582</a> — FedRAMP | Recheck Parity for GES pt. 1</li>
+    <li data-uuid="29aa22b4-235f-4472-80b8-86655ca961e9"><a href="https://jira.atl.workiva.net/browse/DNA-6583">DNA-6583</a> — FedRAMP | Recheck Parity for GES pt. 2</li>
+    <li data-uuid="887978fc-8f3c-4557-9abd-64513fc03c5e"><a href="https://jira.atl.workiva.net/browse/DNA-6584">DNA-6584</a> — FedRAMP | Recheck Parity for GES pt. 3</li>
+    <li data-uuid="62c8fee1-55d5-4939-968e-f9e321d6d9bc"><a href="https://jira.atl.workiva.net/browse/DNA-6674">DNA-6674</a> — Create dim_workspace_modules in gold as a Type 2 SCD</li>
+    <li data-uuid="27b809f0-3e4f-48a8-a083-4475ced90b4a"><a href="https://jira.atl.workiva.net/browse/DNA-6729">DNA-6729</a> — FedRAMP | Identify Amplitude History Leakage</li>
+    <li data-uuid="37e49976-9ceb-4a59-bd27-db7aa86ddea8"><a href="https://jira.atl.workiva.net/browse/DNA-6735">DNA-6735</a> — Retire the grouped int_user_analytics_ intermediate layer</li>
+    <li data-uuid="2307fcc6-1666-4bc1-9450-2ce8787dc01c"><a href="https://jira.atl.workiva.net/browse/DNA-6744">DNA-6744</a> — Extend fct_user_analytics_events for USER_ANALYTIC sources</li>
+    <li data-uuid="ae369e57-2124-4591-9d26-ee74a90cea78"><a href="https://jira.atl.workiva.net/browse/DNA-6784">DNA-6784</a> — PnC - Create Absences fact table</li>
+    <li data-uuid="f7b12548-7b06-4150-ada1-86ecb87cf95c"><a href="https://jira.atl.workiva.net/browse/DNA-6792">DNA-6792</a> — Normalize Amplitude region codes to Workiva environment names when building fct_feature_events</li>
+    <li data-uuid="8533265c-70fe-40d7-84a5-c9b35db0b95c"><a href="https://jira.atl.workiva.net/browse/DNA-6808">DNA-6808</a> — Add product_usage_full_refresh so usage facts stay incremental under CI --full-refresh</li>
+    <li data-uuid="5eb75fd0-02ae-4384-984a-b7ea36ccde66"><a href="https://jira.atl.workiva.net/browse/DNA-6821">DNA-6821</a> — FedRAMP | User analytic history backup</li>
+    <li data-uuid="0ddeaee3-d328-4067-bc1b-bd3cca79e29a"><a href="https://jira.atl.workiva.net/browse/DNA-6823">DNA-6823</a> — FX Rates: Additional Currency Pairs (RE: FINSYS-9513)</li>
+    <li data-uuid="3132a543-55f2-4d3e-94c1-636b37c7723c"><a href="https://jira.atl.workiva.net/browse/DNA-6831">DNA-6831</a> — FedRAMP | Prod CutOver Workiva pt 1</li>
+    </ul>
+    <h3><strong>Contact</strong></h3>
+    <ul>
+      <li data-uuid="71fd5f24-bf04-4c4f-b0cb-40b277a6d240">DnA — post questions in <a href="https://workiva.enterprise.slack.com/archives/CDWRCLFPE">#support-data-services</a></li>
+    </ul>
+    <p><br /></p>
+  </div>
